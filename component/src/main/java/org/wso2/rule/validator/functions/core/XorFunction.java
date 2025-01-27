@@ -17,6 +17,7 @@
  */
 package org.wso2.rule.validator.functions.core;
 
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
 import org.wso2.rule.validator.functions.LintFunction;
@@ -44,17 +45,17 @@ public class XorFunction extends LintFunction {
             return errors;
         }
 
-        if (!options.containsKey("properties")) {
+        if (!options.containsKey(Constants.RULESET_XOR_PROPERTIES)) {
             errors.add("Xor function requires the list of properties.");
             return errors;
         }
 
-        if (!(options.get("properties") instanceof List)) {
+        if (!(options.get(Constants.RULESET_XOR_PROPERTIES) instanceof List)) {
             errors.add("Xor function requires the list of properties.");
             return errors;
         }
 
-        List<Object> properties = (List<Object>) options.get("properties");
+        List<Object> properties = (List<Object>) options.get(Constants.RULESET_XOR_PROPERTIES);
         for (Object property : properties) {
             if (!(property instanceof String)) {
                 errors.add("Xor function properties requires a list of Strings.");
@@ -66,7 +67,7 @@ public class XorFunction extends LintFunction {
     }
 
     public boolean execute(LintTarget target) {
-        ArrayList<String> properties = (ArrayList<String>) options.get("properties");
+        ArrayList<String> properties = (ArrayList<String>) options.get(Constants.RULESET_XOR_PROPERTIES);
         int count = 0;
         for (String property : properties) {
             if (target.value instanceof Map) {

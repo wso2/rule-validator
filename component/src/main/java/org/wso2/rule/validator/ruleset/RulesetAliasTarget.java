@@ -20,6 +20,7 @@ package org.wso2.rule.validator.ruleset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.wso2.rule.validator.Constants;
 
 /**
  * This class represents the target of a ruleset alias which contains the list of formats it should apply to and the
@@ -32,8 +33,8 @@ public class RulesetAliasTarget {
     public RulesetAliasTarget (Object targetObject) {
         if (targetObject instanceof Map) {
             Map<String, Object> targetMap = (Map<String, Object>) targetObject;
-            this.formats = Format.getFormatListFromObject((List<String>) targetMap.get("formats"));
-            this.given = (ArrayList<String>) targetMap.get("given");
+            this.formats = Format.getFormatListFromObject((List<String>) targetMap.get(Constants.RULESET_FORMATS));
+            this.given = (ArrayList<String>) targetMap.get(Constants.RULESET_GIVEN);
         }
     }
 }

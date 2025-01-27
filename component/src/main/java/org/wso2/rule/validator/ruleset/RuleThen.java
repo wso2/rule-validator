@@ -17,6 +17,7 @@
  */
 package org.wso2.rule.validator.ruleset;
 
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.functions.FunctionFactory;
 import org.wso2.rule.validator.functions.LintFunction;
 
@@ -32,9 +33,9 @@ public class RuleThen {
     public LintFunction lintFunction;
 
     public RuleThen(Map<String, Object> ruleThenData) {
-        this.field = (String) ruleThenData.get("field");
-        this.function = (String) ruleThenData.get("function");
-        this.functionOptions = (Map<String, Object>) ruleThenData.get("functionOptions");
+        this.field = (String) ruleThenData.get(Constants.RULESET_FIELD);
+        this.function = (String) ruleThenData.get(Constants.RULESET_FUNCTION);
+        this.functionOptions = (Map<String, Object>) ruleThenData.get(Constants.RULESET_FUNCTION_OPTIONS);
 
         this.lintFunction = FunctionFactory.getFunction(this.function, this.functionOptions);
     }

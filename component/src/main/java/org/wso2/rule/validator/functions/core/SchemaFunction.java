@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
 import org.wso2.rule.validator.functions.LintFunction;
@@ -49,22 +50,22 @@ public class SchemaFunction extends LintFunction {
             return errors;
         }
 
-        if (!options.containsKey("schema")) {
+        if (!options.containsKey(Constants.RULESET_SCHEMA_SCHEMA)) {
             errors.add("Schema function should contain the schema option.");
         }
 
-        if (options.containsKey("schema")) {
-            String schema = new Gson().toJson(options.get("schema"));
+        if (options.containsKey(Constants.RULESET_SCHEMA_SCHEMA)) {
+            String schema = new Gson().toJson(options.get(Constants.RULESET_SCHEMA_SCHEMA));
             if (!isValidSchema(schema)) {
                 errors.add("Schema function should contain a valid JSON schema.");
             }
         }
 
-        if (options.containsKey("dialect")) {
-            if (!(options.get("dialect") instanceof String)) {
+        if (options.containsKey(Constants.RULESET_SCHEMA_DIALECT)) {
+            if (!(options.get(Constants.RULESET_SCHEMA_DIALECT) instanceof String)) {
                 errors.add("Schema function should contain a string value for the dialect option.");
             } else {
-                String dialect = (String) options.get("dialect");
+                String dialect = (String) options.get(Constants.RULESET_SCHEMA_DIALECT);
                 List<String> dialects = new ArrayList<>(Arrays.asList(
                         "auto", "draft4", "draft6", "draft7", "draft2019-09", "draft2020-12"));
                 if (!dialects.contains(dialect)) {
@@ -73,7 +74,8 @@ public class SchemaFunction extends LintFunction {
             }
         }
 
-        if (options.containsKey("allErrors") && !(options.get("allErrors") instanceof Boolean)) {
+        if (options.containsKey(Constants.RULESET_SCHEMA_ALL_ERRORS) &&
+                !(options.get(Constants.RULESET_SCHEMA_ALL_ERRORS) instanceof Boolean)) {
             errors.add("Schema function should contain a boolean value for the allErrors option.");
         }
 
@@ -95,7 +97,7 @@ public class SchemaFunction extends LintFunction {
         String targetString = new Gson().toJson(target.value);
         JSONObject targetObject = new JSONObject(targetString);
 
-        String schema = new Gson().toJson(options.get("schema"));
+        String schema = new Gson().toJson(options.get(Constants.RULESET_SCHEMA_SCHEMA));
         JSONObject schemaObject = new JSONObject(schema);
         org.everit.json.schema.Schema everitSchema = SchemaLoader.load(schemaObject);
 

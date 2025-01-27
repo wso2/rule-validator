@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.wso2.rule.validator.Constants;
 
 /**
  * Class to represent a ruleset alias definition.
@@ -46,9 +47,9 @@ public class RulesetAliasDefinition {
         } else if (aliasObject instanceof Map) {
             isComplexAlias = true;
             Map<String, Object> aliasMap = (Map<String, Object>) aliasObject;
-            this.description = (String) aliasMap.get("description");
+            this.description = (String) aliasMap.get(Constants.DESCRIPTION);
             this.targets = new ArrayList<>();
-            ArrayList<Object> targets = (ArrayList<Object>) aliasMap.get("targets");
+            ArrayList<Object> targets = (ArrayList<Object>) aliasMap.get(Constants.RULESET_ALIAS_TARGETS);
             for (Object target : targets) {
                 RulesetAliasTarget aliasTarget = new RulesetAliasTarget(target);
                 this.targets.add(aliasTarget);
@@ -64,7 +65,7 @@ public class RulesetAliasDefinition {
 
         ArrayList<String> resolved = new ArrayList<>();
 
-        String aliasExtractionRegex = "^#[a-zA-Z]+";
+        String aliasExtractionRegex = Constants.RULESET_ALIAS_EXTRACTION_REGEX;
         Pattern pattern = Pattern.compile(aliasExtractionRegex);
         Matcher matcher = pattern.matcher(given);
         if (!matcher.find()) {

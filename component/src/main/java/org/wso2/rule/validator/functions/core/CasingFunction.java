@@ -17,6 +17,7 @@
  */
 package org.wso2.rule.validator.functions.core;
 
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
 import org.wso2.rule.validator.functions.LintFunction;
@@ -56,28 +57,32 @@ public class CasingFunction extends LintFunction {
         }
 
         // required options
-        if (!options.containsKey("type")) {
-            errors.add("The 'type' option is required for the 'casing' function.");
+        if (!options.containsKey(Constants.RULESET_CASING_TYPE)) {
+            errors.add("The '" + Constants.RULESET_CASING_TYPE + "' option is required for the 'casing' function.");
         }
 
         // optional options
         for (Map.Entry<String, Object> entry : options.entrySet()) {
-            if (entry.getKey().equals("disallowDigits")) {
+            if (entry.getKey().equals(Constants.RULESET_CASING_DISALLOW_DIGITS)) {
                 if (!(options.get(entry.getKey()) instanceof Boolean)) {
-                    errors.add("The 'disallowDigits' option should be a boolean.");
+                    errors.add("The '" + Constants.RULESET_CASING_DISALLOW_DIGITS + "' option should be a boolean.");
                 }
-            } else if (entry.getKey().equals("separator")) {
+            } else if (entry.getKey().equals(Constants.RULESET_CASING_SEPARATOR)) {
                 if (!(options.get(entry.getKey()) instanceof Map)) {
-                    errors.add("The 'separator' option should be a map.");
+                    errors.add("The '" + Constants.RULESET_CASING_SEPARATOR + "' option should be a map.");
                     continue;
                 }
 
                 Map<String, Object> separator = (Map<String, Object>) options.get(entry.getKey());
-                if (separator.containsKey("char") && !(separator.get("char") instanceof String)) {
-                    errors.add("The 'char' key in the 'separator' option should be a string.");
+                if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR) &&
+                        !(separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR) instanceof String)) {
+                    errors.add("The '" + Constants.RULESET_CASING_SEPARATOR_CHAR +
+                            "' key in the '" + Constants.RULESET_CASING_SEPARATOR + "' option should be a string.");
                 }
-                if (separator.containsKey("allowLeading") && !(separator.get("allowLeading") instanceof Boolean)) {
-                    errors.add("The 'allowLeading' key in the 'separator' option should be a boolean.");
+                if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING) &&
+                        !(separator.get(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING) instanceof Boolean)) {
+                    errors.add("The '" + Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING +
+                            "' key in the '" + Constants.RULESET_CASING_SEPARATOR + "' option should be a boolean.");
                 }
             }
         }
@@ -87,11 +92,16 @@ public class CasingFunction extends LintFunction {
 
     public boolean execute(LintTarget target) {
         String targetString = (String) target.value;
+        boolean allowLeading = Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING_DEFAULT;
+        String separatorChar = "";
+        if (options.containsKey(Constants.RULESET_CASING_SEPARATOR)) {
+            Map<String, Object> separator = (Map<String, Object>) options.get(Constants.RULESET_CASING_SEPARATOR);
+            allowLeading = (boolean) separator.get(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING);
+            separatorChar = separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR).toString();
+        }
 
-        if (targetString.length() == 1 &&
-                options.containsKey("separator") &&
-                (boolean) options.get("separator.allowLeading") &&
-                targetString.equals(((Map<String, Object>) options.get("separator")).get("char"))) {
+        if (targetString.length() == 1 && options.containsKey(Constants.RULESET_CASING_SEPARATOR) && allowLeading &&
+                targetString.equals(separatorChar)) {
             return true;
         }
 
@@ -99,11 +109,11 @@ public class CasingFunction extends LintFunction {
     }
 
     private String getPattern(Map<String, Object> options) {
-        String baseCase = (String) options.get("type");
+        String baseCase = (String) options.get(Constants.RULESET_CASING_TYPE);
 
         boolean allowdigits = false;
-        if (options.containsKey("disallowDigits")) {
-            allowdigits = !(boolean) options.get("disallowDigits");
+        if (options.containsKey(Constants.RULESET_CASING_DISALLOW_DIGITS)) {
+            allowdigits = !(boolean) options.get(Constants.RULESET_CASING_DISALLOW_DIGITS);
         }
 
         String basePattern;
@@ -128,13 +138,13 @@ public class CasingFunction extends LintFunction {
 
         String pattern = basePattern.replace("{__DIGITS__}", allowdigits ? digitPattern : "");
 
-        if (!options.containsKey("separator")) {
+        if (!options.containsKey(Constants.RULESET_CASING_SEPARATOR)) {
             return "^" + pattern + "$";
         }
 
-        Map<String, Object> separator = (Map<String, Object>) options.get("separator");
-        String separatorChar = separator.get("char").toString();
-        boolean allowLeading = (boolean) separator.get("allowLeading");
+        Map<String, Object> separator = (Map<String, Object>) options.get(Constants.RULESET_CASING_SEPARATOR);
+        String separatorChar = separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR).toString();
+        boolean allowLeading = (boolean) separator.get(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING);
 
         String separatorPattern = "[" + Pattern.quote(separatorChar) + "]";
         String leadingSeparatorPattern = allowLeading ? separatorPattern + "?" : "";

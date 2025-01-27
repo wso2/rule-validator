@@ -26,6 +26,7 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.ruleset.Format;
 import org.wso2.rule.validator.ruleset.Rule;
@@ -65,16 +66,16 @@ public class Document {
 
         // Read format
         Map<String, Object> documentMap = (Map<String, Object>) yamlData;
-        if (documentMap.containsKey("openapi")) {
-            String oasVersion = (String) documentMap.get("openapi");
-            if (oasVersion.startsWith("3.1")) {
+        if (documentMap.containsKey(Constants.OPENAPI_KEY)) {
+            String oasVersion = (String) documentMap.get(Constants.OPENAPI_KEY);
+            if (oasVersion.startsWith(Constants.OAS_3_1_VERSION)) {
                 this.format = Format.OAS3_1;
-            } else if (oasVersion.startsWith("3.0")) {
+            } else if (oasVersion.startsWith(Constants.OAS_3_0_VERSION)) {
                 this.format = Format.OAS3_0;
             } else {
                 this.format = Format.OAS3;
             }
-        } else if (documentMap.containsKey("swagger")) {
+        } else if (documentMap.containsKey(Constants.SWAGGER_KEY)) {
             this.format = Format.OAS2;
         }
     }
@@ -89,7 +90,7 @@ public class Document {
         for (Rule rule : ruleset.rules.values()) {
             for (String given : rule.given) {
                 // TODO: Implement aliases
-                if (given.startsWith("#")) {
+                if (given.startsWith(Constants.ALIAS_PREFIX)) {
                     continue;
                 }
                 try {
@@ -147,7 +148,7 @@ public class Document {
         ArrayList<LintTarget> lintTargets = new ArrayList<>();
 
         if ((node instanceof List || node instanceof Map) && (then.field != null && !then.field.isEmpty())) {
-            if (then.field.equals("@key")) {
+            if (then.field.equals(Constants.RULESET_FIELD_KEY)) {
                 if (node instanceof Map) {
                     Map<String, Object> map = (Map<String, Object>) node;
                     for (String key : map.keySet()) {
@@ -163,7 +164,7 @@ public class Document {
                 } else {
                     throw new RuntimeException("Node is not a Map or List but the field is @key");
                 }
-            } else if (then.field.startsWith("$")) {
+            } else if (then.field.startsWith(Constants.JSON_PATH_ROOT)) {
                 Configuration config = Configuration.builder().options(Option.AS_PATH_LIST).build();
                 List<String> paths;
                 try {
@@ -224,9 +225,7 @@ public class Document {
         ArrayList<String> segments = new ArrayList<>();
 
         // Regex to match either dot-separated keys or bracket notation
-        Pattern pattern = Pattern.compile(
-                "\\[(?:'([^']*)'|\"([^\"]*)\")\\]|([^.\\[\\]]+)"
-        );
+        Pattern pattern = Pattern.compile(Constants.JSON_PATH_GROUPING_REGEX);
         Matcher matcher = pattern.matcher(path);
 
         while (matcher.find()) {

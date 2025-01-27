@@ -17,6 +17,7 @@
  */
 package org.wso2.rule.validator.functions.core;
 
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
 import org.wso2.rule.validator.functions.LintFunction;
@@ -44,16 +45,18 @@ public class LengthFunction extends LintFunction {
             return errors;
         }
 
-        if (!options.containsKey("min") && !options.containsKey("max")) {
+        if (!options.containsKey(Constants.RULESET_LENGTH_MIN) && !options.containsKey(Constants.RULESET_LENGTH_MAX)) {
             errors.add("Length function requires at least a min or a max value.");
             return errors;
         }
 
-        if (options.containsKey("min") && !(options.get("min") instanceof Integer)) {
+        if (options.containsKey(Constants.RULESET_LENGTH_MIN) &&
+                !(options.get(Constants.RULESET_LENGTH_MIN) instanceof Integer)) {
             errors.add("Length function min value should be an integer.");
         }
 
-        if (options.containsKey("max") && !(options.get("max") instanceof Integer)) {
+        if (options.containsKey(Constants.RULESET_LENGTH_MAX) &&
+                !(options.get(Constants.RULESET_LENGTH_MAX) instanceof Integer)) {
             errors.add("Length function max value should be an integer.");
         }
 
@@ -73,15 +76,15 @@ public class LengthFunction extends LintFunction {
             return true;
         }
 
-        if (options.containsKey("min") && options.containsKey("max")) {
-            int min = (int) options.get("min");
-            int max = (int) options.get("max");
+        if (options.containsKey(Constants.RULESET_LENGTH_MIN) && options.containsKey(Constants.RULESET_LENGTH_MAX)) {
+            int min = (int) options.get(Constants.RULESET_LENGTH_MIN);
+            int max = (int) options.get(Constants.RULESET_LENGTH_MAX);
             return length >= min && length <= max;
-        } else  if (options.containsKey("min")) {
-            int min = (int) options.get("min");
+        } else  if (options.containsKey(Constants.RULESET_LENGTH_MIN)) {
+            int min = (int) options.get(Constants.RULESET_LENGTH_MIN);
             return length >= min;
-        } else if (options.containsKey("max")) {
-            int max = (int) options.get("max");
+        } else if (options.containsKey(Constants.RULESET_LENGTH_MAX)) {
+            int max = (int) options.get(Constants.RULESET_LENGTH_MAX);
             return length <= max;
         } else {
             return false;
