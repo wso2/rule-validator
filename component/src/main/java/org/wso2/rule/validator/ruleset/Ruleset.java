@@ -17,10 +17,11 @@
  */
 package org.wso2.rule.validator.ruleset;
 
+import org.wso2.rule.validator.Constants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.wso2.rule.validator.Constants;
 
 /**
  * Ruleset class represents a set of rules that can be applied to a document.

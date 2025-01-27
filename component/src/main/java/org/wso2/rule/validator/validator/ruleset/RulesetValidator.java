@@ -67,7 +67,8 @@ public abstract class RulesetValidator {
 
         // Validate extends
         if (ruleset.containsKey(Constants.RULESET_EXTENDS)) {
-            if (!(ruleset.get(Constants.RULESET_EXTENDS) instanceof List) || !(ruleset.get(Constants.RULESET_EXTENDS) instanceof String)) {
+            if (!(ruleset.get(Constants.RULESET_EXTENDS) instanceof List) ||
+                    !(ruleset.get(Constants.RULESET_EXTENDS) instanceof String)) {
                 errors.add(new RulesetValidationError("",
                         "'extends' field of a ruleset should be a list or a string."));
             } else if (ruleset.get(Constants.RULESET_EXTENDS) instanceof List) {
@@ -113,7 +114,8 @@ public abstract class RulesetValidator {
                         "' field of a rule should be a string"));
             }
             // Validate message
-            if (rule.containsKey(Constants.RULESET_MESSAGE) && !(rule.get(Constants.RULESET_MESSAGE) instanceof String)) {
+            if (rule.containsKey(Constants.RULESET_MESSAGE) &&
+                    !(rule.get(Constants.RULESET_MESSAGE) instanceof String)) {
                 errors.add(new RulesetValidationError(key, "'" + Constants.RULESET_MESSAGE +
                         "' field of a rule should be a string"));
             }
@@ -135,7 +137,8 @@ public abstract class RulesetValidator {
             }
 
             // Validate severity
-            if (rule.containsKey(Constants.RULESET_SEVERITY) && !(rule.get(Constants.RULESET_SEVERITY) instanceof String)) {
+            if (rule.containsKey(Constants.RULESET_SEVERITY) &&
+                    !(rule.get(Constants.RULESET_SEVERITY) instanceof String)) {
                 errors.add(new RulesetValidationError(key, "'severity' field of a rule should be a string"));
             } else {
                 String severity = (String) rule.get(Constants.RULESET_SEVERITY);
@@ -266,7 +269,8 @@ public abstract class RulesetValidator {
 
         if (!rule.containsKey(Constants.RULESET_GIVEN)) {
             errors.add(new RulesetValidationError(ruleName, "Rule does not contain a 'given' field."));
-        } else if (!(rule.get(Constants.RULESET_GIVEN) instanceof List) && !(rule.get(Constants.RULESET_GIVEN) instanceof String)) {
+        } else if (!(rule.get(Constants.RULESET_GIVEN) instanceof List) &&
+                !(rule.get(Constants.RULESET_GIVEN) instanceof String)) {
             errors.add(new RulesetValidationError(ruleName, "'given' field of a rule should be a string or a list"));
         } else {
             if (rule.get(Constants.RULESET_GIVEN) instanceof List) {

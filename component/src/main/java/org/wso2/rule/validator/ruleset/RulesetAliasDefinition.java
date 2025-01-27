@@ -17,13 +17,14 @@
  */
 package org.wso2.rule.validator.ruleset;
 
+import org.wso2.rule.validator.Constants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.wso2.rule.validator.Constants;
 
 /**
  * Class to represent a ruleset alias definition.

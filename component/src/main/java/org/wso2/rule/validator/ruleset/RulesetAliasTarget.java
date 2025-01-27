@@ -17,10 +17,11 @@
  */
 package org.wso2.rule.validator.ruleset;
 
+import org.wso2.rule.validator.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.wso2.rule.validator.Constants;
 
 /**
  * This class represents the target of a ruleset alias which contains the list of formats it should apply to and the
