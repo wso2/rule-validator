@@ -22,7 +22,7 @@
 
     <groupId>org.wso2.carbon</groupId>
     <artifactId>rule-validator-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 - Rule Validator POM</name>
@@ -136,7 +136,9 @@
         <com.github.erosb.everit-json-schema.version>1.14.4</com.github.erosb.everit-json-schema.version>
         <org.reflections.version>0.10.2</org.reflections.version>
         <org.apache.maven.compiler.plugin.version>3.13.0</org.apache.maven.compiler.plugin.version>
-
+        <maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
+        <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
+        <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
         <maven.spotbugsplugin.exclude.file>spotbugs-exclude.xml</maven.spotbugsplugin.exclude.file>
     </properties>
 </project>
