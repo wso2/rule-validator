@@ -36,5 +36,5 @@ public abstract class LintFunction {
         this.options = options;
     }
 
-    public abstract List<String> validateFunctionOptions(Map<String, Object> options);
+    public abstract List<String> validateFunctionOptions();
 }

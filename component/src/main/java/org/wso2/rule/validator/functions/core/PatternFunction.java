@@ -38,7 +38,7 @@ public class PatternFunction extends LintFunction {
     }
 
     @Override
-    public List<String> validateFunctionOptions(Map<String, Object> options) {
+    public List<String> validateFunctionOptions() {
         ArrayList<String> errors = new ArrayList<>();
 
         if (options == null) {

@@ -4,12 +4,13 @@ import com.jayway.jsonpath.JsonPath;
 import org.wso2.rule.validator.validator.ruleset.RulesetValidator;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ruleset validation for JSON files
  */
 public class JsonRulesetValidator extends RulesetValidator {
     public static List<RulesetValidationError> validateRuleset(String rulesetString) {
-        return RulesetValidator.validate(JsonPath.parse(rulesetString).json());
+        return RulesetValidator.validate((Map<String, Object>) JsonPath.parse(rulesetString).json());
     }
 }

@@ -20,11 +20,13 @@ package org.wso2.rule.validator.ruleset.file.type;
 import com.jayway.jsonpath.JsonPath;
 import org.wso2.rule.validator.ruleset.Ruleset;
 
+import java.util.Map;
+
 /**
  * This class is used to parse a JSON ruleset file.
  */
 public class JsonRuleset extends Ruleset {
     public JsonRuleset(String rulesetString) {
-        super(JsonPath.parse(rulesetString).json());
+        super((Map<String, Object>) JsonPath.parse(rulesetString).json());
     }
 }

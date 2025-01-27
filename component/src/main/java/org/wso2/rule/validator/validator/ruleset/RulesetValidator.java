@@ -22,6 +22,8 @@ public abstract class RulesetValidator {
 
         ArrayList<RulesetValidationError> errors = new ArrayList<>();
 
+        // Validate aliases
+
         if (ruleset == null) {
             errors.add(new RulesetValidationError("", "Ruleset is empty."));
             return errors;
@@ -36,6 +38,7 @@ public abstract class RulesetValidator {
         Object ruleMap = ruleset.get("rules");
         if (ruleMap == null) {
             errors.add(new RulesetValidationError("", "Ruleset contains a null value for rules."));
+            return errors;
         } else if (!(ruleMap instanceof Map)) {
             errors.add(new RulesetValidationError("", "Ruleset contains an invalid value for rules."));
             return errors;
@@ -222,8 +225,8 @@ public abstract class RulesetValidator {
                         "'functionOptions' field of a then object should be an object"));
             }
         }
-        LintFunction lintFunction = FunctionFactory.getFunction(function, then);
-        List<String> functionErrors = lintFunction.validateFunctionOptions(functionOptions);
+        LintFunction lintFunction = FunctionFactory.getFunction(function, functionOptions);
+        List<String> functionErrors = lintFunction.validateFunctionOptions();
         for (String error : functionErrors) {
             errors.add(new RulesetValidationError(ruleName, error));
         }

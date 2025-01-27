@@ -193,7 +193,7 @@ public class Document {
                 }
             }
         } else {
-            lintTargets.add(new LintTarget(new ArrayList<>(), node));
+            lintTargets.add(new LintTarget(new ArrayList<String>(), node));
         }
 
         return lintTargets;
