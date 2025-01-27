@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.JsonPath;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.Document;
 import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.ruleset.RulesetType;
@@ -18,7 +19,13 @@ import java.util.List;
  * Validator class to validate documents and rulesets.
  */
 public class Validator {
-    public static String validateDocument(String documentFile, String rulesetFile) {
+    public static String validateDocument(String documentFile, String rulesetFile) throws InvalidRulesetException {
+
+        List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetFile);
+        if (!errors.isEmpty()) {
+            Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+            throw new InvalidRulesetException(gson.toJson(errors));
+        }
 
         RulesetType type = findRulesetType(rulesetFile);
         Ruleset ruleset;
@@ -34,7 +41,7 @@ public class Validator {
         return gson.toJson(document.lint(ruleset));
     }
 
-    public static String validateRuleset(String rulesetString) throws IOException {
+    private static List<RulesetValidationError> getRulesetValidationErrors(String rulesetString) {
         RulesetType type = findRulesetType(rulesetString);
         List<RulesetValidationError> errors;
         if (type == RulesetType.YAML) {
@@ -42,6 +49,11 @@ public class Validator {
         } else {
             errors = JsonRulesetValidator.validateRuleset(rulesetString);
         }
+        return errors;
+    }
+
+    public static String validateRuleset(String rulesetString) throws IOException {
+        List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetString);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         return gson.toJson(errors);
     }

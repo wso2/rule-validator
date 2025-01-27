@@ -20,8 +20,8 @@ package org.wso2.rule.validator;
 /**
  * Exception class to handle invalid function options.
  */
-public class InvalidFunctionOptionsException extends Exception {
-    public InvalidFunctionOptionsException(String message) {
+public class InvalidRulesetException extends Exception {
+    public InvalidRulesetException(String message) {
         super(message);
     }
 }
