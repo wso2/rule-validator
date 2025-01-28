@@ -90,7 +90,7 @@ public class CasingFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
         String targetString = (String) target.value;
         boolean allowLeading = Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING_DEFAULT;
         String separatorChar = "";

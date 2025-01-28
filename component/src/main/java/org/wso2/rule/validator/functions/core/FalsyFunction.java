@@ -46,7 +46,7 @@ public class FalsyFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
         if (target.value instanceof String) {
             return ((String) target.value).isEmpty();
         } else if (target.value instanceof List) {

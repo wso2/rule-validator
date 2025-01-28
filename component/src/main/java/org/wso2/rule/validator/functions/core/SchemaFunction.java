@@ -92,7 +92,7 @@ public class SchemaFunction extends LintFunction {
         }
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
 
         String targetString = new Gson().toJson(target.value);
         JSONObject targetObject = new JSONObject(targetString);

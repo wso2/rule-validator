@@ -53,7 +53,7 @@ public class EnumerationFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
         String[] values = (String[]) options.get(Constants.RULESET_ENUMERATION_VALUES);
         for (String value : values) {
             if (target.value.equals(value)) {

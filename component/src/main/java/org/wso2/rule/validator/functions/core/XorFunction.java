@@ -66,7 +66,7 @@ public class XorFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
         ArrayList<String> properties = (ArrayList<String>) options.get(Constants.RULESET_XOR_PROPERTIES);
         int count = 0;
         for (String property : properties) {
