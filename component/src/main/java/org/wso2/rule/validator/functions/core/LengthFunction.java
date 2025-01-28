@@ -63,7 +63,7 @@ public class LengthFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
         int length;
 
         if (target.value instanceof String) {

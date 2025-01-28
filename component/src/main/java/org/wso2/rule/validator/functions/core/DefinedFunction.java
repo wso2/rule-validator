@@ -46,7 +46,7 @@ public class DefinedFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
         return target.value != null;
     }
 }

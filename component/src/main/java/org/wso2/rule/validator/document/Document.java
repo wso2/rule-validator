@@ -27,6 +27,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.wso2.rule.validator.Constants;
+import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.ruleset.Format;
 import org.wso2.rule.validator.ruleset.Rule;
@@ -80,7 +81,7 @@ public class Document {
         }
     }
 
-    public ArrayList<FunctionResult> lint(Ruleset ruleset) {
+    public ArrayList<FunctionResult> lint(Ruleset ruleset) throws InvalidRulesetException {
         // TODO: Add parsing errors to the result set
 
         // TODO: Filter enabled and relevant rules
@@ -124,7 +125,7 @@ public class Document {
          */
     }
 
-    private ArrayList<FunctionResult> lintNode(String path, Rule rule) {
+    private ArrayList<FunctionResult> lintNode(String path, Rule rule) throws InvalidRulesetException {
         ArrayList<FunctionResult> results = new ArrayList<>();
         Object node;
         try {

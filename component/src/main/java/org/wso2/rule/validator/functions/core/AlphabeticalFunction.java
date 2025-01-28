@@ -59,7 +59,7 @@ public class AlphabeticalFunction extends LintFunction {
 
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
         return target.value.toString().matches(Constants.RULESET_ALPHABETICAL_REGEX);
     }
 

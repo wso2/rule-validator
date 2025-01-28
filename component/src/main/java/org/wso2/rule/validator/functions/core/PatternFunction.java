@@ -89,7 +89,7 @@ public class PatternFunction extends LintFunction {
         }
     }
 
-    public boolean execute(LintTarget target) {
+    public boolean executeFunction(LintTarget target) {
         Object match = options.get(Constants.RULESET_PATTERN_MATCH);
         Object notMatch = options.get(Constants.RULESET_PATTERN_NOT_MATCH);
 
