@@ -22,7 +22,7 @@
 
     <groupId>org.wso2.carbon</groupId>
     <artifactId>rule-validator-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 - Rule Validator POM</name>
@@ -114,6 +114,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${apache.commons.lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.classgraph</groupId>
+                <artifactId>classgraph</artifactId>
+                <version>4.8.162</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
