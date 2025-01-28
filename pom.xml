@@ -133,6 +133,7 @@
         <org.snakeyaml.snakeyaml.engine.version>2.9</org.snakeyaml.snakeyaml.engine.version>
         <com.jayway.jsonpath.version>2.9.0</com.jayway.jsonpath.version>
         <com.google.code.gson.version>2.11.0</com.google.code.gson.version>
+        <compiler.plugin.version>3.0</compiler.plugin.version>
         <com.github.erosb.everit-json-schema.version>1.14.4</com.github.erosb.everit-json-schema.version>
         <org.reflections.version>0.10.2</org.reflections.version>
         <org.apache.maven.compiler.plugin.version>3.13.0</org.apache.maven.compiler.plugin.version>
