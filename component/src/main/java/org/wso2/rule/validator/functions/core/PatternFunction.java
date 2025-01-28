@@ -17,6 +17,7 @@
  */
 package org.wso2.rule.validator.functions.core;
 
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
 import org.wso2.rule.validator.functions.LintFunction;
@@ -46,27 +47,33 @@ public class PatternFunction extends LintFunction {
             return errors;
         }
 
-        if (!options.containsKey("match") && !options.containsKey("notMatch")) {
+        if (!options.containsKey(Constants.RULESET_PATTERN_MATCH) &&
+                !options.containsKey(Constants.RULESET_PATTERN_NOT_MATCH)) {
             errors.add("Pattern function requires either match or notMatch options");
         }
 
-        if (options.containsKey("match") && options.containsKey("notMatch")) {
+        if (options.containsKey(Constants.RULESET_PATTERN_MATCH) &&
+                options.containsKey(Constants.RULESET_PATTERN_NOT_MATCH)) {
             errors.add("Pattern function cannot contain both match and notMatch options.");
         }
 
-        if (options.containsKey("match") && !(options.get("match") instanceof String)) {
+        if (options.containsKey(Constants.RULESET_PATTERN_MATCH) &&
+                !(options.get(Constants.RULESET_PATTERN_MATCH) instanceof String)) {
             errors.add("Pattern function match option must be a string.");
         }
 
-        if (options.containsKey("notMatch") && !(options.get("notMatch") instanceof String)) {
+        if (options.containsKey(Constants.RULESET_PATTERN_NOT_MATCH) &&
+                !(options.get(Constants.RULESET_PATTERN_NOT_MATCH) instanceof String)) {
             errors.add("Pattern function notMatch option must be a string.");
         }
 
-        if (options.containsKey("match") && !isValidRegex((String) options.get("match"))) {
+        if (options.containsKey(Constants.RULESET_PATTERN_MATCH) &&
+                !isValidRegex((String) options.get(Constants.RULESET_PATTERN_MATCH))) {
             errors.add("Pattern function match option is not a valid regex pattern.");
         }
 
-        if (options.containsKey("notMatch") && !isValidRegex((String) options.get("notMatch"))) {
+        if (options.containsKey(Constants.RULESET_PATTERN_NOT_MATCH) &&
+                !isValidRegex((String) options.get(Constants.RULESET_PATTERN_NOT_MATCH))) {
             errors.add("Pattern function notMatch option is not a valid regex pattern.");
         }
 
@@ -83,8 +90,8 @@ public class PatternFunction extends LintFunction {
     }
 
     public boolean execute(LintTarget target) {
-        Object match = options.get("match");
-        Object notMatch = options.get("notMatch");
+        Object match = options.get(Constants.RULESET_PATTERN_MATCH);
+        Object notMatch = options.get(Constants.RULESET_PATTERN_NOT_MATCH);
 
         if (target.value == null) {
             return false;

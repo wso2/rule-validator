@@ -18,6 +18,7 @@
 package org.wso2.rule.validator.ruleset;
 
 import org.apache.commons.lang3.StringUtils;
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.DiagnosticSeverity;
 
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class Rule {
         // resolve given aliases
         ArrayList<String> resolvedGiven = new ArrayList<>();
         for (String given : this.given) {
-            if (given.startsWith("#")) {
+            if (given.startsWith(Constants.ALIAS_PREFIX)) {
                 resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, aliases));
             } else {
                 resolvedGiven.add(given);

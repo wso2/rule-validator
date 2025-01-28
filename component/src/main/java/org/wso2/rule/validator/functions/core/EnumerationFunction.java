@@ -17,6 +17,7 @@
  */
 package org.wso2.rule.validator.functions.core;
 
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
 import org.wso2.rule.validator.functions.LintFunction;
@@ -53,7 +54,7 @@ public class EnumerationFunction extends LintFunction {
     }
 
     public boolean execute(LintTarget target) {
-        String[] values = (String[]) options.get("values");
+        String[] values = (String[]) options.get(Constants.RULESET_ENUMERATION_VALUES);
         for (String value : values) {
             if (target.value.equals(value)) {
                 return true;

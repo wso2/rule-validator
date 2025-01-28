@@ -17,6 +17,7 @@
  */
 package org.wso2.rule.validator.functions.core;
 
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
 import org.wso2.rule.validator.functions.LintFunction;
@@ -45,17 +46,12 @@ public class AlphabeticalFunction extends LintFunction {
         }
 
         for (Map.Entry<String, Object> entry : options.entrySet()) {
-            if (!entry.getKey().equals("value")) {
-                errors.add("Invalid option '" + entry.getKey() + "' for function 'alphabetical'");
-
-
-                if (entry.getKey().equals("keyedBy")) {
-                    if (!(options.get(entry.getKey()) instanceof String)) {
-                        errors.add("The value of 'keyedBy' should be a string");
-                    }
-                } else {
-                    errors.add("Unknown option '" + entry.getKey() + "' for alphabetical function.");
+            if (entry.getKey().equals(Constants.RULESET_ALPHABETICAL_KEYED_BY)) {
+                if (!(options.get(entry.getKey()) instanceof String)) {
+                    errors.add("The value of '" + Constants.RULESET_ALPHABETICAL_KEYED_BY + "' should be a string");
                 }
+            } else {
+                errors.add("Unknown option '" + entry.getKey() + "' for alphabetical function.");
             }
         }
 
@@ -64,7 +60,7 @@ public class AlphabeticalFunction extends LintFunction {
     }
 
     public boolean execute(LintTarget target) {
-        return target.value.toString().matches("^[a-zA-Z\\s.,!?;:'\"-]*$");
+        return target.value.toString().matches(Constants.RULESET_ALPHABETICAL_REGEX);
     }
 
 }

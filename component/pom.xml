@@ -79,13 +79,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <basedir/>
-                    <buildDirectory/>
-                    <mainOutputDirectory/>
-                    <outputDirectory/>
-                    <projectArtifact/>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -118,10 +113,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.github.classgraph</groupId>
-            <artifactId>classgraph</artifactId>
-        </dependency>
     </dependencies>
 
     <repositories>
@@ -131,10 +122,4 @@
             <url>http://oss.sonatype.org/content/groups/public/</url>
         </repository>
     </repositories>
-
-    <properties>
-        <maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
-        <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
-        <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
-    </properties>
 </project>
