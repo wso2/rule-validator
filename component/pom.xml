@@ -47,7 +47,8 @@
                             org.apache.commons.lang3.*,
                             com.google.gson.*,
                             com.github.erosb.*,
-                            org.everit.json.schema.*
+                            org.everit.json.schema.*,
+                            org.json.*
                         </Private-Package>
                         <Import-Package>
                             com.google.gson.*
