@@ -27,34 +27,6 @@
     </parent>
 
     <artifactId>rule.validator</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.snakeyaml</groupId>
-            <artifactId>snakeyaml-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.erosb</groupId>
-            <artifactId>everit-json-schema</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
@@ -68,7 +40,14 @@
                             ${project.artifactId}
                         </Bundle-SymbolicName>
                         <Private-Package>
-                            org.wso2.rule.validator.internal.*
+                            org.wso2.rule.validator.internal.*,
+                            org.snakeyaml.engine.*,
+                            com.jayway.jsonpath.*,
+                            org.reflections.*,
+                            org.apache.commons.lang3.*,
+                            com.google.gson.*,
+                            com.github.erosb.*,
+                            org.everit.json.schema.*
                         </Private-Package>
                         <Import-Package>
                             com.google.gson.*
@@ -100,7 +79,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>${compiler.plugin.version}</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -110,6 +89,33 @@
     </build>
 
     <packaging>bundle</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.snakeyaml</groupId>
+            <artifactId>snakeyaml-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.erosb</groupId>
+            <artifactId>everit-json-schema</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
 
     <repositories>
         <repository>
