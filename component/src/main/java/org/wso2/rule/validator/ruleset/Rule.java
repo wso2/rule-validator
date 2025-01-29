@@ -37,7 +37,7 @@ public class Rule {
     private boolean resolved;
     public List<RuleThen> then;
     public List<String> given;
-    private List<Format> formats;
+    public List<Format> formats;
     private boolean enabled;
 
     public Rule(String name, Map<String, Object> ruleData, HashMap<String, RulesetAliasDefinition> aliases) {

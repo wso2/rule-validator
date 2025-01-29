@@ -30,13 +30,14 @@ public class Ruleset {
     public final Map<String, Rule> rules;
     public final HashMap<String, RulesetAliasDefinition> aliases;
     private boolean hasComplexAliases;
-    private ArrayList<Format> formats;
+    public ArrayList<Format> formats;
     private ArrayList<Ruleset> extendsRulesets;
 
     public Ruleset(Map<String, Object> datamap) {
         this.rules = new HashMap<>();
         this.aliases = new HashMap<>();
         this.hasComplexAliases = false;
+        this.formats = new ArrayList<>();
 
         if (datamap == null) {
             return;
