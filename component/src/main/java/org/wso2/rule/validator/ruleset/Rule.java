@@ -33,7 +33,7 @@ public class Rule {
     public String name;
     private String description;
     public String message;
-    private DiagnosticSeverity severity;
+    public DiagnosticSeverity severity;
     private boolean resolved;
     public List<RuleThen> then;
     public List<String> given;

@@ -160,7 +160,7 @@ public class Document {
                 }
                 boolean result = then.lintFunction.execute(target);
                 String targetPath = target.getPathString();
-                results.add(new FunctionResult(result, path + targetPath, rule.message, rule));
+                results.add(new FunctionResult(result, path + targetPath, rule));
             }
         }
         return results;

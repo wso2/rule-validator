@@ -40,4 +40,12 @@
         <Class name="org.wso2.rule.validator.ruleset.RulesetAliasTarget"/>
         <Bug pattern="URF_UNREAD_FIELD"/>
     </Match>
+    <Match>
+        <Class name="org.wso2.rule.validator.validator.DocumentValidationResult"/>
+        <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+    </Match>
+    <Match>
+        <Class name="org.wso2.rule.validator.validator.ruleset.RulesetValidationResult"/>
+        <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+    </Match>
 </FindBugsFilter>
