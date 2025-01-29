@@ -59,6 +59,7 @@
                             !org.wso2.rule.validator.internal.*,
                             org.wso2.rule.validator.*;version=${project.version}
                         </Export-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
