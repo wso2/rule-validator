@@ -30,19 +30,25 @@ public class Ruleset {
     public final Map<String, Rule> rules;
     public final HashMap<String, RulesetAliasDefinition> aliases;
     private boolean hasComplexAliases;
-    private ArrayList<Format> formats;
+    public ArrayList<Format> formats;
     private ArrayList<Ruleset> extendsRulesets;
 
     public Ruleset(Map<String, Object> datamap) {
         this.rules = new HashMap<>();
         this.aliases = new HashMap<>();
         this.hasComplexAliases = false;
+        this.formats = new ArrayList<>();
 
         if (datamap == null) {
             return;
         }
 
         Map<String, Object> ruleMap = (Map<String, Object>) datamap.get(Constants.RULESET_RULES);
+
+        // Read formats
+        if (datamap.containsKey(Constants.RULESET_FORMATS)) {
+            this.formats = Format.getFormatListFromObject((ArrayList<String>) datamap.get(Constants.RULESET_FORMATS));
+        }
 
         // Read aliases
         if (datamap.containsKey(Constants.RULESET_ALIASES)) {
@@ -60,13 +66,8 @@ public class Ruleset {
         // Read rules
         for (Map.Entry<String, Object> entry : ruleMap.entrySet()) {
             String ruleName = entry.getKey();
-            Rule rule = new Rule(ruleName, (Map<String, Object>) entry.getValue(), this.aliases);
+            Rule rule = new Rule(ruleName, (Map<String, Object>) entry.getValue(), this.aliases, this.formats);
             this.rules.put(ruleName, rule);
-        }
-
-        // Read formats
-        if (datamap.containsKey(Constants.RULESET_FORMATS)) {
-            this.formats = Format.getFormatListFromObject((ArrayList<String>) datamap.get(Constants.RULESET_FORMATS));
         }
 
         // TODO: Read extends
@@ -78,28 +79,54 @@ public class Ruleset {
     }
 
     private void resolveAliasesInAliases() {
-        for (RulesetAliasDefinition alias : this.aliases.values()) {
-            if (!alias.isComplexAlias()) {
-                ArrayList<String> resolvedGiven = new ArrayList<>();
-                for (String given : alias.given) {
-                    if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                        resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, this.aliases));
-                    } else {
-                        resolvedGiven.add(given);
-                    }
-                }
-                alias.given = resolvedGiven;
-            } else {
-                for (RulesetAliasTarget target: alias.targets) {
+        while (!allAliasesResolved()) {
+            for (RulesetAliasDefinition alias : this.aliases.values()) {
+                if (!alias.isComplexAlias()) {
                     ArrayList<String> resolvedGiven = new ArrayList<>();
-                    for (String given: target.given) {
+                    for (String given : alias.given) {
                         if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                            resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, this.aliases));
+                            resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, this.aliases, null));
+                        } else {
+                            resolvedGiven.add(given);
                         }
                     }
-                    target.given = resolvedGiven;
+                    alias.given = resolvedGiven;
+                } else {
+                    for (RulesetAliasTarget target: alias.targets) {
+                        ArrayList<String> resolvedGiven = new ArrayList<>();
+                        for (String given: target.given) {
+                            if (given.startsWith(Constants.ALIAS_PREFIX)) {
+                                resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(
+                                        given, this.aliases, target.formats));
+                            } else {
+                                resolvedGiven.add(given);
+                            }
+                        }
+                        target.given = resolvedGiven;
+                    }
                 }
             }
         }
+    }
+
+    private boolean allAliasesResolved() {
+        for (RulesetAliasDefinition alias : this.aliases.values()) {
+            if (!alias.isComplexAlias()) {
+                for (String given : alias.given) {
+                    if (given.startsWith(Constants.ALIAS_PREFIX)) {
+                        return false;
+                    }
+                }
+            } else {
+                for (RulesetAliasTarget target: alias.targets) {
+                    for (String given: target.given) {
+                        if (given.startsWith(Constants.ALIAS_PREFIX)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

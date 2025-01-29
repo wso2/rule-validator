@@ -41,7 +41,7 @@ public abstract class RulesetValidator {
 
         ArrayList<RulesetValidationError> errors = new ArrayList<>();
 
-        // Validate aliases
+        // TODO: Validate aliases
 
         if (ruleset == null) {
             errors.add(new RulesetValidationError("", "Ruleset is empty."));
@@ -172,6 +172,7 @@ public abstract class RulesetValidator {
 
         if (object.containsKey(Constants.RULESET_FORMATS) && !(object.get(Constants.RULESET_FORMATS) instanceof List)) {
             errors.add(new RulesetValidationError(ruleName, "'formats' field of a rule should be a list"));
+            return errors;
         }
         if (object.containsKey(Constants.RULESET_FORMATS)) {
             List<Object> formatObjects = (List<Object>) object.get(Constants.RULESET_FORMATS);

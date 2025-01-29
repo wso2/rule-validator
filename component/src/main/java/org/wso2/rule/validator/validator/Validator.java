@@ -30,7 +30,6 @@ import org.wso2.rule.validator.ruleset.RulesetType;
 import org.wso2.rule.validator.ruleset.file.type.JsonRuleset;
 import org.wso2.rule.validator.ruleset.file.type.YamlRuleset;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -70,7 +69,7 @@ public class Validator {
         return errors;
     }
 
-    public static String validateRuleset(String rulesetString) throws IOException {
+    public static String validateRuleset(String rulesetString) {
         List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetString);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         return gson.toJson(errors);

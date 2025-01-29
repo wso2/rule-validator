@@ -106,4 +106,18 @@ public enum Format {
         }
         return formats;
     }
+
+    public static boolean matchFormat(List<Format> toBeCheckedIn, List<Format> toCheck) {
+        if (toCheck == null) {
+            return true;
+        } else if (toBeCheckedIn == null) {
+            return false;
+        }
+        for (Format format : toCheck) {
+            if (toBeCheckedIn.contains(format)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

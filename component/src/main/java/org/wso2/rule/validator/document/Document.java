@@ -48,7 +48,7 @@ public class Document {
 
     private String documentString;
     private Object document;
-    Format format;
+    ArrayList<Format> formats;
 
     public Document(String documentString) {
         LoadSettings settings = LoadSettings.builder().build();
@@ -66,18 +66,23 @@ public class Document {
         resolveReferences();
 
         // Read format
+        this.formats = new ArrayList<>();
         Map<String, Object> documentMap = (Map<String, Object>) yamlData;
         if (documentMap.containsKey(Constants.OPENAPI_KEY)) {
             String oasVersion = (String) documentMap.get(Constants.OPENAPI_KEY);
             if (oasVersion.startsWith(Constants.OAS_3_1_VERSION)) {
-                this.format = Format.OAS3_1;
+                this.formats.add(Format.OAS3_1);
+                this.formats.add(Format.OAS3);
             } else if (oasVersion.startsWith(Constants.OAS_3_0_VERSION)) {
-                this.format = Format.OAS3_0;
+                this.formats.add(Format.OAS3_0);
+                this.formats.add(Format.OAS3);
             } else {
-                this.format = Format.OAS3;
+                this.formats.add(Format.OAS3);
+                this.formats.add(Format.OAS3_0);
+                this.formats.add(Format.OAS3_1);
             }
         } else if (documentMap.containsKey(Constants.SWAGGER_KEY)) {
-            this.format = Format.OAS2;
+            this.formats.add(Format.OAS2);
         }
     }
 
@@ -89,6 +94,9 @@ public class Document {
         ArrayList<FunctionResult> results = new ArrayList<>();
 
         for (Rule rule : ruleset.rules.values()) {
+            if (!matchFormat(ruleset, rule)) {
+                continue;
+            }
             for (String given : rule.given) {
                 // TODO: Implement aliases
                 if (given.startsWith(Constants.ALIAS_PREFIX)) {
@@ -111,6 +119,16 @@ public class Document {
         }
 
         return results;
+    }
+
+    private boolean matchFormat(Ruleset ruleset, Rule rule) {
+        if (!rule.formats.isEmpty()) {
+            return  Format.matchFormat(rule.formats, this.formats);
+        } else if (!ruleset.formats.isEmpty()) {
+            return Format.matchFormat(ruleset.formats, this.formats);
+        } else {
+            return true;
+        }
     }
 
     private void resolveReferences() {
@@ -137,6 +155,9 @@ public class Document {
             ArrayList<LintTarget> lintTargets = getLintTargets(node, then);
 
             for (LintTarget target : lintTargets) {
+                if (target.value == null) {
+                    continue;
+                }
                 boolean result = then.lintFunction.execute(target);
                 String targetPath = target.getPathString();
                 results.add(new FunctionResult(result, path + targetPath, rule.message, rule));
