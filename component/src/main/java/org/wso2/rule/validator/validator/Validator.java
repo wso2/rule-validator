@@ -23,20 +23,25 @@ import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.JsonPath;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.wso2.rule.validator.InvalidContentTypeException;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.Document;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.ruleset.RulesetType;
 import org.wso2.rule.validator.ruleset.file.type.JsonRuleset;
 import org.wso2.rule.validator.ruleset.file.type.YamlRuleset;
+import org.wso2.rule.validator.validator.ruleset.RulesetValidationResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Validator class to validate documents and rulesets.
  */
 public class Validator {
-    public static String validateDocument(String documentFile, String rulesetFile) throws InvalidRulesetException {
+    public static String validateDocument(String documentFile, String rulesetFile)
+            throws InvalidRulesetException, InvalidContentTypeException {
 
         List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetFile);
         if (!errors.isEmpty()) {
@@ -55,10 +60,20 @@ public class Validator {
 
         Document document = new Document(documentFile);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-        return gson.toJson(document.lint(ruleset));
+        List<FunctionResult> functionResults = document.lint(ruleset);
+        ArrayList<DocumentValidationResult> results = new ArrayList<>();
+        for (FunctionResult functionResult : functionResults) {
+            if (functionResult.passed) {
+                continue;
+            }
+            results.add(new DocumentValidationResult(functionResult.path, functionResult.rule.message,
+                    functionResult.rule.name, functionResult.rule.severity));
+        }
+        return gson.toJson(results);
     }
 
-    private static List<RulesetValidationError> getRulesetValidationErrors(String rulesetString) {
+    private static List<RulesetValidationError> getRulesetValidationErrors(String rulesetString)
+            throws InvalidContentTypeException {
         RulesetType type = findRulesetType(rulesetString);
         List<RulesetValidationError> errors;
         if (type == RulesetType.YAML) {
@@ -69,24 +84,31 @@ public class Validator {
         return errors;
     }
 
-    public static String validateRuleset(String rulesetString) {
+    public static String validateRuleset(String rulesetString) throws InvalidContentTypeException {
         List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetString);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-        return gson.toJson(errors);
+        // Create a string with all the error strings
+        StringBuilder errorString = new StringBuilder();
+        for (RulesetValidationError error : errors) {
+            errorString.append(error.toString()).append("\n");
+        }
+        RulesetValidationResult result = new RulesetValidationResult(errors.isEmpty(), errorString.toString());
+        return gson.toJson(result);
     }
 
-    private static RulesetType findRulesetType(String ruleset) {
+    private static RulesetType findRulesetType(String ruleset) throws InvalidContentTypeException {
         try {
-            Load settings = new Load(LoadSettings.builder().build());
-            settings.loadFromString(ruleset);
-            return RulesetType.YAML;
-        } catch (Exception e) {
-            try {
+            String trimmedRuleset = ruleset.trim();
+            if (trimmedRuleset.startsWith("{") || trimmedRuleset.startsWith("[")) {
                 JsonPath.parse(ruleset);
                 return RulesetType.JSON;
-            } catch (Exception e1) {
-                return RulesetType.INVALID;
+            } else {
+                Load settings = new Load(LoadSettings.builder().build());
+                settings.loadFromString(ruleset);
+                return RulesetType.YAML;
             }
+        } catch (Exception e) {
+            throw new InvalidContentTypeException(e.getMessage());
         }
     }
 }

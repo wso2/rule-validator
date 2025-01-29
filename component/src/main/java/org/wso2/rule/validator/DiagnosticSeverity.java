@@ -25,5 +25,22 @@ public enum DiagnosticSeverity {
     WARN,
     INFO,
     HINT,
-    OFF
+    OFF;
+
+    public static String getSeverityString(DiagnosticSeverity severity) {
+        switch (severity) {
+            case ERROR:
+                return "error";
+            case WARN:
+                return "warn";
+            case INFO:
+                return "info";
+            case HINT:
+                return "hint";
+            case OFF:
+                return "off";
+            default:
+                return "off";
+        }
+    }
 }

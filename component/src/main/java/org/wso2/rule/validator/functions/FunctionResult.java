@@ -25,21 +25,19 @@ import org.wso2.rule.validator.ruleset.Rule;
 public class FunctionResult {
     public final boolean passed;
     public final String path;
-    public final String message;
-    public final String ruleName;
+    public final Rule rule;
 
-    public FunctionResult(boolean passed, String path, String message, Rule rule) {
+    public FunctionResult(boolean passed, String path, Rule rule) {
         this.passed = passed;
         this.path = path;
-        this.message = message;
-        this.ruleName = rule.name;
+        this.rule = rule;
     }
 
     public String toString() {
-        return "Rule: " + ruleName + " {\n" +
+        return "Rule: " + this.rule.name + " {\n" +
                 "\tpassed=" + passed +
                 "\n\tpath='" + path + '\'' +
-                "\n\tmessage='" + message + '\'' +
+                "\n\tmessage='" + this.rule.message + '\'' +
                 "\n}";
     }
 }

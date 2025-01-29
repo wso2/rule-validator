@@ -31,6 +31,9 @@ public class RulesetValidationError {
     }
 
     public String toString() {
-        return "Rule: " + ruleName + ", Message: " + message;
+        if (ruleName.isEmpty()) {
+            return message;
+        }
+        return "Rule name: " + ruleName + ", Message: " + message;
     }
 }
