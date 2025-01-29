@@ -37,6 +37,6 @@ public class RuleThen {
         this.function = (String) ruleThenData.get(Constants.RULESET_FUNCTION);
         this.functionOptions = (Map<String, Object>) ruleThenData.get(Constants.RULESET_FUNCTION_OPTIONS);
 
-        this.lintFunction = FunctionFactory.getFunctionTemp(this.function, this.functionOptions);
+        this.lintFunction = FunctionFactory.getFunction(this.function, this.functionOptions);
     }
 }

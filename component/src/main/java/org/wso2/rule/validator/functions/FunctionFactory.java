@@ -18,19 +18,10 @@
 
 package org.wso2.rule.validator.functions;
 
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
-import org.wso2.rule.validator.functions.core.AlphabeticalFunction;
-import org.wso2.rule.validator.functions.core.CasingFunction;
-import org.wso2.rule.validator.functions.core.DefinedFunction;
-import org.wso2.rule.validator.functions.core.EnumerationFunction;
-import org.wso2.rule.validator.functions.core.FalsyFunction;
-import org.wso2.rule.validator.functions.core.LengthFunction;
-import org.wso2.rule.validator.functions.core.PatternFunction;
-import org.wso2.rule.validator.functions.core.SchemaFunction;
-import org.wso2.rule.validator.functions.core.TruthyFunction;
-import org.wso2.rule.validator.functions.core.UndefinedFunction;
-import org.wso2.rule.validator.functions.core.XorFunction;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,54 +44,19 @@ public class FunctionFactory {
         }
     }
 
-//    public static LintFunction getFunction(String functionName, Map<String, Object> functionOptions) {
-//        Class<? extends LintFunction> functionClass = functionRegistry.get(StringUtils.toRootLowerCase(functionName));
-//        if (functionClass == null) {
-//            throw new IllegalArgumentException("Unknown function: " + functionName);
-//        }
-//        try {
-//            return (LintFunction) functionClass.getDeclaredConstructors()[0].newInstance(functionOptions);
-//        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-//            throw new RuntimeException("Error creating function instance", e);
-//        }
-//    }
-//
-//    public static boolean isFunction(String functionName) {
-//        return functionRegistry.containsKey(StringUtils.toRootLowerCase(functionName));
-//    }
-
-    public static boolean isFunctionTemp(String functionName) {
-        return functionName.equals("alphabetical") || functionName.equals("casing") || functionName.equals("defined")
-                || functionName.equals("enumeration") || functionName.equals("falsy") || functionName.equals("length")
-                || functionName.equals("pattern") || functionName.equals("schema") || functionName.equals("truthy")
-                || functionName.equals("undefined") || functionName.equals("xor");
+    public static LintFunction getFunction(String functionName, Map<String, Object> functionOptions) {
+        Class<? extends LintFunction> functionClass = functionRegistry.get(StringUtils.toRootLowerCase(functionName));
+        if (functionClass == null) {
+            throw new IllegalArgumentException("Unknown function: " + functionName);
+        }
+        try {
+            return (LintFunction) functionClass.getDeclaredConstructors()[0].newInstance(functionOptions);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Error creating function instance", e);
+        }
     }
 
-    public static LintFunction getFunctionTemp(String functionName, Map<String, Object> functionOptions) {
-        if (functionName.equals("alphabetical")) {
-            return new AlphabeticalFunction(functionOptions);
-        } else if (functionName.equals("casing")) {
-            return new CasingFunction(functionOptions);
-        } else if (functionName.equals("defined")) {
-            return new DefinedFunction(functionOptions);
-        } else if (functionName.equals("enumeration")) {
-            return new EnumerationFunction(functionOptions);
-        } else if (functionName.equals("falsy")) {
-            return new FalsyFunction(functionOptions);
-        } else if (functionName.equals("pattern")) {
-            return new PatternFunction(functionOptions);
-        } else if (functionName.equals("truthy")) {
-            return new TruthyFunction(functionOptions);
-        } else if (functionName.equals("length")) {
-            return new LengthFunction(functionOptions);
-        } else if (functionName.equals("schema")) {
-            return new SchemaFunction(functionOptions);
-        } else if (functionName.equals("undefined")) {
-            return new UndefinedFunction(functionOptions);
-        } else if (functionName.equals("xor")) {
-            return new XorFunction(functionOptions);
-        } else {
-            return null;
-        }
+    public static boolean isFunction(String functionName) {
+        return functionRegistry.containsKey(StringUtils.toRootLowerCase(functionName));
     }
 }
