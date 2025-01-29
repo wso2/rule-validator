@@ -33,12 +33,12 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <version>${maven.bundle.plugin}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>
-                            ${project.artifactId}
-                        </Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Private-Package>
                             org.wso2.rule.validator.internal.*,
                             org.snakeyaml.engine.*,
@@ -47,7 +47,10 @@
                             org.apache.commons.lang3.*,
                             com.google.gson.*,
                             com.github.erosb.*,
-                            org.everit.json.schema.*
+                            org.everit.json.schema.*,
+                            org.json.*,
+                            net.minidev.json.*,
+                            net.minidev.asm.*
                         </Private-Package>
                         <Import-Package>
                             com.google.gson.*
