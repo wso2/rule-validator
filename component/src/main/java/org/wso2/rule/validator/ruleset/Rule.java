@@ -38,10 +38,13 @@ public class Rule {
     public List<RuleThen> then;
     public List<String> given;
     public List<Format> formats;
+    private final List<Format> rulesetFormats;
     private boolean enabled;
 
-    public Rule(String name, Map<String, Object> ruleData, HashMap<String, RulesetAliasDefinition> aliases) {
+    public Rule(String name, Map<String, Object> ruleData, HashMap<String, RulesetAliasDefinition> aliases,
+                List<Format> rulesetFormats) {
         this.name = name;
+        this.rulesetFormats = new ArrayList<>(rulesetFormats);
         Object descriptionObject = ruleData.get("description");
         Object messageObject = ruleData.get("message");
         Object severityObject = ruleData.get("severity");
@@ -107,7 +110,15 @@ public class Rule {
         ArrayList<String> resolvedGiven = new ArrayList<>();
         for (String given : this.given) {
             if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, aliases));
+                List<Format> aliasFormats;
+                if (!this.formats.isEmpty()) {
+                    aliasFormats = this.formats;
+                } else if (!this.rulesetFormats.isEmpty()) {
+                    aliasFormats = this.rulesetFormats;
+                } else {
+                    aliasFormats = null;
+                }
+                resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, aliases, aliasFormats));
             } else {
                 resolvedGiven.add(given);
             }

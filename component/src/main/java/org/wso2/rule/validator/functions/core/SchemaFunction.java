@@ -19,6 +19,7 @@ package org.wso2.rule.validator.functions.core;
 
 import com.google.gson.Gson;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.wso2.rule.validator.Constants;
@@ -95,14 +96,27 @@ public class SchemaFunction extends LintFunction {
     public boolean executeFunction(LintTarget target) {
 
         String targetString = new Gson().toJson(target.value);
-        JSONObject targetObject = new JSONObject(targetString);
+        JSONArray targetArray = null;
+        JSONObject targetObject = null;
+        if (targetString.startsWith("[")) {
+            targetArray = new JSONArray(targetString);
+        } else if (targetString.startsWith("{")) {
+            targetObject = new JSONObject(targetString);
+        } else {
+            return true;
+        }
+
 
         String schema = new Gson().toJson(options.get(Constants.RULESET_SCHEMA_SCHEMA));
         JSONObject schemaObject = new JSONObject(schema);
         org.everit.json.schema.Schema everitSchema = SchemaLoader.load(schemaObject);
 
         try {
-            everitSchema.validate(targetObject);
+            if (targetObject != null) {
+                everitSchema.validate(targetObject);
+            } else {
+                everitSchema.validate(targetArray);
+            }
         } catch (org.everit.json.schema.ValidationException e) {
             return false;
         }

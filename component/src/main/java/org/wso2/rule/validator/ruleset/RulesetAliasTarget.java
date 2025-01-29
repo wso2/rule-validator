@@ -28,7 +28,7 @@ import java.util.Map;
  * given path.
  */
 public class RulesetAliasTarget {
-    private ArrayList<Format> formats;
+    public ArrayList<Format> formats;
     public ArrayList<String> given;
 
     public RulesetAliasTarget (Object targetObject) {

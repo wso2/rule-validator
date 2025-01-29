@@ -121,23 +121,14 @@ public class Document {
         return results;
     }
 
-    boolean matchFormat(Ruleset ruleset, Rule rule) {
+    private boolean matchFormat(Ruleset ruleset, Rule rule) {
         if (!rule.formats.isEmpty()) {
-            return  matchFormat(rule.formats, this.formats);
+            return  Format.matchFormat(rule.formats, this.formats);
         } else if (!ruleset.formats.isEmpty()) {
-            return matchFormat(ruleset.formats, this.formats);
+            return Format.matchFormat(ruleset.formats, this.formats);
         } else {
             return true;
         }
-    }
-
-    boolean matchFormat(List<Format> toBeCheckedIn, List<Format> toCheck) {
-        for (Format format : toCheck) {
-            if (toBeCheckedIn.contains(format)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void resolveReferences() {
@@ -164,6 +155,9 @@ public class Document {
             ArrayList<LintTarget> lintTargets = getLintTargets(node, then);
 
             for (LintTarget target : lintTargets) {
+                if (target.value == null) {
+                    continue;
+                }
                 boolean result = then.lintFunction.execute(target);
                 String targetPath = target.getPathString();
                 results.add(new FunctionResult(result, path + targetPath, rule.message, rule));

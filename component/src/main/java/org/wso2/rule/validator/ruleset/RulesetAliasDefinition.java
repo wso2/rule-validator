@@ -62,11 +62,12 @@ public class RulesetAliasDefinition {
         return isComplexAlias;
     }
 
-    public static ArrayList<String> resolveAliasGiven(String given, HashMap<String, RulesetAliasDefinition> aliases) {
+    public static ArrayList<String> resolveAliasGiven(String given, HashMap<String, RulesetAliasDefinition> aliases,
+                                                      List<Format> formats) {
 
         ArrayList<String> resolved = new ArrayList<>();
 
-        String aliasExtractionRegex = Pattern.quote(Constants.RULESET_ALIAS_EXTRACTION_REGEX);
+        String aliasExtractionRegex = Constants.RULESET_ALIAS_EXTRACTION_REGEX;
         Pattern pattern = Pattern.compile(aliasExtractionRegex);
         Matcher matcher = pattern.matcher(given);
         if (!matcher.find()) {
@@ -78,7 +79,9 @@ public class RulesetAliasDefinition {
 
         if (alias.isComplexAlias()) {
             for (RulesetAliasTarget target : alias.targets) {
-                // TODO: Match target with document format
+                if (!Format.matchFormat(target.formats, formats)) {
+                    continue;
+                }
                 for (String g : target.given) {
                     resolved.add(given.replaceFirst(aliasExtractionRegex, "\\" + g));
                 }
