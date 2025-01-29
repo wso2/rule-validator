@@ -82,7 +82,7 @@ public class PatternFunction extends LintFunction {
 
     private boolean isValidRegex(String regex) {
         try {
-            Pattern.compile(regex);
+            Pattern.compile(Pattern.quote(regex));
             return true;
         } catch (PatternSyntaxException e) {
             return false;

@@ -66,7 +66,7 @@ public class RulesetAliasDefinition {
 
         ArrayList<String> resolved = new ArrayList<>();
 
-        String aliasExtractionRegex = Constants.RULESET_ALIAS_EXTRACTION_REGEX;
+        String aliasExtractionRegex = Pattern.quote(Constants.RULESET_ALIAS_EXTRACTION_REGEX);
         Pattern pattern = Pattern.compile(aliasExtractionRegex);
         Matcher matcher = pattern.matcher(given);
         if (!matcher.find()) {
