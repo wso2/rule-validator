@@ -19,7 +19,11 @@ public class FalsyFunctionTest {
 
     @Test
     void givenFalsyInputsShouldReturnNoErrorMessage() {
-        List<Object> falsyInputs = new ArrayList<>(List.of(false, null, 0, ""));
+        List<Object> falsyInputs = new ArrayList<>();
+        falsyInputs.add(false);
+        falsyInputs.add(null);
+        falsyInputs.add(0);
+        falsyInputs.add("");
 
         for (Object input : falsyInputs) {
             LintTarget target = new LintTarget(new ArrayList<>(), input);
