@@ -32,7 +32,7 @@ import java.util.Map;
 public class TruthyFunction extends LintFunction {
 
     public TruthyFunction(Map<String, Object> options) {
-        super(null);
+        super(options);
     }
 
     @Override
@@ -53,6 +53,10 @@ public class TruthyFunction extends LintFunction {
             return !((List) target.value).isEmpty();
         } else if (target.value instanceof Map) {
             return !((Map) target.value).isEmpty();
+        } else if (target.value instanceof Boolean) {
+            return (Boolean) target.value;
+        } else if (target.value instanceof Integer) {
+            return (Integer) target.value != 0;
         } else {
             return target.value != null;
         }

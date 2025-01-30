@@ -32,7 +32,7 @@ import java.util.Map;
 public class FalsyFunction extends LintFunction {
 
     public FalsyFunction(Map<String, Object> options) {
-        super(null);
+        super(options);
     }
 
     @Override
@@ -53,6 +53,14 @@ public class FalsyFunction extends LintFunction {
             return ((List) target.value).isEmpty();
         } else if (target.value instanceof Map) {
             return ((Map) target.value).isEmpty();
+        } else if (target.value instanceof Boolean) {
+            return !(Boolean) target.value;
+        } else if (target.value instanceof Integer) {
+            return (Integer) target.value == 0;
+        } else if (target.value instanceof Double) {
+            return (Double) target.value == 0.0;
+        } else if (target.value instanceof Float) {
+            return (Float) target.value == 0.0f;
         } else {
             return target.value == null;
         }

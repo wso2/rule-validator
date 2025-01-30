@@ -72,6 +72,8 @@ public class LengthFunction extends LintFunction {
             length = ((List) target.value).size();
         } else if (target.value instanceof Map) {
             length = ((Map) target.value).size();
+        } else if (target.value instanceof Integer) {
+            length = (int) target.value;
         } else {
             return true;
         }
