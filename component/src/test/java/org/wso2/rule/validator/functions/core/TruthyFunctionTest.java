@@ -1,8 +1,8 @@
 package org.wso2.rule.validator.functions.core;
 
 import org.junit.jupiter.api.Test;
-import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.InvalidRulesetException;
+import org.wso2.rule.validator.document.LintTarget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class TruthyFunctionTest {
@@ -36,7 +36,11 @@ class TruthyFunctionTest {
 
     @Test
     void givenFalsyInputsShouldReturnErrorMessage() {
-        List<Object> falsyInputs = new ArrayList<>(List.of(false, null, 0, ""));
+        List<Object> falsyInputs = new ArrayList<>();
+        falsyInputs.add(false);
+        falsyInputs.add(null);
+        falsyInputs.add(0);
+        falsyInputs.add("");
 
         for (Object input : falsyInputs) {
             LintTarget target = new LintTarget(new ArrayList<>(), input);
