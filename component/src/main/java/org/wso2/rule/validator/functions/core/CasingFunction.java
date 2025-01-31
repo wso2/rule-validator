@@ -96,8 +96,12 @@ public class CasingFunction extends LintFunction {
         String separatorChar = "";
         if (options.containsKey(Constants.RULESET_CASING_SEPARATOR)) {
             Map<String, Object> separator = (Map<String, Object>) options.get(Constants.RULESET_CASING_SEPARATOR);
-            allowLeading = (boolean) separator.get(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING);
-            separatorChar = separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR).toString();
+            if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING)) {
+                allowLeading = (boolean) separator.get(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING);
+            }
+            if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR)) {
+                separatorChar = separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR).toString();
+            }
         }
 
         if (targetString.length() == 1 && options.containsKey(Constants.RULESET_CASING_SEPARATOR) && allowLeading &&
