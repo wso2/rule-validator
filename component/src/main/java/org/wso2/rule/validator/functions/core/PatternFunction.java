@@ -21,6 +21,7 @@ import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
 import org.wso2.rule.validator.functions.LintFunction;
+import org.wso2.rule.validator.utils.RulesetUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,12 +113,16 @@ public class PatternFunction extends LintFunction {
     }
 
     private PatternAndFlags extractPatternAndFlags(String regex) {
+        // TODO: Process
         String pattern = regex;
         String flags = "";
-        int lastSlash = regex.lastIndexOf("/");
-        if (lastSlash != -1) {
+        if (regex.startsWith("/") && regex.lastIndexOf("/") > 0) {
+            int lastSlash = regex.lastIndexOf('/');
             pattern = regex.substring(1, lastSlash);
             flags = regex.substring(lastSlash + 1);
+
+            // Double escape the backslashes
+            pattern = pattern.replace("\\", "\\\\");
         }
         return new PatternAndFlags(pattern, flags);
     }
@@ -195,6 +200,20 @@ public class PatternFunction extends LintFunction {
             return matchResult && notMatchResult;
         } catch (PatternSyntaxException e) {
             return false;
+        }
+    }
+
+    @Override
+    public void processFunctionOptions(Map<String, Object> options) {
+        if (options.containsKey(Constants.RULESET_PATTERN_MATCH)) {
+            String match = (String) options.get(Constants.RULESET_PATTERN_MATCH);
+            match = RulesetUtil.doubleBackslashesAfterMatch(match);
+            options.put(Constants.RULESET_PATTERN_MATCH, match);
+        }
+        if (options.containsKey(Constants.RULESET_PATTERN_NOT_MATCH)) {
+            String notMatch = (String) options.get(Constants.RULESET_PATTERN_NOT_MATCH);
+            notMatch = RulesetUtil.doubleBackslashesAfterMatch(notMatch);
+            options.put(Constants.RULESET_PATTERN_NOT_MATCH, notMatch);
         }
     }
 }

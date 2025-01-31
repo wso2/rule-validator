@@ -20,6 +20,7 @@ package org.wso2.rule.validator.ruleset.file.type;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.wso2.rule.validator.ruleset.Ruleset;
+import org.wso2.rule.validator.utils.RulesetUtil;
 
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import java.util.Map;
  */
 public class YamlRuleset extends Ruleset {
     public YamlRuleset(String rulesetString) {
-        super((Map<String, Object>) (new Load(LoadSettings.builder().build())).loadFromString(rulesetString));
+        super((Map<String, Object>) (new Load(LoadSettings.builder().build())).loadFromString(
+                RulesetUtil.doubleBackslashesAfterMatch(rulesetString)));
     }
 }

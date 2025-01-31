@@ -31,6 +31,7 @@ import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.ruleset.RulesetType;
 import org.wso2.rule.validator.ruleset.file.type.JsonRuleset;
 import org.wso2.rule.validator.ruleset.file.type.YamlRuleset;
+import org.wso2.rule.validator.utils.RulesetUtil;
 import org.wso2.rule.validator.validator.ruleset.RulesetValidationResult;
 
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class Validator {
                 return RulesetType.JSON;
             } else {
                 Load settings = new Load(LoadSettings.builder().build());
-                settings.loadFromString(ruleset);
+                settings.loadFromString(RulesetUtil.doubleBackslashesAfterMatch(ruleset));
                 return RulesetType.YAML;
             }
         } catch (Exception e) {

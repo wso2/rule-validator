@@ -263,7 +263,8 @@ public abstract class RulesetValidator {
         return errors;
     }
 
-    private static List<RulesetValidationError> validateGiven (String ruleName, Map<String, Object> rule, Object aliases) {
+    private static List<RulesetValidationError> validateGiven (String ruleName, Map<String, Object> rule,
+                                                               Object aliases) {
 
         ArrayList<RulesetValidationError> errors = new ArrayList<>();
 

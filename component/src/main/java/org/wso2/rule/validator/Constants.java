@@ -66,4 +66,5 @@ public class Constants {
     public static final String JSON_PATH_GROUPING_REGEX = "\\[(?:'([^']*)'|\"([^\"]*)\")\\]|([^.\\[\\]]+)";
     public static final String RULESET_ALPHABETICAL_REGEX = "^[a-zA-Z\\s.,!?;:'\"-]*$";
     public static final String RULESET_ALIAS_EXTRACTION_REGEX = "^#[a-zA-Z_-]+";
+    public static final String RULESET_REGEX_EXTRACTION_REGEX = "(?m)^(\\s*)(match|notMatch)(\\s*:\\s*)([^']*)$";
 }
