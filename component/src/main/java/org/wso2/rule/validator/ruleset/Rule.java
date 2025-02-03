@@ -39,7 +39,6 @@ public class Rule {
     public List<String> given;
     public List<Format> formats;
     private final List<Format> rulesetFormats;
-    private boolean enabled;
 
     public Rule(String name, Map<String, Object> ruleData, HashMap<String, RulesetAliasDefinition> aliases,
                 List<Format> rulesetFormats) {
@@ -53,9 +52,6 @@ public class Rule {
         Object givenObject = ruleData.get("given");
         Object formatsObject = ruleData.get("formats");
 
-        // TODO: Read enabled
-        this.enabled = true;
-
         if (descriptionObject instanceof String) {
             this.description = (String) descriptionObject;
         } else {
@@ -68,8 +64,6 @@ public class Rule {
             this.message = "";
         }
 
-        // TODO: Implement message placeholder logic
-
         if (severityObject instanceof String) {
             this.severity = DiagnosticSeverity.valueOf(StringUtils.toRootUpperCase((String) severityObject));
         } else {
@@ -81,8 +75,6 @@ public class Rule {
         } else {
             this.resolved = false;
         }
-
-        // TODO: Implement Recommended
 
         this.formats = new ArrayList<>();
         if (formatsObject instanceof List) {

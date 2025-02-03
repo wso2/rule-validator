@@ -62,7 +62,7 @@ public abstract class RulesetValidator {
             errors.add(new RulesetValidationError("", "Ruleset contains an invalid value for rules."));
             return errors;
         } else {
-            errors.addAll(validateRules((Map<String, Object>) ruleMap));
+            errors.addAll(validateRules((Map<String, Object>) ruleMap, ruleset.get(Constants.RULESET_ALIASES)));
         }
 
         // Validate extends
@@ -90,7 +90,7 @@ public abstract class RulesetValidator {
         return errors;
     }
 
-    private static List<RulesetValidationError> validateRules(Map<String, Object> rules) {
+    private static List<RulesetValidationError> validateRules(Map<String, Object> rules, Object aliases) {
         ArrayList<RulesetValidationError> errors = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : rules.entrySet()) {
@@ -103,7 +103,7 @@ public abstract class RulesetValidator {
             Map<String, Object> rule = (Map<String, Object>) ruleObject;
 
             // Validate given
-            errors.addAll(validateGiven(key, rule));
+            errors.addAll(validateGiven(key, rule, aliases));
 
             // Validate then
             errors.addAll(validateThen(key, rule));
@@ -263,8 +263,8 @@ public abstract class RulesetValidator {
         return errors;
     }
 
-    private static List<RulesetValidationError> validateGiven (String ruleName, Map<String, Object> rule) {
-        // TODO: Check for alias usage
+    private static List<RulesetValidationError> validateGiven (String ruleName, Map<String, Object> rule,
+                                                               Object aliases) {
 
         ArrayList<RulesetValidationError> errors = new ArrayList<>();
 
@@ -274,19 +274,39 @@ public abstract class RulesetValidator {
                 !(rule.get(Constants.RULESET_GIVEN) instanceof String)) {
             errors.add(new RulesetValidationError(ruleName, "'given' field of a rule should be a string or a list"));
         } else {
+            // We only need to check whether the given alias exists because the alias itself has been validated prior.
             if (rule.get(Constants.RULESET_GIVEN) instanceof List) {
                 List<String> givenList = (List<String>) rule.get(Constants.RULESET_GIVEN);
                 for (String given : givenList) {
-                    if (!validateJsonPath(given)) {
-                        errors.add(new RulesetValidationError(ruleName, "Invalid JSON path: " + given));
-                    }
+                    errors.addAll(validateGiven(ruleName, given, aliases));
                 }
             } else {
-                if (!validateJsonPath((String) rule.get(Constants.RULESET_GIVEN))) {
-                    errors.add(new RulesetValidationError(ruleName, "Invalid JSON path: " +
-                            rule.get(Constants.RULESET_GIVEN)));
+                String given = (String) rule.get(Constants.RULESET_GIVEN);
+                errors.addAll(validateGiven(ruleName, given, aliases));
+            }
+        }
+
+        return errors;
+    }
+
+    private static List<RulesetValidationError> validateGiven(String ruleName, String given, Object aliases) {
+        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+
+        if (given.startsWith(Constants.ALIAS_PREFIX)) {
+            if (aliases == null) {
+                errors.add(new RulesetValidationError(ruleName, "Rule uses an alias but no aliases are defined."));
+            } else {
+                if (!(aliases instanceof Map)) {
+                    errors.add(new RulesetValidationError(ruleName, "Invalid aliases object."));
+                } else {
+                    Map<String, Object> aliasMap = (Map<String, Object>) aliases;
+                    if (!aliasMap.containsKey(given.substring(1))) {
+                        errors.add(new RulesetValidationError(ruleName, "Unknown alias: " + given.substring(1)));
+                    }
                 }
             }
+        } else if (!validateJsonPath(given)) {
+            errors.add(new RulesetValidationError(ruleName, "Invalid JSON path: " + given));
         }
 
         return errors;
@@ -294,6 +314,10 @@ public abstract class RulesetValidator {
 
     private static boolean validateJsonPath(String jsonPath) {
         try {
+            if (!jsonPath.startsWith("$")) {
+                return false;
+            }
+
             JsonPath.compile(jsonPath);
             return true;
         } catch (InvalidPathException e) {

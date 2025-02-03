@@ -87,9 +87,6 @@ public class Document {
     }
 
     public ArrayList<FunctionResult> lint(Ruleset ruleset) throws InvalidRulesetException {
-        // TODO: Add parsing errors to the result set
-
-        // TODO: Filter enabled and relevant rules
 
         ArrayList<FunctionResult> results = new ArrayList<>();
 
@@ -98,10 +95,6 @@ public class Document {
                 continue;
             }
             for (String given : rule.given) {
-                // TODO: Implement aliases
-                if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                    continue;
-                }
                 try {
                     Configuration config = Configuration.builder().options(Option.AS_PATH_LIST).build();
                     List<String> paths = JsonPath.using(config).parse(this.document).read(given);
@@ -177,7 +170,6 @@ public class Document {
                         lintTargets.add(new LintTarget(new ArrayList<>(Arrays.asList(key)), key));
                     }
                 } else if (node instanceof List) {
-                    // TODO: Test
                     List<Object> list = (List<Object>) node;
                     for (int i = 0; i < list.size(); i++) {
                         lintTargets.add(new LintTarget(new ArrayList<>(Arrays.asList(String.valueOf(i))),

@@ -31,6 +31,11 @@ public abstract class LintFunction {
 
     public Map<String, Object> options;
 
+    public LintFunction(Map<String, Object> options) {
+        this.options = options;
+        processFunctionOptions(options);
+    }
+
     public boolean execute(LintTarget target) throws InvalidRulesetException {
         List<String> errors = validateFunctionOptions();
         if (!errors.isEmpty()) {
@@ -41,9 +46,7 @@ public abstract class LintFunction {
 
     protected abstract boolean executeFunction(LintTarget target);
 
-    public LintFunction(Map<String, Object> options) {
-        this.options = options;
-    }
-
     public abstract List<String> validateFunctionOptions();
+
+    public void processFunctionOptions(Map<String, Object> options) {}
 }
