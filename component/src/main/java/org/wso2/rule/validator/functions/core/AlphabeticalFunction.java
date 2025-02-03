@@ -60,7 +60,65 @@ public class AlphabeticalFunction extends LintFunction {
     }
 
     public boolean executeFunction(LintTarget target) {
-        return target.value.toString().matches(Constants.RULESET_ALPHABETICAL_REGEX);
+
+        Object value = target.value;
+
+        if (!(value instanceof List) && !(value instanceof Map)) {
+            return true;
+        }
+        if (value instanceof Map) {
+            return isAlphabetical((Map) value);
+        }
+
+        List<Object> list = (List) value;
+
+        if (options != null && options.containsKey(Constants.RULESET_ALPHABETICAL_KEYED_BY)) {
+            for (Object element : list) {
+                if (!(element instanceof Map)) {
+                    return false;
+                }
+                Map<String, Object> map = (Map) element;
+                if (!map.containsKey(options.get(Constants.RULESET_ALPHABETICAL_KEYED_BY))) {
+                    return false;
+                }
+                Object valueToCheck = map.get(options.get(Constants.RULESET_ALPHABETICAL_KEYED_BY));
+                if (!(valueToCheck instanceof String) && !(valueToCheck instanceof Integer) &&
+                        !(valueToCheck instanceof Double)) {
+                    return false;
+                }
+            }
+            return isAlphabetical(list, (String) options.get(Constants.RULESET_ALPHABETICAL_KEYED_BY));
+        } else {
+            for (Object element : list) {
+                if (!(element instanceof String) && !(element instanceof Integer) && !(element instanceof Double)) {
+                    return false;
+                }
+            }
+            return isAlphabetical(list);
+        }
+    }
+
+    private boolean isAlphabetical(List<Object> objectList, String key) {
+        ArrayList<Object> list = new ArrayList<>();
+        for (Object obj : objectList) {
+            Map<String, Object> map = (Map) obj;
+            list.add(map.get(key));
+        }
+        return isAlphabetical(list);
+    }
+
+    private boolean isAlphabetical(Map<String, Object> map) {
+        return isAlphabetical(new ArrayList<>(map.keySet()));
+    }
+
+    private boolean isAlphabetical(List<Object> list) {
+
+        for (int i = 0; i < list.size() - 1; i++) {
+            if (list.get(i).toString().compareTo(list.get(i + 1).toString()) > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
