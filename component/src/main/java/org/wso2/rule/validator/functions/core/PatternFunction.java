@@ -52,7 +52,7 @@ public class PatternFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             errors.add("Pattern function requires a regex pattern");
@@ -113,7 +113,6 @@ public class PatternFunction extends LintFunction {
     }
 
     private PatternAndFlags extractPatternAndFlags(String regex) {
-        // TODO: Process
         String pattern = regex;
         String flags = "";
         if (regex.startsWith("/") && regex.lastIndexOf("/") > 0) {

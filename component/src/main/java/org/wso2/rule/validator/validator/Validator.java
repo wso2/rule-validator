@@ -62,7 +62,7 @@ public class Validator {
         Document document = new Document(documentFile);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         List<FunctionResult> functionResults = document.lint(ruleset);
-        ArrayList<DocumentValidationResult> results = new ArrayList<>();
+        List<DocumentValidationResult> results = new ArrayList<>();
         for (FunctionResult functionResult : functionResults) {
             if (functionResult.passed) {
                 continue;

@@ -20,7 +20,6 @@ package org.wso2.rule.validator.ruleset;
 import org.wso2.rule.validator.Constants;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -35,7 +34,7 @@ import java.util.regex.Pattern;
 public class RulesetAliasDefinition {
     private final String name;
     private String description;
-    public ArrayList<RulesetAliasTarget> targets;
+    public List<RulesetAliasTarget> targets;
     private boolean isComplexAlias;
     public List<String> given;
 
@@ -50,7 +49,7 @@ public class RulesetAliasDefinition {
             Map<String, Object> aliasMap = (Map<String, Object>) aliasObject;
             this.description = (String) aliasMap.get(Constants.DESCRIPTION);
             this.targets = new ArrayList<>();
-            ArrayList<Object> targets = (ArrayList<Object>) aliasMap.get(Constants.RULESET_ALIAS_TARGETS);
+            List<Object> targets = (List<Object>) aliasMap.get(Constants.RULESET_ALIAS_TARGETS);
             for (Object target : targets) {
                 RulesetAliasTarget aliasTarget = new RulesetAliasTarget(target);
                 this.targets.add(aliasTarget);
@@ -62,10 +61,10 @@ public class RulesetAliasDefinition {
         return isComplexAlias;
     }
 
-    public static ArrayList<String> resolveAliasGiven(String given, HashMap<String, RulesetAliasDefinition> aliases,
+    public static List<String> resolveAliasGiven(String given, Map<String, RulesetAliasDefinition> aliases,
                                                       List<Format> formats) {
 
-        ArrayList<String> resolved = new ArrayList<>();
+        List<String> resolved = new ArrayList<>();
 
         String aliasExtractionRegex = Constants.RULESET_ALIAS_EXTRACTION_REGEX;
         Pattern pattern = Pattern.compile(aliasExtractionRegex);

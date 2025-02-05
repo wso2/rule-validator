@@ -16,11 +16,11 @@
  * under the License.
  */
 package org.wso2.rule.validator.ruleset;
-
 import org.wso2.rule.validator.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,10 +28,10 @@ import java.util.Map;
  */
 public class Ruleset {
     public final Map<String, Rule> rules;
-    public final HashMap<String, RulesetAliasDefinition> aliases;
+    public final Map<String, RulesetAliasDefinition> aliases;
     private boolean hasComplexAliases;
-    public ArrayList<Format> formats;
-    private ArrayList<Ruleset> extendsRulesets;
+    public List<Format> formats;
+    private List<Ruleset> extendsRulesets;
 
     public Ruleset(Map<String, Object> datamap) {
         this.rules = new HashMap<>();
@@ -47,7 +47,7 @@ public class Ruleset {
 
         // Read formats
         if (datamap.containsKey(Constants.RULESET_FORMATS)) {
-            this.formats = Format.getFormatListFromObject((ArrayList<String>) datamap.get(Constants.RULESET_FORMATS));
+            this.formats = Format.getFormatListFromObject((List<String>) datamap.get(Constants.RULESET_FORMATS));
         }
 
         // Read aliases
@@ -69,22 +69,13 @@ public class Ruleset {
             Rule rule = new Rule(ruleName, (Map<String, Object>) entry.getValue(), this.aliases, this.formats);
             this.rules.put(ruleName, rule);
         }
-
-        // TODO: Read extends
-
-        // TODO: Read recommends
-
-        // TODO: Read overrides
-
-        // TODO: Merge Rules
-
     }
 
     private void resolveAliasesInAliases() {
         while (!allAliasesResolved()) {
             for (RulesetAliasDefinition alias : this.aliases.values()) {
                 if (!alias.isComplexAlias()) {
-                    ArrayList<String> resolvedGiven = new ArrayList<>();
+                    List<String> resolvedGiven = new ArrayList<>();
                     for (String given : alias.given) {
                         if (given.startsWith(Constants.ALIAS_PREFIX)) {
                             resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, this.aliases, null));
@@ -95,7 +86,7 @@ public class Ruleset {
                     alias.given = resolvedGiven;
                 } else {
                     for (RulesetAliasTarget target: alias.targets) {
-                        ArrayList<String> resolvedGiven = new ArrayList<>();
+                        List<String> resolvedGiven = new ArrayList<>();
                         for (String given: target.given) {
                             if (given.startsWith(Constants.ALIAS_PREFIX)) {
                                 resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(

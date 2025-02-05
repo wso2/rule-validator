@@ -38,7 +38,7 @@ public class XorFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             errors.add("Xor function requires the list of properties.");
@@ -67,7 +67,7 @@ public class XorFunction extends LintFunction {
     }
 
     public boolean executeFunction(LintTarget target) {
-        ArrayList<String> properties = (ArrayList<String>) options.get(Constants.RULESET_XOR_PROPERTIES);
+        List<String> properties = (List<String>) options.get(Constants.RULESET_XOR_PROPERTIES);
         int count = 0;
         for (String property : properties) {
             if (target.value instanceof Map) {

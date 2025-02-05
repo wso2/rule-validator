@@ -37,7 +37,7 @@ public class FalsyFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options != null && !options.isEmpty()) {
             errors.add("Falsy function does not accept any options.");

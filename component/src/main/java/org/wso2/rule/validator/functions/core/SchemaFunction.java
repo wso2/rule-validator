@@ -44,7 +44,7 @@ public class SchemaFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             errors.add("Schema function should at least contain the schema option.");
