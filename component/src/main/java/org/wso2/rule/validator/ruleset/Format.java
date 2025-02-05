@@ -99,8 +99,8 @@ public enum Format {
         }
     }
 
-    public static ArrayList<Format> getFormatListFromObject(List<String> formatStrings) {
-        ArrayList<Format> formats = new ArrayList<>();
+    public static List<Format> getFormatListFromObject(List<String> formatStrings) {
+        List<Format> formats = new ArrayList<>();
         for (String formatString : formatStrings) {
             formats.add(getFormat(formatString));
         }

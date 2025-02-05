@@ -22,7 +22,6 @@ import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.DiagnosticSeverity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +39,7 @@ public class Rule {
     public List<Format> formats;
     private final List<Format> rulesetFormats;
 
-    public Rule(String name, Map<String, Object> ruleData, HashMap<String, RulesetAliasDefinition> aliases,
+    public Rule(String name, Map<String, Object> ruleData, Map<String, RulesetAliasDefinition> aliases,
                 List<Format> rulesetFormats) {
         this.name = name;
         this.rulesetFormats = new ArrayList<>(rulesetFormats);
@@ -99,7 +98,7 @@ public class Rule {
         }
 
         // resolve given aliases
-        ArrayList<String> resolvedGiven = new ArrayList<>();
+        List<String> resolvedGiven = new ArrayList<>();
         for (String given : this.given) {
             if (given.startsWith(Constants.ALIAS_PREFIX)) {
                 List<Format> aliasFormats;

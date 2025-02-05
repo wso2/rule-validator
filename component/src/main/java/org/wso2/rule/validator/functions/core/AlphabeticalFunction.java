@@ -39,7 +39,7 @@ public class AlphabeticalFunction extends LintFunction {
     @Override
     public List<String> validateFunctionOptions() {
 
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             return errors;
@@ -99,7 +99,7 @@ public class AlphabeticalFunction extends LintFunction {
     }
 
     private boolean isAlphabetical(List<Object> objectList, String key) {
-        ArrayList<Object> list = new ArrayList<>();
+        List<Object> list = new ArrayList<>();
         for (Object obj : objectList) {
             Map<String, Object> map = (Map) obj;
             list.add(map.get(key));

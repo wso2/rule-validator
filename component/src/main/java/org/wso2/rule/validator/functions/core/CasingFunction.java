@@ -49,7 +49,7 @@ public class CasingFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             errors.add("At least the casing type should be specified in functionOptions in the 'casing' function.");

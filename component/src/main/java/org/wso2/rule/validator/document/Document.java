@@ -48,7 +48,7 @@ public class Document {
 
     private String documentString;
     private Object document;
-    ArrayList<Format> formats;
+    List<Format> formats;
 
     public Document(String documentString) {
         LoadSettings settings = LoadSettings.builder().build();
@@ -86,9 +86,9 @@ public class Document {
         }
     }
 
-    public ArrayList<FunctionResult> lint(Ruleset ruleset) throws InvalidRulesetException {
+    public List<FunctionResult> lint(Ruleset ruleset) throws InvalidRulesetException {
 
-        ArrayList<FunctionResult> results = new ArrayList<>();
+        List<FunctionResult> results = new ArrayList<>();
 
         for (Rule rule : ruleset.rules.values()) {
             if (!matchFormat(ruleset, rule)) {
@@ -106,7 +106,6 @@ public class Document {
                     // log("Json Path not found: " + given);
                 } catch (InvalidPathException e) {
                     // log("Unsupported Json Path: " + given);
-                    // TODO: Implement json path plus features
                 }
             }
         }
@@ -125,7 +124,6 @@ public class Document {
     }
 
     private void resolveReferences() {
-        // TODO: Resolve references
         /**
          * A document Inventory maintains a graph (non-circular) pointing to other documents via refs. When a ref is in
          * a document, it adds a Node in the graph pointing to the document, and if there are refs within that ref, that
@@ -136,8 +134,8 @@ public class Document {
          */
     }
 
-    private ArrayList<FunctionResult> lintNode(String path, Rule rule) throws InvalidRulesetException {
-        ArrayList<FunctionResult> results = new ArrayList<>();
+    private List<FunctionResult> lintNode(String path, Rule rule) throws InvalidRulesetException {
+        List<FunctionResult> results = new ArrayList<>();
         Object node;
         try {
             node = JsonPath.read(this.document, path);
@@ -145,7 +143,7 @@ public class Document {
             return results;
         }
         for (RuleThen then : rule.then) {
-            ArrayList<LintTarget> lintTargets = getLintTargets(node, then);
+            List<LintTarget> lintTargets = getLintTargets(node, then);
 
             for (LintTarget target : lintTargets) {
                 if (target.value == null) {
@@ -159,8 +157,8 @@ public class Document {
         return results;
     }
 
-    private ArrayList<LintTarget> getLintTargets(Object node, RuleThen then) {
-        ArrayList<LintTarget> lintTargets = new ArrayList<>();
+    private List<LintTarget> getLintTargets(Object node, RuleThen then) {
+        List<LintTarget> lintTargets = new ArrayList<>();
 
         if ((node instanceof List || node instanceof Map) && (then.field != null && !then.field.isEmpty())) {
             if (then.field.equals(Constants.RULESET_FIELD_KEY)) {
@@ -188,7 +186,7 @@ public class Document {
                 }
 
                 for (String path : paths) {
-                    ArrayList<String> splitPath = splitJsonPath(path);
+                    List<String> splitPath = splitJsonPath(path);
                     Object value;
                     try {
                         value = JsonPath.read(node, path);
@@ -198,7 +196,7 @@ public class Document {
                     }
                 }
             } else {
-                ArrayList<String> path = toPath(then.field);
+                List<String> path = toPath(then.field);
                 Object value;
                 try {
                     value = JsonPath.read(node, then.field);
@@ -214,8 +212,8 @@ public class Document {
         return lintTargets;
     }
 
-    public static ArrayList<String> splitJsonPath(String jsonPath) {
-        ArrayList<String> parts = new ArrayList<>();
+    public static List<String> splitJsonPath(String jsonPath) {
+        List<String> parts = new ArrayList<>();
         StringBuilder currentPart = new StringBuilder();
         boolean insideBrackets = false;
 
@@ -235,8 +233,8 @@ public class Document {
         return parts;
     }
 
-    public static ArrayList<String> toPath(String path) {
-        ArrayList<String> segments = new ArrayList<>();
+    public static List<String> toPath(String path) {
+        List<String> segments = new ArrayList<>();
 
         // Regex to match either dot-separated keys or bracket notation
         Pattern pattern = Pattern.compile(Constants.JSON_PATH_GROUPING_REGEX);

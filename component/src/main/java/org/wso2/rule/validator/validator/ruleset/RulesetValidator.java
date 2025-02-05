@@ -39,9 +39,7 @@ import java.util.regex.Pattern;
 public abstract class RulesetValidator {
     protected static List<RulesetValidationError> validate(Map<String, Object> ruleset) {
 
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
-
-        // TODO: Validate aliases
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (ruleset == null) {
             errors.add(new RulesetValidationError("", "Ruleset is empty."));
@@ -85,13 +83,11 @@ public abstract class RulesetValidator {
         // Validate Formats
         errors.addAll(validateFormats("", ruleset));
 
-
-
         return errors;
     }
 
     private static List<RulesetValidationError> validateRules(Map<String, Object> rules, Object aliases) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : rules.entrySet()) {
             String key = entry.getKey();
@@ -168,7 +164,7 @@ public abstract class RulesetValidator {
     }
 
     private static List<RulesetValidationError> validateFormats(String ruleName, Map<String, Object> object) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (object.containsKey(Constants.RULESET_FORMATS) && !(object.get(Constants.RULESET_FORMATS) instanceof List)) {
             errors.add(new RulesetValidationError(ruleName, "'formats' field of a rule should be a list"));
@@ -192,7 +188,7 @@ public abstract class RulesetValidator {
     }
 
     private static List<RulesetValidationError> validateThen (String ruleName, Map<String, Object> rule) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (!rule.containsKey(Constants.RULESET_THEN)) {
             errors.add(new RulesetValidationError(ruleName, "Rule does not contain a 'then' field."));
@@ -223,7 +219,7 @@ public abstract class RulesetValidator {
     }
 
     private static List<RulesetValidationError> validateThenObject(String ruleName, Map<String, Object> then) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         // Field can be undefined. If it is defined, it should be a string
         if (then.containsKey(Constants.RULESET_FIELD) && !(then.get(Constants.RULESET_FIELD) instanceof String)) {
@@ -266,7 +262,7 @@ public abstract class RulesetValidator {
     private static List<RulesetValidationError> validateGiven (String ruleName, Map<String, Object> rule,
                                                                Object aliases) {
 
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (!rule.containsKey(Constants.RULESET_GIVEN)) {
             errors.add(new RulesetValidationError(ruleName, "Rule does not contain a 'given' field."));
@@ -290,7 +286,7 @@ public abstract class RulesetValidator {
     }
 
     private static List<RulesetValidationError> validateGiven(String ruleName, String given, Object aliases) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (given.startsWith(Constants.ALIAS_PREFIX)) {
             if (aliases == null) {
