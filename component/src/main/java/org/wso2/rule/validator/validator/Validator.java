@@ -21,8 +21,6 @@ package org.wso2.rule.validator.validator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.JsonPath;
-import org.snakeyaml.engine.v2.api.Load;
-import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.wso2.rule.validator.InvalidContentTypeException;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.Document;
@@ -31,7 +29,7 @@ import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.ruleset.RulesetType;
 import org.wso2.rule.validator.ruleset.file.type.JsonRuleset;
 import org.wso2.rule.validator.ruleset.file.type.YamlRuleset;
-import org.wso2.rule.validator.utils.RulesetUtil;
+import org.wso2.rule.validator.utils.Util;
 import org.wso2.rule.validator.validator.ruleset.RulesetValidationResult;
 
 import java.util.ArrayList;
@@ -104,8 +102,7 @@ public class Validator {
                 JsonPath.parse(ruleset);
                 return RulesetType.JSON;
             } else {
-                Load settings = new Load(LoadSettings.builder().build());
-                settings.loadFromString(RulesetUtil.doubleBackslashesAfterMatch(ruleset));
+                Util.loadYaml(ruleset);
                 return RulesetType.YAML;
             }
         } catch (Exception e) {
