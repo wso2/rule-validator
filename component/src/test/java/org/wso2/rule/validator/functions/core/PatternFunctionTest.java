@@ -6,25 +6,21 @@ import org.wso2.rule.validator.document.LintTarget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PatternFunctionTest {
-    private boolean runPattern(String value, Map<String, Object> options) throws InvalidRulesetException {
-        PatternFunction patternFunction = new PatternFunction(options);
-        return patternFunction.execute(new LintTarget(new ArrayList<>(), value));
-    }
 
     @Test
     void testMatchingPatternWithoutSlashes() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "[abc]+");
+
+        PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(runPattern("abc", options));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -34,8 +30,10 @@ public class PatternFunctionTest {
     void testMatchingPatternWithSlashes() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "/[abc]+/");
+
+        PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(runPattern("abc", options));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -45,8 +43,10 @@ public class PatternFunctionTest {
     void testMatchingPatternWithSlashesAndModifiers() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "/[abc]+/im");
+
+        PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(runPattern("aBc", options));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "aBc")));
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -56,10 +56,12 @@ public class PatternFunctionTest {
     void testMatchingPatternWithGlobalModifier() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "/[abc]+/gi");
+
+        PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(runPattern("abc", options));
-            assertTrue(runPattern("abc", options));
-            assertTrue(runPattern("abc", options));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -69,15 +71,19 @@ public class PatternFunctionTest {
     void testInvalidRegexFlags() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "/[abc]+/invalid");
-        assertThrows(InvalidRulesetException.class, () -> runPattern("aBc", options));
+
+        PatternFunction patternFunction = new PatternFunction(options);
+        assertThrows(InvalidRulesetException.class, () -> patternFunction.execute(new LintTarget(new ArrayList<>(), "aBc")));
     }
 
     @Test
     void testNonMatchingNotMatchPattern() {
         Map<String, Object> options = new HashMap<>();
         options.put("notMatch", "/[abc]+/i");
+
+        PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(runPattern("def", options));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "def")));
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -88,8 +94,10 @@ public class PatternFunctionTest {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "[def]+");
         options.put("notMatch", "[abc]+");
+
+        PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(runPattern("def", options));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "def")));
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -99,41 +107,50 @@ public class PatternFunctionTest {
     void testValidFunctionOptions() {
         Map<String, Object> options1 = new HashMap<>();
         options1.put("match", "foo");
-        assertDoesNotThrow(() -> runPattern("def", options1));
+        PatternFunction patternFunction1 = new PatternFunction(options1);
+        assertDoesNotThrow(() -> patternFunction1.execute(new LintTarget(new ArrayList<>(), "def")));
 
         Map<String, Object> options2 = new HashMap<>();
         options2.put("notMatch", "foo");
-        assertDoesNotThrow(() -> runPattern("def", options2));
+        PatternFunction patternFunction2 = new PatternFunction(options2);
+        assertDoesNotThrow(() -> patternFunction2.execute(new LintTarget(new ArrayList<>(), "def")));
 
         Map<String, Object> options3 = new HashMap<>();
         options3.put("match", "foo");
         options3.put("notMatch", "bar");
-        assertDoesNotThrow(() -> runPattern("def", options3));
+        PatternFunction patternFunction3 = new PatternFunction(options3);
+        assertDoesNotThrow(() -> patternFunction3.execute(new LintTarget(new ArrayList<>(), "def")));
     }
 
     @Test
     void testInvalidFunctionOptions() {
         Map<String, Object> options1 = null;
-        assertThrows(InvalidRulesetException.class, () -> runPattern("abc", options1));
+        PatternFunction patternFunction1 = new PatternFunction(options1);
+        assertThrows(InvalidRulesetException.class, () -> patternFunction1.execute(new LintTarget(new ArrayList<>(), "abc")));
 
         Map<String, Object> options2 = new HashMap<>();
-        assertThrows(InvalidRulesetException.class, () -> runPattern("abc", options2));
+        PatternFunction patternFunction2 = new PatternFunction(options2);
+        assertThrows(InvalidRulesetException.class, () -> patternFunction2.execute(new LintTarget(new ArrayList<>(), "abc")));
 
         Map<String, Object> options3 = new HashMap<>();
         options3.put("foo", true);
-        assertThrows(InvalidRulesetException.class, () -> runPattern("abc", options3));
+        PatternFunction patternFunction3 = new PatternFunction(options3);
+        assertThrows(InvalidRulesetException.class, () -> patternFunction3.execute(new LintTarget(new ArrayList<>(), "abc")));
 
         Map<String, Object> options4 = new HashMap<>();
         options4.put("match", 2);
-        assertThrows(InvalidRulesetException.class, () -> runPattern("abc", options4));
+        PatternFunction patternFunction4 = new PatternFunction(options4);
+        assertThrows(InvalidRulesetException.class, () -> patternFunction4.execute(new LintTarget(new ArrayList<>(), "abc")));
 
         Map<String, Object> options5 = new HashMap<>();
         options5.put("notMatch", null);
-        assertThrows(InvalidRulesetException.class, () -> runPattern("abc", options5));
+        PatternFunction patternFunction5 = new PatternFunction(options5);
+        assertThrows(InvalidRulesetException.class, () -> patternFunction5.execute(new LintTarget(new ArrayList<>(), "abc")));
 
         Map<String, Object> options6 = new HashMap<>();
         options6.put("match", 4);
         options6.put("notMatch", 10);
-        assertThrows(InvalidRulesetException.class, () -> runPattern("abc", options6));
+        PatternFunction patternFunction6 = new PatternFunction(options6);
+        assertThrows(InvalidRulesetException.class, () -> patternFunction6.execute(new LintTarget(new ArrayList<>(), "abc")));
     }
 }

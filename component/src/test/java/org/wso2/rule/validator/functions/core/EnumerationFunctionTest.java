@@ -80,7 +80,7 @@ public class EnumerationFunctionTest {
                 Map.of("values", 2)
         ));
 
-        invalidOptionsList.add(null); // Adding null separately to avoid the null check in the function
+        invalidOptionsList.add(null);
 
         for (Map<String, Object> options : invalidOptionsList) {
             EnumerationFunction function = new EnumerationFunction(options);
