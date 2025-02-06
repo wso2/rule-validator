@@ -24,8 +24,6 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
-import org.snakeyaml.engine.v2.api.Load;
-import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.functions.FunctionResult;
@@ -33,6 +31,7 @@ import org.wso2.rule.validator.ruleset.Format;
 import org.wso2.rule.validator.ruleset.Rule;
 import org.wso2.rule.validator.ruleset.RuleThen;
 import org.wso2.rule.validator.ruleset.Ruleset;
+import org.wso2.rule.validator.utils.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,9 +50,7 @@ public class Document {
     List<Format> formats;
 
     public Document(String documentString) {
-        LoadSettings settings = LoadSettings.builder().build();
-        Load yamlLoader = new Load(settings);
-        Object yamlData = yamlLoader.loadFromString(documentString);
+        Object yamlData = Util.loadYaml(documentString);
 
         if (yamlData == null) {
             return;

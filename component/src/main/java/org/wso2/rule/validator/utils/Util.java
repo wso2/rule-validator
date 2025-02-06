@@ -17,6 +17,8 @@
  */
 package org.wso2.rule.validator.utils;
 
+import org.snakeyaml.engine.v2.api.Load;
+import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.wso2.rule.validator.Constants;
 
 import java.util.regex.Matcher;
@@ -25,7 +27,7 @@ import java.util.regex.Pattern;
 /**
  * Utility class for ruleset operations.
  */
-public class RulesetUtil {
+public class Util {
     public static String doubleBackslashesAfterMatch(String input) {
         Pattern pattern = Pattern.compile(Constants.RULESET_REGEX_EXTRACTION_REGEX);
 
@@ -53,5 +55,9 @@ public class RulesetUtil {
 
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+    public static Object loadYaml(String yamlString) {
+        return (new Load(LoadSettings.builder().build())).loadFromString(yamlString);
     }
 }
