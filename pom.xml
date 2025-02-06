@@ -132,6 +132,13 @@
         </repository>
     </repositories>
 
+    <scm>
+        <url>https://github.com/wso2/rule-validator.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/rule-validator.git</developerConnection>
+        <connection>scm:git:https://github.com/wso2/rule-validator.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
     <properties>
         <maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
         <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
