@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class EnumerationFunctionTest {
     @Test
-    void givenValidInputShouldReturnTrue() {
+    public void givenValidInputShouldReturnTrue() {
         Map<String, Object> options = new HashMap<>();
         options.put("values", new String[]{"x", "y", "z"});
 
@@ -32,7 +32,7 @@ public class EnumerationFunctionTest {
     }
 
     @Test
-    void givenInvalidInputShouldReturnFalse() {
+    public void givenInvalidInputShouldReturnFalse() {
         Map<String, Object> options = new HashMap<>();
         options.put("values", new String[]{"y", "z"});
 
@@ -47,7 +47,7 @@ public class EnumerationFunctionTest {
     }
 
     @Test
-    void givenNonPrimitiveValueShouldReturnFalse() {
+    public void givenNonPrimitiveValueShouldReturnFalse() {
         Map<String, Object> options = new HashMap<>();
         options.put("values", new String[]{"test"});
 
@@ -62,7 +62,7 @@ public class EnumerationFunctionTest {
     }
 
     @Test
-    void givenValidOptionsShouldNotThrow() {
+    public void givenValidOptionsShouldNotThrow() {
         Map<String, Object> options = new HashMap<>();
         options.put("values", new String[]{"foo", "2"});
 
@@ -73,7 +73,7 @@ public class EnumerationFunctionTest {
     }
 
     @Test
-    void givenInvalidOptionsShouldThrowInvalidRulesetException() {
+    public void givenInvalidOptionsShouldThrowInvalidRulesetException() {
         List<Map<String, Object>> invalidOptionsList = new ArrayList<>(List.of(
                 Map.of("values", new String[]{"foo", "2"}, "foo", true),
                 Map.of("values", new Object[]{}),

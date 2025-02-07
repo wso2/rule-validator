@@ -6,7 +6,6 @@ import org.wso2.rule.validator.document.LintTarget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PatternFunctionTest {
 
     @Test
-    void testMatchingPatternWithoutSlashes() {
+    public void testMatchingPatternWithoutSlashes() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "[abc]+");
 
@@ -27,7 +26,7 @@ public class PatternFunctionTest {
     }
 
     @Test
-    void testMatchingPatternWithSlashes() {
+    public void testMatchingPatternWithSlashes() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "/[abc]+/");
 
@@ -40,7 +39,7 @@ public class PatternFunctionTest {
     }
 
     @Test
-    void testMatchingPatternWithSlashesAndModifiers() {
+    public void testMatchingPatternWithSlashesAndModifiers() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "/[abc]+/im");
 
@@ -53,7 +52,7 @@ public class PatternFunctionTest {
     }
 
     @Test
-    void testMatchingPatternWithGlobalModifier() {
+    public void testMatchingPatternWithGlobalModifier() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "/[abc]+/gi");
 
@@ -68,7 +67,7 @@ public class PatternFunctionTest {
     }
 
     @Test
-    void testInvalidRegexFlags() {
+    public void testInvalidRegexFlags() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "/[abc]+/invalid");
 
@@ -77,7 +76,7 @@ public class PatternFunctionTest {
     }
 
     @Test
-    void testNonMatchingNotMatchPattern() {
+    public void testNonMatchingNotMatchPattern() {
         Map<String, Object> options = new HashMap<>();
         options.put("notMatch", "/[abc]+/i");
 
@@ -90,7 +89,7 @@ public class PatternFunctionTest {
     }
 
     @Test
-    void testMatchingBothMatchAndNotMatch() {
+    public void testMatchingBothMatchAndNotMatch() {
         Map<String, Object> options = new HashMap<>();
         options.put("match", "[def]+");
         options.put("notMatch", "[abc]+");
@@ -104,7 +103,7 @@ public class PatternFunctionTest {
     }
 
     @Test
-    void testValidFunctionOptions() {
+    public void testValidFunctionOptions() {
         Map<String, Object> options1 = new HashMap<>();
         options1.put("match", "foo");
         PatternFunction patternFunction1 = new PatternFunction(options1);
@@ -123,7 +122,7 @@ public class PatternFunctionTest {
     }
 
     @Test
-    void testInvalidFunctionOptions() {
+    public void testInvalidFunctionOptions() {
         Map<String, Object> options1 = null;
         PatternFunction patternFunction1 = new PatternFunction(options1);
         assertThrows(InvalidRulesetException.class, () -> patternFunction1.execute(new LintTarget(new ArrayList<>(), "abc")));

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class SchemaFunctionTest {
     @Test
-    void validatesDraft4() {
+    public void validatesDraft4() {
         Map<String, Object> schema = new HashMap<>();
         schema.put("$schema", "http://json-schema.org/draft-04/schema#");
         schema.put("type", "number");
@@ -44,7 +44,7 @@ public class SchemaFunctionTest {
     }
 
     @Test
-    void validatesDraft6() {
+    public void validatesDraft6() {
         Map<String, Object> schema = new HashMap<>();
         schema.put("$schema", "http://json-schema.org/draft-06/schema#");
         schema.put("type", "string");
@@ -64,7 +64,7 @@ public class SchemaFunctionTest {
     }
 
     @Test
-    void allowsRedundantEscapes() {
+    public void allowsRedundantEscapes() {
         Map<String, Object> schema = new HashMap<>();
         schema.put("$schema", "http://json-schema.org/draft-07/schema#");
         schema.put("type", "string");

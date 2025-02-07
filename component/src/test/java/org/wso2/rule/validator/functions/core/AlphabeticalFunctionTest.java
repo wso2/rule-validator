@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class AlphabeticalFunctionTest {
     @Test
-    void testFalsyTargetShouldReturnNoError() {
+    public void testFalsyTargetShouldReturnNoError() {
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
             assertTrue(function.execute(new LintTarget(new ArrayList<>(), false)));
@@ -30,7 +30,7 @@ public class AlphabeticalFunctionTest {
     }
 
     @Test
-    void testSingleElementTargetShouldReturnNoError() {
+    public void testSingleElementTargetShouldReturnNoError() {
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
             assertTrue(function.execute(new LintTarget(new ArrayList<>(), "a")));
@@ -40,7 +40,7 @@ public class AlphabeticalFunctionTest {
     }
 
     @Test
-    void testObjectKeysNotInOrderShouldReturnError() {
+    public void testObjectKeysNotInOrderShouldReturnError() {
         Map<String, Object> input = new LinkedHashMap<>();
         input.put("c", 2);
         input.put("b", "xz");
@@ -54,7 +54,7 @@ public class AlphabeticalFunctionTest {
     }
 
     @Test
-    void testUnsortedPropertiesWithNumericKeysShouldReturnError() {
+    public void testUnsortedPropertiesWithNumericKeysShouldReturnError() {
         Map<String, Object> input = new LinkedHashMap<>();
         input.put("400", Map.of("description", ""));
         input.put("200", Map.of("description", ""));
@@ -68,7 +68,7 @@ public class AlphabeticalFunctionTest {
     }
 
     @Test
-    void testUnsortedArrayOfStringsShouldReturnError() {
+    public void testUnsortedArrayOfStringsShouldReturnError() {
         List<Object> input = new ArrayList<>();
         input.add("b");
         input.add("a");
@@ -82,7 +82,7 @@ public class AlphabeticalFunctionTest {
     }
 
     @Test
-    void testSortedArrayOfStringsShouldReturnNoError() {
+    public void testSortedArrayOfStringsShouldReturnNoError() {
         List<Object> input = new ArrayList<>();
         input.add("a");
         input.add("ab");
@@ -96,7 +96,7 @@ public class AlphabeticalFunctionTest {
     }
 
     @Test
-    void testUnsortedArrayOfNumbersShouldReturnError() {
+    public void testUnsortedArrayOfNumbersShouldReturnError() {
         List<Object> input = new ArrayList<>();
         input.add(10);
         input.add(1);
@@ -110,7 +110,7 @@ public class AlphabeticalFunctionTest {
     }
 
     @Test
-    void testArrayOfObjectsShouldReturnError() throws InvalidRulesetException {
+    public void testArrayOfObjectsShouldReturnError() throws InvalidRulesetException {
         List<Object> input = new ArrayList<>();
         input.add(Map.of("a", "10"));
         input.add(Map.of("b", "1"));

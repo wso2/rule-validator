@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class XorFunctionTest {
     @Test
-    void givenNoPropertiesShouldReturnErrorMessage() {
+    public void givenNoPropertiesShouldReturnErrorMessage() {
         Map<String, Object> document = new HashMap<>();
         document.put("version", "1.0.0");
         document.put("title", "Swagger Petstore");
@@ -36,7 +36,7 @@ public class XorFunctionTest {
     }
 
     @Test
-    void givenMultiplePropertiesThatDoNotMatchShouldReturnErrorMessage() {
+    public void givenMultiplePropertiesThatDoNotMatchShouldReturnErrorMessage() {
         Map<String, Object> document = new HashMap<>();
         document.put("version", "1.0.0");
         document.put("title", "Swagger Petstore");
@@ -54,7 +54,7 @@ public class XorFunctionTest {
     }
 
     @Test
-    void givenBothPropertiesShouldReturnErrorMessage() {
+    public void givenBothPropertiesShouldReturnErrorMessage() {
         Map<String, Object> document = new HashMap<>();
         document.put("version", "1.0.0");
         document.put("title", "Swagger Petstore");
@@ -71,7 +71,7 @@ public class XorFunctionTest {
     }
 
     @Test
-    void givenInvalidInputShouldReturnNoErrorMessage() {
+    public void givenInvalidInputShouldReturnNoErrorMessage() {
         Map<String, Object> options = Map.of("properties", new ArrayList<>(List.of("version", "title")));
         XorFunction xorFunction = new XorFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), null);
@@ -84,7 +84,7 @@ public class XorFunctionTest {
     }
 
     @Test
-    void givenOnlyOnePropertyShouldReturnNoErrorMessage() {
+    public void givenOnlyOnePropertyShouldReturnNoErrorMessage() {
         Map<String, Object> document = new HashMap<>();
         document.put("version", "1.0.0");
         document.put("title", "Swagger Petstore");
@@ -102,7 +102,7 @@ public class XorFunctionTest {
     }
 
     @Test
-    void givenValidOptionsShouldNotThrow() {
+    public void givenValidOptionsShouldNotThrow() {
         Map<String, Object> options = Map.of("properties", new ArrayList<>(List.of("foo", "bar")));
         XorFunction xorFunction = new XorFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), new HashMap<>());
@@ -111,7 +111,7 @@ public class XorFunctionTest {
     }
 
     @Test
-    void givenInvalidOptions_shouldThrow() {
+    public void givenInvalidOptions_shouldThrow() {
         List<Object> invalidOptionsList = Arrays.asList(Map.of("properties", new ArrayList<>(List.of("foo", 2))),
                 Map.of("properties", new ArrayList<>(List.of("foo"))), Map.of("properties", new ArrayList<>(List.of())),
                 Map.of("properties", new ArrayList<>(List.of("foo", new HashMap<>()))),
