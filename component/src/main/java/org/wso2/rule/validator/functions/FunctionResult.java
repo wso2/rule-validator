@@ -17,27 +17,15 @@
  */
 package org.wso2.rule.validator.functions;
 
-import org.wso2.rule.validator.ruleset.Rule;
-
 /**
  * Represents the result of a function execution
  */
 public class FunctionResult {
-    public final boolean passed;
-    public final String path;
-    public final Rule rule;
+    public boolean passed;
+    public String message;
 
-    public FunctionResult(boolean passed, String path, Rule rule) {
+    public FunctionResult(boolean passed, String message) {
         this.passed = passed;
-        this.path = path;
-        this.rule = rule;
-    }
-
-    public String toString() {
-        return "Rule: " + this.rule.name + " {\n" +
-                "\tpassed=" + passed +
-                "\n\tpath='" + path + '\'' +
-                "\n\tmessage='" + this.rule.message + '\'' +
-                "\n}";
+        this.message = message;
     }
 }

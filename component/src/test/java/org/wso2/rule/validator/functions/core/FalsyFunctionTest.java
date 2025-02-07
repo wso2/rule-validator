@@ -20,6 +20,7 @@ package org.wso2.rule.validator.functions.core;
 import org.junit.jupiter.api.Test;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
+import org.wso2.rule.validator.functions.FunctionResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class FalsyFunctionTest {
-    private final FalsyFunction falsy = new FalsyFunction(null);
+    public final FalsyFunction falsy = new FalsyFunction(null);
 
     @Test
-    void givenFalsyInputsShouldReturnNoErrorMessage() {
+    public void givenFalsyInputsShouldReturnNoErrorMessage() {
         List<Object> falsyInputs = new ArrayList<>();
         falsyInputs.add(false);
         falsyInputs.add(null);
@@ -45,8 +46,8 @@ public class FalsyFunctionTest {
         for (Object input : falsyInputs) {
             LintTarget target = new LintTarget(new ArrayList<>(), input);
             try {
-                boolean result = falsy.execute(target);
-                assertTrue(result, "Expected falsy input: " + input + " to be falsy");
+                FunctionResult result = falsy.execute(target);
+                assertTrue(result.passed, "Expected falsy input: " + input + " to be falsy");
             } catch (InvalidRulesetException e) {
                 fail("Exception thrown for falsy input: " + e.getMessage());
             }
@@ -54,15 +55,15 @@ public class FalsyFunctionTest {
     }
 
     @Test
-    void givenTruthyInputsShouldReturnErrorMessage() {
+    public void givenTruthyInputsShouldReturnErrorMessage() {
         List<Object> truthyInputs = List.of(true, 1, new ArrayList<>(List.of(1)),
                 new HashMap<>(Map.of("key", "value")));
 
         for (Object input : truthyInputs) {
             LintTarget target = new LintTarget(new ArrayList<>(), input);
             try {
-                boolean result = falsy.execute(target);
-                assertFalse(result, "Expected truthy input: " + input + " to be truthy");
+                FunctionResult result = falsy.execute(target);
+                assertFalse(result.passed, "Expected truthy input: " + input + " to be truthy");
             } catch (InvalidRulesetException e) {
                 fail("Exception thrown for truthy input: " + e.getMessage());
             }
@@ -70,7 +71,7 @@ public class FalsyFunctionTest {
     }
 
     @Test
-    void validationTestForInvalidOptions() {
+    public void validationTestForInvalidOptions() {
         Map<String, Object> invalidOption = Map.of("unsupportedKey", true); // Unsupported key
 
         FalsyFunction function = new FalsyFunction(invalidOption);

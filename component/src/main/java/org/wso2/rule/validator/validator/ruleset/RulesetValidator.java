@@ -136,7 +136,7 @@ public abstract class RulesetValidator {
             if (rule.containsKey(Constants.RULESET_SEVERITY) &&
                     !(rule.get(Constants.RULESET_SEVERITY) instanceof String)) {
                 errors.add(new RulesetValidationError(key, "'severity' field of a rule should be a string"));
-            } else {
+            } else if (rule.containsKey(Constants.RULESET_SEVERITY)) {
                 String severity = (String) rule.get(Constants.RULESET_SEVERITY);
                 List<String> severities = Arrays.asList("error", "warn", "info", "hint", "off");
                 if (!severities.contains(severity)) {

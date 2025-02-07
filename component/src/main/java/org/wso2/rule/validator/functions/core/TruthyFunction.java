@@ -19,6 +19,7 @@ package org.wso2.rule.validator.functions.core;
 
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -46,19 +47,49 @@ public class TruthyFunction extends LintFunction {
         return errors;
     }
 
-    public boolean executeFunction(LintTarget target) {
+    public FunctionResult executeFunction(LintTarget target) {
         if (target.value instanceof String) {
-            return !((String) target.value).isEmpty();
+            if (((String) target.value).isEmpty()) {
+                return new FunctionResult(false,
+                        "property\" " + target.getTargetName() + "\" must be truthy");
+            } else {
+                return new FunctionResult(true, null);
+            }
         } else if (target.value instanceof List) {
-            return !((List) target.value).isEmpty();
+            if (((List) target.value).isEmpty()) {
+                return new FunctionResult(false,
+                        "property\" " + target.getTargetName() + "\" must be truthy");
+            } else {
+                return new FunctionResult(true, null);
+            }
         } else if (target.value instanceof Map) {
-            return !((Map) target.value).isEmpty();
+            if (((Map) target.value).isEmpty()) {
+                return new FunctionResult(false,
+                        "property\" " + target.getTargetName() + "\" must be truthy");
+            } else {
+                return new FunctionResult(true, null);
+            }
         } else if (target.value instanceof Boolean) {
-            return (Boolean) target.value;
+            if (!(Boolean) target.value) {
+                return new FunctionResult(false,
+                        "property\" " + target.getTargetName() + "\" must be truthy");
+            } else {
+                return new FunctionResult(true, null);
+            }
         } else if (target.value instanceof Integer) {
-            return (Integer) target.value != 0;
+            if ((Integer) target.value == 0) {
+                return new FunctionResult(false,
+                        "property\" " + target.getTargetName() + "\" must be truthy");
+            } else {
+                return new FunctionResult(true, null);
+            }
         } else {
-            return target.value != null;
+            if (target.value == null) {
+                return new FunctionResult(false,
+                        "property\" " + target.getTargetName() + "\" must be truthy");
+            } else {
+                return new FunctionResult(true, null);
+            }
         }
     }
 }

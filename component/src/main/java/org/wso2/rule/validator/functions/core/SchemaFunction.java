@@ -25,6 +25,7 @@ import org.json.JSONTokener;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class SchemaFunction extends LintFunction {
         }
     }
 
-    public boolean executeFunction(LintTarget target) {
+    public FunctionResult executeFunction(LintTarget target) {
 
         String targetString = new Gson().toJson(target.value);
         JSONArray targetArray = null;
@@ -103,7 +104,7 @@ public class SchemaFunction extends LintFunction {
         } else if (targetString.startsWith("{")) {
             targetObject = new JSONObject(targetString);
         } else {
-            return true;
+            return new FunctionResult(false, "Invalid target object.");
         }
 
 
@@ -118,9 +119,9 @@ public class SchemaFunction extends LintFunction {
                 everitSchema.validate(targetArray);
             }
         } catch (org.everit.json.schema.ValidationException e) {
-            return false;
+            return new FunctionResult(false, e.getMessage());
         }
-        return true;
+        return new FunctionResult(true, null);
     }
 
 }

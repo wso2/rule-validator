@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
+import org.wso2.rule.validator.functions.FunctionResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class LengthFunctionTest {
+public class LengthFunctionTest {
 
     private List<Object> inputs; // Common input values to test
     private Map<String, Object> options; // Common options map
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         // Initialize common inputs
         inputs = List.of(
                 "123",                  // String
@@ -57,7 +58,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testExceedsMaxLength() {
+    public void testExceedsMaxLength() {
         options.put(Constants.RULESET_LENGTH_MAX, 2); // Max length: 2
 
         for (Object input : inputs) {
@@ -65,8 +66,8 @@ class LengthFunctionTest {
             LengthFunction function = createFunction(options);
 
             try {
-                boolean result = function.execute(target);
-                assertFalse(result, "Expected input to exceed max length of 2");
+                FunctionResult result = function.execute(target);
+                assertFalse(result.passed, "Expected input to exceed max length of 2");
             } catch (InvalidRulesetException e) {
                 // Handle exception, optionally log
                 fail("Exception thrown: " + e.getMessage());
@@ -75,7 +76,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testFallsBelowMinLength() {
+    public void testFallsBelowMinLength() {
         options.put(Constants.RULESET_LENGTH_MIN, 4); // Min length: 4
 
         for (Object input : inputs) {
@@ -83,8 +84,8 @@ class LengthFunctionTest {
             LengthFunction function = createFunction(options);
 
             try {
-                boolean result = function.execute(target);
-                assertFalse(result, "Expected input to fall below min length of 4");
+                FunctionResult result = function.execute(target);
+                assertFalse(result.passed, "Expected input to fall below min length of 4");
             } catch (InvalidRulesetException e) {
                 // Handle exception, optionally log
                 fail("Exception thrown: " + e.getMessage());
@@ -93,7 +94,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testWithinMinAndMaxLength() {
+    public void testWithinMinAndMaxLength() {
         options.put(Constants.RULESET_LENGTH_MIN, 3); // Min length: 3
         options.put(Constants.RULESET_LENGTH_MAX, 3); // Max length: 3
 
@@ -102,8 +103,8 @@ class LengthFunctionTest {
             LengthFunction function = createFunction(options);
 
             try {
-                boolean result = function.execute(target);
-                assertTrue(result, "Expected input to be within min and max length of 3");
+                FunctionResult result = function.execute(target);
+                assertTrue(result.passed, "Expected input to be within min and max length of 3");
             } catch (InvalidRulesetException e) {
                 // Handle exception, optionally log
                 fail("Exception thrown: " + e.getMessage());
@@ -112,7 +113,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testValidOptions() {
+    public void testValidOptions() {
         Map<String, Object>[] validOptions = new Map[]{
                 Map.of(Constants.RULESET_LENGTH_MIN, 2),
                 Map.of(Constants.RULESET_LENGTH_MAX, 4),
@@ -123,8 +124,8 @@ class LengthFunctionTest {
             LengthFunction function = createFunction(validOption);
             try {
                 // Validate that no exception is thrown during execution
-                boolean result = function.execute(new LintTarget(new ArrayList<>(), "123"));
-                assertTrue(result, "Expected no exception for valid options.");
+                FunctionResult result = function.execute(new LintTarget(new ArrayList<>(), "123"));
+                assertTrue(result.passed, "Expected no exception for valid options.");
             } catch (InvalidRulesetException e) {
                 // Handle exception, optionally log
                 fail("Exception thrown: " + e.getMessage());
@@ -133,7 +134,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testInvalidOptions() {
+    public void testInvalidOptions() {
         Map<String, Object>[] invalidOptions = new Map[]{
                 null,                       // Null options
                 Map.of("foo", true),        // Unsupported key
