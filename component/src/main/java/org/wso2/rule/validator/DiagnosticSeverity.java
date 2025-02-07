@@ -32,7 +32,7 @@ public enum DiagnosticSeverity {
             case ERROR:
                 return "error";
             case WARN:
-                return "warning";
+                return "warn";
             case INFO:
                 return "info";
             case HINT:

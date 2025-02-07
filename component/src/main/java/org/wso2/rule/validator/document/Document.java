@@ -151,7 +151,8 @@ public class Document {
                 String targetPath = LintTarget.getPathString(parentPath);
                 target.jsonPath = parentPath;
                 FunctionResult result = then.lintFunction.execute(target);
-                results.add(new LintResult(result.passed, targetPath, rule, rule.message == null ? result.message : rule.message));
+                results.add(new LintResult(result.passed, targetPath, rule,
+                        rule.message == null ? result.message : rule.message));
             }
         }
         return results;

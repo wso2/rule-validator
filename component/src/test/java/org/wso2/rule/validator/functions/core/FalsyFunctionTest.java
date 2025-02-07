@@ -20,12 +20,12 @@ package org.wso2.rule.validator.functions.core;
 import org.junit.jupiter.api.Test;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
+import org.wso2.rule.validator.functions.FunctionResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.wso2.rule.validator.functions.FunctionResult;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;

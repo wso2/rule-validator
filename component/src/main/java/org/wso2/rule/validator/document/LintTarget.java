@@ -40,6 +40,10 @@ public class LintTarget {
     }
 
     public String getTargetName() {
-        return jsonPath.get(jsonPath.size() - 1);
+        try {
+            return jsonPath.get(jsonPath.size() - 1);
+        } catch (IndexOutOfBoundsException e) {
+            return "";
+        }
     }
 }
