@@ -99,11 +99,25 @@ public enum Format {
         }
     }
 
-    public static ArrayList<Format> getFormatListFromObject(List<String> formatStrings) {
-        ArrayList<Format> formats = new ArrayList<>();
+    public static List<Format> getFormatListFromObject(List<String> formatStrings) {
+        List<Format> formats = new ArrayList<>();
         for (String formatString : formatStrings) {
             formats.add(getFormat(formatString));
         }
         return formats;
+    }
+
+    public static boolean matchFormat(List<Format> toBeCheckedIn, List<Format> toCheck) {
+        if (toCheck == null) {
+            return true;
+        } else if (toBeCheckedIn == null) {
+            return false;
+        }
+        for (Format format : toCheck) {
+            if (toBeCheckedIn.contains(format)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

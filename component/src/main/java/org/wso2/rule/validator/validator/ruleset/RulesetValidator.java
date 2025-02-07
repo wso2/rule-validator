@@ -39,9 +39,7 @@ import java.util.regex.Pattern;
 public abstract class RulesetValidator {
     protected static List<RulesetValidationError> validate(Map<String, Object> ruleset) {
 
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
-
-        // Validate aliases
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (ruleset == null) {
             errors.add(new RulesetValidationError("", "Ruleset is empty."));
@@ -62,7 +60,7 @@ public abstract class RulesetValidator {
             errors.add(new RulesetValidationError("", "Ruleset contains an invalid value for rules."));
             return errors;
         } else {
-            errors.addAll(validateRules((Map<String, Object>) ruleMap));
+            errors.addAll(validateRules((Map<String, Object>) ruleMap, ruleset.get(Constants.RULESET_ALIASES)));
         }
 
         // Validate extends
@@ -85,13 +83,11 @@ public abstract class RulesetValidator {
         // Validate Formats
         errors.addAll(validateFormats("", ruleset));
 
-
-
         return errors;
     }
 
-    private static List<RulesetValidationError> validateRules(Map<String, Object> rules) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+    private static List<RulesetValidationError> validateRules(Map<String, Object> rules, Object aliases) {
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : rules.entrySet()) {
             String key = entry.getKey();
@@ -103,7 +99,7 @@ public abstract class RulesetValidator {
             Map<String, Object> rule = (Map<String, Object>) ruleObject;
 
             // Validate given
-            errors.addAll(validateGiven(key, rule));
+            errors.addAll(validateGiven(key, rule, aliases));
 
             // Validate then
             errors.addAll(validateThen(key, rule));
@@ -140,7 +136,7 @@ public abstract class RulesetValidator {
             if (rule.containsKey(Constants.RULESET_SEVERITY) &&
                     !(rule.get(Constants.RULESET_SEVERITY) instanceof String)) {
                 errors.add(new RulesetValidationError(key, "'severity' field of a rule should be a string"));
-            } else {
+            } else if (rule.containsKey(Constants.RULESET_SEVERITY)) {
                 String severity = (String) rule.get(Constants.RULESET_SEVERITY);
                 List<String> severities = Arrays.asList("error", "warn", "info", "hint", "off");
                 if (!severities.contains(severity)) {
@@ -168,10 +164,11 @@ public abstract class RulesetValidator {
     }
 
     private static List<RulesetValidationError> validateFormats(String ruleName, Map<String, Object> object) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (object.containsKey(Constants.RULESET_FORMATS) && !(object.get(Constants.RULESET_FORMATS) instanceof List)) {
             errors.add(new RulesetValidationError(ruleName, "'formats' field of a rule should be a list"));
+            return errors;
         }
         if (object.containsKey(Constants.RULESET_FORMATS)) {
             List<Object> formatObjects = (List<Object>) object.get(Constants.RULESET_FORMATS);
@@ -191,7 +188,7 @@ public abstract class RulesetValidator {
     }
 
     private static List<RulesetValidationError> validateThen (String ruleName, Map<String, Object> rule) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (!rule.containsKey(Constants.RULESET_THEN)) {
             errors.add(new RulesetValidationError(ruleName, "Rule does not contain a 'then' field."));
@@ -222,7 +219,7 @@ public abstract class RulesetValidator {
     }
 
     private static List<RulesetValidationError> validateThenObject(String ruleName, Map<String, Object> then) {
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         // Field can be undefined. If it is defined, it should be a string
         if (then.containsKey(Constants.RULESET_FIELD) && !(then.get(Constants.RULESET_FIELD) instanceof String)) {
@@ -262,10 +259,10 @@ public abstract class RulesetValidator {
         return errors;
     }
 
-    private static List<RulesetValidationError> validateGiven (String ruleName, Map<String, Object> rule) {
-        // TODO: Check for alias usage
+    private static List<RulesetValidationError> validateGiven (String ruleName, Map<String, Object> rule,
+                                                               Object aliases) {
 
-        ArrayList<RulesetValidationError> errors = new ArrayList<>();
+        List<RulesetValidationError> errors = new ArrayList<>();
 
         if (!rule.containsKey(Constants.RULESET_GIVEN)) {
             errors.add(new RulesetValidationError(ruleName, "Rule does not contain a 'given' field."));
@@ -273,19 +270,39 @@ public abstract class RulesetValidator {
                 !(rule.get(Constants.RULESET_GIVEN) instanceof String)) {
             errors.add(new RulesetValidationError(ruleName, "'given' field of a rule should be a string or a list"));
         } else {
+            // We only need to check whether the given alias exists because the alias itself has been validated prior.
             if (rule.get(Constants.RULESET_GIVEN) instanceof List) {
                 List<String> givenList = (List<String>) rule.get(Constants.RULESET_GIVEN);
                 for (String given : givenList) {
-                    if (!validateJsonPath(given)) {
-                        errors.add(new RulesetValidationError(ruleName, "Invalid JSON path: " + given));
-                    }
+                    errors.addAll(validateGiven(ruleName, given, aliases));
                 }
             } else {
-                if (!validateJsonPath((String) rule.get(Constants.RULESET_GIVEN))) {
-                    errors.add(new RulesetValidationError(ruleName, "Invalid JSON path: " +
-                            rule.get(Constants.RULESET_GIVEN)));
+                String given = (String) rule.get(Constants.RULESET_GIVEN);
+                errors.addAll(validateGiven(ruleName, given, aliases));
+            }
+        }
+
+        return errors;
+    }
+
+    private static List<RulesetValidationError> validateGiven(String ruleName, String given, Object aliases) {
+        List<RulesetValidationError> errors = new ArrayList<>();
+
+        if (given.startsWith(Constants.ALIAS_PREFIX)) {
+            if (aliases == null) {
+                errors.add(new RulesetValidationError(ruleName, "Rule uses an alias but no aliases are defined."));
+            } else {
+                if (!(aliases instanceof Map)) {
+                    errors.add(new RulesetValidationError(ruleName, "Invalid aliases object."));
+                } else {
+                    Map<String, Object> aliasMap = (Map<String, Object>) aliases;
+                    if (!aliasMap.containsKey(given.substring(1))) {
+                        errors.add(new RulesetValidationError(ruleName, "Unknown alias: " + given.substring(1)));
+                    }
                 }
             }
+        } else if (!validateJsonPath(given)) {
+            errors.add(new RulesetValidationError(ruleName, "Invalid JSON path: " + given));
         }
 
         return errors;
@@ -293,6 +310,10 @@ public abstract class RulesetValidator {
 
     private static boolean validateJsonPath(String jsonPath) {
         try {
+            if (!jsonPath.startsWith("$")) {
+                return false;
+            }
+
             JsonPath.compile(jsonPath);
             return true;
         } catch (InvalidPathException e) {

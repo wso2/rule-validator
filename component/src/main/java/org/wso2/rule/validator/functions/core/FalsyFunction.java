@@ -19,6 +19,7 @@ package org.wso2.rule.validator.functions.core;
 
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -32,12 +33,12 @@ import java.util.Map;
 public class FalsyFunction extends LintFunction {
 
     public FalsyFunction(Map<String, Object> options) {
-        super(null);
+        super(options);
     }
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options != null && !options.isEmpty()) {
             errors.add("Falsy function does not accept any options.");
@@ -46,15 +47,55 @@ public class FalsyFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public FunctionResult executeFunction(LintTarget target) {
         if (target.value instanceof String) {
-            return ((String) target.value).isEmpty();
+            if (((String) target.value).isEmpty()) {
+                return new FunctionResult(true, "property \"" + target.getTargetName() + "\" must be falsy");
+            } else {
+                return new FunctionResult(false, null);
+            }
         } else if (target.value instanceof List) {
-            return ((List) target.value).isEmpty();
+            if (((List) target.value).isEmpty()) {
+                return new FunctionResult(true, "property \"" + target.getTargetName() + "\" must be falsy");
+            } else {
+                return new FunctionResult(false, null);
+            }
         } else if (target.value instanceof Map) {
-            return ((Map) target.value).isEmpty();
+            if (((Map) target.value).isEmpty()) {
+                return new FunctionResult(true, "property \"" + target.getTargetName() + "\" must be falsy");
+            } else {
+                return new FunctionResult(false, null);
+            }
+        } else if (target.value instanceof Boolean) {
+            if (!(Boolean) target.value) {
+                return new FunctionResult(true, "property \"" + target.getTargetName() + "\" must be falsy");
+            } else {
+                return new FunctionResult(false, null);
+            }
+        } else if (target.value instanceof Integer) {
+            if ((Integer) target.value == 0) {
+                return new FunctionResult(true, "property \"" + target.getTargetName() + "\" must be falsy");
+            } else {
+                return new FunctionResult(false, null);
+            }
+        } else if (target.value instanceof Double) {
+            if ((Double) target.value == 0.0) {
+                return new FunctionResult(true, "property \"" + target.getTargetName() + "\" must be falsy");
+            } else {
+                return new FunctionResult(false, null);
+            }
+        } else if (target.value instanceof Float) {
+            if ((Float) target.value == 0.0f) {
+                return new FunctionResult(true, "property \"" + target.getTargetName() + "\" must be falsy");
+            } else {
+                return new FunctionResult(false, null);
+            }
         } else {
-            return target.value == null;
+            if (target.value == null) {
+                return new FunctionResult(true, "property \"" + target.getTargetName() + "\" must be falsy");
+            } else {
+                return new FunctionResult(false, null);
+            }
         }
     }
 }

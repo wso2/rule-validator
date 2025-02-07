@@ -20,6 +20,7 @@ package org.wso2.rule.validator.functions.core;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class XorFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             errors.add("Xor function requires the list of properties.");
@@ -66,8 +67,8 @@ public class XorFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
-        ArrayList<String> properties = (ArrayList<String>) options.get(Constants.RULESET_XOR_PROPERTIES);
+    public FunctionResult executeFunction(LintTarget target) {
+        List<String> properties = (List<String>) options.get(Constants.RULESET_XOR_PROPERTIES);
         int count = 0;
         for (String property : properties) {
             if (target.value instanceof Map) {
@@ -80,6 +81,10 @@ public class XorFunction extends LintFunction {
             }
         }
 
-        return count == 1;
+        if (count == 1) {
+            return new FunctionResult(true, null);
+        } else {
+            return new FunctionResult(false, "Only one of the properties " + properties + " should be present");
+        }
     }
 }

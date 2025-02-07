@@ -20,6 +20,7 @@ package org.wso2.rule.validator.functions.core;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class CasingFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             errors.add("At least the casing type should be specified in functionOptions in the 'casing' function.");
@@ -90,22 +91,30 @@ public class CasingFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public FunctionResult executeFunction(LintTarget target) {
         String targetString = (String) target.value;
         boolean allowLeading = Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING_DEFAULT;
         String separatorChar = "";
         if (options.containsKey(Constants.RULESET_CASING_SEPARATOR)) {
             Map<String, Object> separator = (Map<String, Object>) options.get(Constants.RULESET_CASING_SEPARATOR);
-            allowLeading = (boolean) separator.get(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING);
-            separatorChar = separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR).toString();
+            if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING)) {
+                allowLeading = (boolean) separator.get(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING);
+            }
+            if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR)) {
+                separatorChar = separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR).toString();
+            }
         }
 
         if (targetString.length() == 1 && options.containsKey(Constants.RULESET_CASING_SEPARATOR) && allowLeading &&
                 targetString.equals(separatorChar)) {
-            return true;
+            return new FunctionResult(true, null);
         }
 
-        return targetString.matches(getPattern(options));
+        if (targetString.matches(getPattern(options))) {
+            return new FunctionResult(true, null);
+        } else {
+            return new FunctionResult(false, target.getTargetName() + " does not match the specified casing pattern.");
+        }
     }
 
     private String getPattern(Map<String, Object> options) {

@@ -15,18 +15,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.rule.validator.ruleset.file.type;
+package org.wso2.rule.validator.validator;
 
-import org.wso2.rule.validator.ruleset.Ruleset;
-import org.wso2.rule.validator.utils.Util;
-
-import java.util.Map;
+import org.wso2.rule.validator.DiagnosticSeverity;
 
 /**
- * This class is used to load a yaml ruleset file
+ * Class to represent the result of a document validation that is sent to the user
  */
-public class YamlRuleset extends Ruleset {
-    public YamlRuleset(String rulesetString) {
-        super((Map<String, Object>) Util.loadYaml(rulesetString));
+public class DocumentValidationResult {
+    public final String path;
+    public final String message;
+    public final String ruleName;
+    public final String severity;
+
+    public DocumentValidationResult(String path, String message, String ruleName, DiagnosticSeverity severity) {
+        this.path = path;
+        this.message = message;
+        this.ruleName = ruleName;
+        this.severity = DiagnosticSeverity.getSeverityString(severity);
     }
 }

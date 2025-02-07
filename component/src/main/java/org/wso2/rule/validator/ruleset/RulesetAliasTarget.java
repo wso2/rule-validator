@@ -19,7 +19,6 @@ package org.wso2.rule.validator.ruleset;
 
 import org.wso2.rule.validator.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +27,14 @@ import java.util.Map;
  * given path.
  */
 public class RulesetAliasTarget {
-    private ArrayList<Format> formats;
-    public ArrayList<String> given;
+    public List<Format> formats;
+    public List<String> given;
 
     public RulesetAliasTarget (Object targetObject) {
         if (targetObject instanceof Map) {
             Map<String, Object> targetMap = (Map<String, Object>) targetObject;
             this.formats = Format.getFormatListFromObject((List<String>) targetMap.get(Constants.RULESET_FORMATS));
-            this.given = (ArrayList<String>) targetMap.get(Constants.RULESET_GIVEN);
+            this.given = (List<String>) targetMap.get(Constants.RULESET_GIVEN);
         }
     }
 }

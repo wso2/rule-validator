@@ -63,6 +63,12 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${apache.commons.lang3.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -126,6 +132,13 @@
         </repository>
     </repositories>
 
+    <scm>
+        <url>https://github.com/wso2/rule-validator.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/rule-validator.git</developerConnection>
+        <connection>scm:git:https://github.com/wso2/rule-validator.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
     <properties>
         <maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
         <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
@@ -133,12 +146,15 @@
         <org.snakeyaml.snakeyaml.engine.version>2.9</org.snakeyaml.snakeyaml.engine.version>
         <com.jayway.jsonpath.version>2.9.0</com.jayway.jsonpath.version>
         <com.google.code.gson.version>2.11.0</com.google.code.gson.version>
+        <compiler.plugin.version>3.0</compiler.plugin.version>
         <com.github.erosb.everit-json-schema.version>1.14.4</com.github.erosb.everit-json-schema.version>
         <org.reflections.version>0.10.2</org.reflections.version>
         <org.apache.maven.compiler.plugin.version>3.13.0</org.apache.maven.compiler.plugin.version>
         <maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
+        <maven.bundle.plugin>6.0.0</maven.bundle.plugin>
         <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
         <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
+        <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <maven.spotbugsplugin.exclude.file>spotbugs-exclude.xml</maven.spotbugsplugin.exclude.file>
     </properties>
 </project>

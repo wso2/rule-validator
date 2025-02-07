@@ -17,6 +17,7 @@
  */
 package org.wso2.rule.validator.functions;
 
+import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
 
 import java.util.List;
@@ -30,11 +31,22 @@ public abstract class LintFunction {
 
     public Map<String, Object> options;
 
-    public abstract boolean execute(LintTarget target);
-
     public LintFunction(Map<String, Object> options) {
         this.options = options;
+        processFunctionOptions(options);
     }
 
+    public FunctionResult execute(LintTarget target) throws InvalidRulesetException {
+        List<String> errors = validateFunctionOptions();
+        if (!errors.isEmpty()) {
+            throw new InvalidRulesetException("Function options are invalid: " + errors);
+        }
+        return executeFunction(target);
+    }
+
+    protected abstract FunctionResult executeFunction(LintTarget target);
+
     public abstract List<String> validateFunctionOptions();
+
+    public void processFunctionOptions(Map<String, Object> options) {}
 }

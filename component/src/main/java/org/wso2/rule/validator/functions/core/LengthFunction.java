@@ -20,6 +20,7 @@ package org.wso2.rule.validator.functions.core;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class LengthFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             errors.add("Length function requires at least a min or a max value.");
@@ -63,7 +64,7 @@ public class LengthFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public FunctionResult executeFunction(LintTarget target) {
         int length;
 
         if (target.value instanceof String) {
@@ -72,22 +73,37 @@ public class LengthFunction extends LintFunction {
             length = ((List) target.value).size();
         } else if (target.value instanceof Map) {
             length = ((Map) target.value).size();
+        } else if (target.value instanceof Integer) {
+            length = (int) target.value;
         } else {
-            return true;
+            // Following Stoplight Spectral's logic
+            return new FunctionResult(true, null);
         }
 
         if (options.containsKey(Constants.RULESET_LENGTH_MIN) && options.containsKey(Constants.RULESET_LENGTH_MAX)) {
             int min = (int) options.get(Constants.RULESET_LENGTH_MIN);
             int max = (int) options.get(Constants.RULESET_LENGTH_MAX);
-            return length >= min && length <= max;
+            if (length >= min && length <= max) {
+                return new FunctionResult(true, null);
+            } else {
+                return new FunctionResult(false, "Length should be between " + min + " and " + max);
+            }
         } else  if (options.containsKey(Constants.RULESET_LENGTH_MIN)) {
             int min = (int) options.get(Constants.RULESET_LENGTH_MIN);
-            return length >= min;
+            if (length >= min) {
+                return new FunctionResult(true, null);
+            } else {
+                return new FunctionResult(false, "Length should be at least " + min);
+            }
         } else if (options.containsKey(Constants.RULESET_LENGTH_MAX)) {
             int max = (int) options.get(Constants.RULESET_LENGTH_MAX);
-            return length <= max;
+            if (length <= max) {
+                return new FunctionResult(true, null);
+            } else {
+                return new FunctionResult(false, "Length should be at most " + max);
+            }
         } else {
-            return false;
+            return new FunctionResult(false, "Length function requires at least a min or a max value.");
         }
     }
 }

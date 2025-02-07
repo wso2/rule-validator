@@ -20,6 +20,7 @@ package org.wso2.rule.validator.functions.core;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class EnumerationFunction extends LintFunction {
 
     @Override
     public List<String> validateFunctionOptions() {
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             errors.add("Enumeration function requires the set of values.");
@@ -53,13 +54,13 @@ public class EnumerationFunction extends LintFunction {
         return errors;
     }
 
-    public boolean execute(LintTarget target) {
+    public FunctionResult executeFunction(LintTarget target) {
         String[] values = (String[]) options.get(Constants.RULESET_ENUMERATION_VALUES);
         for (String value : values) {
             if (target.value.equals(value)) {
-                return true;
+                return new FunctionResult(true, null);
             }
         }
-        return false;
+        return new FunctionResult(false, "Value '" + target.value + "' is not in the enumeration.");
     }
 }

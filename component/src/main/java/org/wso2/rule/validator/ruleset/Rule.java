@@ -22,7 +22,6 @@ import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.DiagnosticSeverity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,15 +32,17 @@ public class Rule {
     public String name;
     private String description;
     public String message;
-    private DiagnosticSeverity severity;
+    public DiagnosticSeverity severity;
     private boolean resolved;
     public List<RuleThen> then;
     public List<String> given;
-    private List<Format> formats;
-    private boolean enabled;
+    public List<Format> formats;
+    private final List<Format> rulesetFormats;
 
-    public Rule(String name, Map<String, Object> ruleData, HashMap<String, RulesetAliasDefinition> aliases) {
+    public Rule(String name, Map<String, Object> ruleData, Map<String, RulesetAliasDefinition> aliases,
+                List<Format> rulesetFormats) {
         this.name = name;
+        this.rulesetFormats = new ArrayList<>(rulesetFormats);
         Object descriptionObject = ruleData.get("description");
         Object messageObject = ruleData.get("message");
         Object severityObject = ruleData.get("severity");
@@ -50,27 +51,24 @@ public class Rule {
         Object givenObject = ruleData.get("given");
         Object formatsObject = ruleData.get("formats");
 
-        // TODO: Read enabled
-        this.enabled = true;
-
         if (descriptionObject instanceof String) {
             this.description = (String) descriptionObject;
         } else {
             this.description = "";
         }
 
-        if (messageObject instanceof String) {
+        if (messageObject instanceof String && !((String) messageObject).isEmpty()) {
             this.message = (String) messageObject;
+        } else if (descriptionObject instanceof String && !((String) descriptionObject).isEmpty()) {
+            this.message = this.description;
         } else {
-            this.message = "";
+            this.message = null;
         }
-
-        // TODO: Implement message placeholder logic
 
         if (severityObject instanceof String) {
             this.severity = DiagnosticSeverity.valueOf(StringUtils.toRootUpperCase((String) severityObject));
         } else {
-            this.severity = DiagnosticSeverity.ERROR;
+            this.severity = DiagnosticSeverity.WARN;
         }
 
         if (resolvedObject instanceof Boolean) {
@@ -78,8 +76,6 @@ public class Rule {
         } else {
             this.resolved = false;
         }
-
-        // TODO: Implement Recommended
 
         this.formats = new ArrayList<>();
         if (formatsObject instanceof List) {
@@ -104,10 +100,18 @@ public class Rule {
         }
 
         // resolve given aliases
-        ArrayList<String> resolvedGiven = new ArrayList<>();
+        List<String> resolvedGiven = new ArrayList<>();
         for (String given : this.given) {
             if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, aliases));
+                List<Format> aliasFormats;
+                if (!this.formats.isEmpty()) {
+                    aliasFormats = this.formats;
+                } else if (!this.rulesetFormats.isEmpty()) {
+                    aliasFormats = this.rulesetFormats;
+                } else {
+                    aliasFormats = null;
+                }
+                resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, aliases, aliasFormats));
             } else {
                 resolvedGiven.add(given);
             }

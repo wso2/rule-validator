@@ -17,25 +17,33 @@
  */
 package org.wso2.rule.validator.document;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents a lint target in a document.
  */
 public class LintTarget {
-    public ArrayList<String> jsonPath;
+    public List<String> jsonPath;
     public final Object value;
 
-    public LintTarget(ArrayList<String> jsonPath, Object value) {
+    public LintTarget(List<String> jsonPath, Object value) {
         this.jsonPath = jsonPath;
         this.value = value;
     }
 
-    public String getPathString() {
+    public static String getPathString(List<String> jsonPath) {
         StringBuilder resultPath = new StringBuilder();
         for (String path : jsonPath) {
             resultPath.append("[").append(path).append("]");
         }
         return resultPath.toString();
+    }
+
+    public String getTargetName() {
+        try {
+            return jsonPath.get(jsonPath.size() - 1);
+        } catch (IndexOutOfBoundsException e) {
+            return "";
+        }
     }
 }

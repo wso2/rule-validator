@@ -20,6 +20,7 @@ package org.wso2.rule.validator.functions.core;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class AlphabeticalFunction extends LintFunction {
     @Override
     public List<String> validateFunctionOptions() {
 
-        ArrayList<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (options == null) {
             return errors;
@@ -59,8 +60,79 @@ public class AlphabeticalFunction extends LintFunction {
 
     }
 
-    public boolean execute(LintTarget target) {
-        return target.value.toString().matches(Constants.RULESET_ALPHABETICAL_REGEX);
+    public FunctionResult executeFunction(LintTarget target) {
+
+        Object value = target.value;
+
+        if (!(value instanceof List) && !(value instanceof Map)) {
+            return new FunctionResult(false, target.getTargetName() + " Value is not a list or a map");
+        }
+        if (value instanceof Map) {
+            if (isAlphabetical((Map) value)) {
+                return new FunctionResult(true, null);
+            } else {
+                return new FunctionResult(false, target.getTargetName() + " is not alphabetical");
+            }
+        }
+
+        List<Object> list = (List) value;
+
+        if (options != null && options.containsKey(Constants.RULESET_ALPHABETICAL_KEYED_BY)) {
+            for (Object element : list) {
+                if (!(element instanceof Map)) {
+                    return new FunctionResult(false, target.getTargetName() + " Value is not a list of maps");
+                }
+                Map<String, Object> map = (Map) element;
+                if (!map.containsKey(options.get(Constants.RULESET_ALPHABETICAL_KEYED_BY))) {
+                    return new FunctionResult(false, target.getTargetName() + " Map does not contain key " +
+                            options.get(Constants.RULESET_ALPHABETICAL_KEYED_BY));
+                }
+                Object valueToCheck = map.get(options.get(Constants.RULESET_ALPHABETICAL_KEYED_BY));
+                if (!(valueToCheck instanceof String) && !(valueToCheck instanceof Integer) &&
+                        !(valueToCheck instanceof Double)) {
+                    return new FunctionResult(false, target.getTargetName() + " Value is not a list of strings");
+                }
+            }
+            if (isAlphabetical(list, (String) options.get(Constants.RULESET_ALPHABETICAL_KEYED_BY))) {
+                return new FunctionResult(true, null);
+            } else {
+                return new FunctionResult(false, target.getTargetName() + " is not alphabetical");
+            }
+        } else {
+            for (Object element : list) {
+                if (!(element instanceof String) && !(element instanceof Integer) && !(element instanceof Double)) {
+                    return new FunctionResult(false, target.getTargetName() + " Value is not a list of strings");
+                }
+            }
+            if (isAlphabetical(list)) {
+                return new FunctionResult(true, null);
+            } else {
+                return new FunctionResult(false, target.getTargetName() + " is not alphabetical");
+            }
+        }
+    }
+
+    private boolean isAlphabetical(List<Object> objectList, String key) {
+        List<Object> list = new ArrayList<>();
+        for (Object obj : objectList) {
+            Map<String, Object> map = (Map) obj;
+            list.add(map.get(key));
+        }
+        return isAlphabetical(list);
+    }
+
+    private boolean isAlphabetical(Map<String, Object> map) {
+        return isAlphabetical(new ArrayList<>(map.keySet()));
+    }
+
+    private boolean isAlphabetical(List<Object> list) {
+
+        for (int i = 0; i < list.size() - 1; i++) {
+            if (list.get(i).toString().compareTo(list.get(i + 1).toString()) > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

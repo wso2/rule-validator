@@ -15,18 +15,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.rule.validator.ruleset.file.type;
 
-import org.wso2.rule.validator.ruleset.Ruleset;
-import org.wso2.rule.validator.utils.Util;
-
-import java.util.Map;
+package org.wso2.rule.validator;
 
 /**
- * This class is used to load a yaml ruleset file
+ * Exception to handle invalid content type. Content type must be either JSON or YAML.
  */
-public class YamlRuleset extends Ruleset {
-    public YamlRuleset(String rulesetString) {
-        super((Map<String, Object>) Util.loadYaml(rulesetString));
+public class InvalidContentTypeException extends Exception {
+    public InvalidContentTypeException(String message) {
+        super("Invalid content type. Rulesets and documents must be either valid JSON or YAML." + "\n" + message);
     }
 }
