@@ -36,7 +36,7 @@ public abstract class LintFunction {
         processFunctionOptions(options);
     }
 
-    public boolean execute(LintTarget target) throws InvalidRulesetException {
+    public FunctionResult execute(LintTarget target) throws InvalidRulesetException {
         List<String> errors = validateFunctionOptions();
         if (!errors.isEmpty()) {
             throw new InvalidRulesetException("Function options are invalid: " + errors);
@@ -44,7 +44,7 @@ public abstract class LintFunction {
         return executeFunction(target);
     }
 
-    protected abstract boolean executeFunction(LintTarget target);
+    protected abstract FunctionResult executeFunction(LintTarget target);
 
     public abstract List<String> validateFunctionOptions();
 

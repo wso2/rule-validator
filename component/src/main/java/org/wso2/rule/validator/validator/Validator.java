@@ -24,7 +24,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.wso2.rule.validator.InvalidContentTypeException;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.Document;
-import org.wso2.rule.validator.functions.FunctionResult;
+import org.wso2.rule.validator.functions.LintResult;
 import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.ruleset.RulesetType;
 import org.wso2.rule.validator.ruleset.file.type.JsonRuleset;
@@ -59,14 +59,14 @@ public class Validator {
 
         Document document = new Document(documentFile);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-        List<FunctionResult> functionResults = document.lint(ruleset);
+        List<LintResult> lintResults = document.lint(ruleset);
         List<DocumentValidationResult> results = new ArrayList<>();
-        for (FunctionResult functionResult : functionResults) {
-            if (functionResult.passed) {
+        for (LintResult lintResult : lintResults) {
+            if (lintResult.passed) {
                 continue;
             }
-            results.add(new DocumentValidationResult(functionResult.path, functionResult.rule.message,
-                    functionResult.rule.name, functionResult.rule.severity));
+            results.add(new DocumentValidationResult(lintResult.path, lintResult.rule.message,
+                    lintResult.rule.name, lintResult.rule.severity));
         }
         return gson.toJson(results);
     }

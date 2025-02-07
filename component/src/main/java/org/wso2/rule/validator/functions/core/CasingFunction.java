@@ -20,6 +20,7 @@ package org.wso2.rule.validator.functions.core;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class CasingFunction extends LintFunction {
         return errors;
     }
 
-    public boolean executeFunction(LintTarget target) {
+    public FunctionResult executeFunction(LintTarget target) {
         String targetString = (String) target.value;
         boolean allowLeading = Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING_DEFAULT;
         String separatorChar = "";
@@ -106,10 +107,14 @@ public class CasingFunction extends LintFunction {
 
         if (targetString.length() == 1 && options.containsKey(Constants.RULESET_CASING_SEPARATOR) && allowLeading &&
                 targetString.equals(separatorChar)) {
-            return true;
+            return new FunctionResult(true, null);
         }
 
-        return targetString.matches(getPattern(options));
+        if (targetString.matches(getPattern(options))) {
+            return new FunctionResult(true, null);
+        } else {
+            return new FunctionResult(false, target.getTargetName() + " does not match the specified casing pattern.");
+        }
     }
 
     private String getPattern(Map<String, Object> options) {

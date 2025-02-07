@@ -20,6 +20,7 @@ package org.wso2.rule.validator.functions.core;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 import org.wso2.rule.validator.utils.Util;
 
@@ -165,15 +166,15 @@ public class PatternFunction extends LintFunction {
         return matcher.matches();
     }
 
-    public boolean executeFunction(LintTarget target) {
+    public FunctionResult executeFunction(LintTarget target) {
         Object match = options.get(Constants.RULESET_PATTERN_MATCH);
         Object notMatch = options.get(Constants.RULESET_PATTERN_NOT_MATCH);
 
         if (target.value == null) {
-            return false;
+            return new FunctionResult(false, target.getTargetName() + " is null");
         }
         if (!(target.value instanceof String)) {
-            return true;
+            return new FunctionResult(true, target.getTargetName() + " is not a string");
         }
 
         boolean matchResult = false;
@@ -184,7 +185,11 @@ public class PatternFunction extends LintFunction {
                 PatternAndFlags matchPatternAndFlags = extractPatternAndFlags((String) match);
                 boolean result = matches((String) target.value, matchPatternAndFlags);
                 if (notMatch == null) {
-                    return result;
+                    if (result) {
+                        return new FunctionResult(true, null);
+                    } else {
+                        return new FunctionResult(false, target.getTargetName() + " does not match the pattern");
+                    }
                 }
                 matchResult = result;
             }
@@ -192,13 +197,21 @@ public class PatternFunction extends LintFunction {
                 PatternAndFlags notMatchPatternAndFlags = extractPatternAndFlags((String) notMatch);
                 boolean result = !matches((String) target.value, notMatchPatternAndFlags);
                 if (match == null) {
-                    return result;
+                    if (result) {
+                        return new FunctionResult(true, null);
+                    } else {
+                        return new FunctionResult(false, target.getTargetName() + " matches the pattern");
+                    }
                 }
                 notMatchResult = result;
             }
-            return matchResult && notMatchResult;
+            if (matchResult && notMatchResult) {
+                return new FunctionResult(true, null);
+            } else {
+                return new FunctionResult(false, target.getTargetName() + " does not match the pattern");
+            }
         } catch (PatternSyntaxException e) {
-            return false;
+            return new FunctionResult(false, "Invalid regex pattern: " + e.getMessage());
         }
     }
 

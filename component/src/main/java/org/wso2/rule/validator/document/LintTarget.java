@@ -31,11 +31,15 @@ public class LintTarget {
         this.value = value;
     }
 
-    public String getPathString() {
+    public static String getPathString(List<String> jsonPath) {
         StringBuilder resultPath = new StringBuilder();
         for (String path : jsonPath) {
             resultPath.append("[").append(path).append("]");
         }
         return resultPath.toString();
+    }
+
+    public String getTargetName() {
+        return jsonPath.get(jsonPath.size() - 1);
     }
 }

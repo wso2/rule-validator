@@ -27,6 +27,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.functions.FunctionResult;
+import org.wso2.rule.validator.functions.LintResult;
 import org.wso2.rule.validator.ruleset.Format;
 import org.wso2.rule.validator.ruleset.Rule;
 import org.wso2.rule.validator.ruleset.RuleThen;
@@ -63,29 +64,31 @@ public class Document {
         resolveReferences();
 
         // Read format
-        this.formats = new ArrayList<>();
-        Map<String, Object> documentMap = (Map<String, Object>) yamlData;
-        if (documentMap.containsKey(Constants.OPENAPI_KEY)) {
-            String oasVersion = (String) documentMap.get(Constants.OPENAPI_KEY);
-            if (oasVersion.startsWith(Constants.OAS_3_1_VERSION)) {
-                this.formats.add(Format.OAS3_1);
-                this.formats.add(Format.OAS3);
-            } else if (oasVersion.startsWith(Constants.OAS_3_0_VERSION)) {
-                this.formats.add(Format.OAS3_0);
-                this.formats.add(Format.OAS3);
-            } else {
-                this.formats.add(Format.OAS3);
-                this.formats.add(Format.OAS3_0);
-                this.formats.add(Format.OAS3_1);
+        if (this.document instanceof Map) {
+            this.formats = new ArrayList<>();
+            Map<String, Object> documentMap = (Map<String, Object>) yamlData;
+            if (documentMap.containsKey(Constants.OPENAPI_KEY)) {
+                String oasVersion = (String) documentMap.get(Constants.OPENAPI_KEY);
+                if (oasVersion.startsWith(Constants.OAS_3_1_VERSION)) {
+                    this.formats.add(Format.OAS3_1);
+                    this.formats.add(Format.OAS3);
+                } else if (oasVersion.startsWith(Constants.OAS_3_0_VERSION)) {
+                    this.formats.add(Format.OAS3_0);
+                    this.formats.add(Format.OAS3);
+                } else {
+                    this.formats.add(Format.OAS3);
+                    this.formats.add(Format.OAS3_0);
+                    this.formats.add(Format.OAS3_1);
+                }
+            } else if (documentMap.containsKey(Constants.SWAGGER_KEY)) {
+                this.formats.add(Format.OAS2);
             }
-        } else if (documentMap.containsKey(Constants.SWAGGER_KEY)) {
-            this.formats.add(Format.OAS2);
         }
     }
 
-    public List<FunctionResult> lint(Ruleset ruleset) throws InvalidRulesetException {
+    public List<LintResult> lint(Ruleset ruleset) throws InvalidRulesetException {
 
-        List<FunctionResult> results = new ArrayList<>();
+        List<LintResult> results = new ArrayList<>();
 
         for (Rule rule : ruleset.rules.values()) {
             if (!matchFormat(ruleset, rule)) {
@@ -131,8 +134,8 @@ public class Document {
          */
     }
 
-    private List<FunctionResult> lintNode(String path, Rule rule) throws InvalidRulesetException {
-        List<FunctionResult> results = new ArrayList<>();
+    private List<LintResult> lintNode(String path, Rule rule) throws InvalidRulesetException {
+        List<LintResult> results = new ArrayList<>();
         Object node;
         try {
             node = JsonPath.read(this.document, path);
@@ -143,12 +146,12 @@ public class Document {
             List<LintTarget> lintTargets = getLintTargets(node, then);
 
             for (LintTarget target : lintTargets) {
-                if (target.value == null) {
-                    continue;
-                }
-                boolean result = then.lintFunction.execute(target);
-                String targetPath = target.getPathString();
-                results.add(new FunctionResult(result, path + targetPath, rule));
+                List<String> parentPath = splitJsonPath(path);
+                parentPath.addAll(target.jsonPath);
+                String targetPath = LintTarget.getPathString(parentPath);
+                target.jsonPath = parentPath;
+                FunctionResult result = then.lintFunction.execute(target);
+                results.add(new LintResult(result.passed, targetPath, rule, rule.message == null ? result.message : rule.message));
             }
         }
         return results;

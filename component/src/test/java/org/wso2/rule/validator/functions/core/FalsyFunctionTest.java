@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.wso2.rule.validator.functions.FunctionResult;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,8 +46,8 @@ public class FalsyFunctionTest {
         for (Object input : falsyInputs) {
             LintTarget target = new LintTarget(new ArrayList<>(), input);
             try {
-                boolean result = falsy.execute(target);
-                assertTrue(result, "Expected falsy input: " + input + " to be falsy");
+                FunctionResult result = falsy.execute(target);
+                assertTrue(result.passed, "Expected falsy input: " + input + " to be falsy");
             } catch (InvalidRulesetException e) {
                 fail("Exception thrown for falsy input: " + e.getMessage());
             }
@@ -61,8 +62,8 @@ public class FalsyFunctionTest {
         for (Object input : truthyInputs) {
             LintTarget target = new LintTarget(new ArrayList<>(), input);
             try {
-                boolean result = falsy.execute(target);
-                assertFalse(result, "Expected truthy input: " + input + " to be truthy");
+                FunctionResult result = falsy.execute(target);
+                assertFalse(result.passed, "Expected truthy input: " + input + " to be truthy");
             } catch (InvalidRulesetException e) {
                 fail("Exception thrown for truthy input: " + e.getMessage());
             }

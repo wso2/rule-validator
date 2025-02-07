@@ -57,16 +57,18 @@ public class Rule {
             this.description = "";
         }
 
-        if (messageObject instanceof String) {
+        if (messageObject instanceof String && !((String) messageObject).isEmpty()) {
             this.message = (String) messageObject;
+        } else if (descriptionObject instanceof String && !((String) descriptionObject).isEmpty()) {
+            this.message = this.description;
         } else {
-            this.message = "";
+            this.message = null;
         }
 
         if (severityObject instanceof String) {
             this.severity = DiagnosticSeverity.valueOf(StringUtils.toRootUpperCase((String) severityObject));
         } else {
-            this.severity = DiagnosticSeverity.ERROR;
+            this.severity = DiagnosticSeverity.WARN;
         }
 
         if (resolvedObject instanceof Boolean) {

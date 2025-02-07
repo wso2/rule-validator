@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.wso2.rule.validator.functions.FunctionResult;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -65,8 +66,8 @@ class LengthFunctionTest {
             LengthFunction function = createFunction(options);
 
             try {
-                boolean result = function.execute(target);
-                assertFalse(result, "Expected input to exceed max length of 2");
+                FunctionResult result = function.execute(target);
+                assertFalse(result.passed, "Expected input to exceed max length of 2");
             } catch (InvalidRulesetException e) {
                 // Handle exception, optionally log
                 fail("Exception thrown: " + e.getMessage());
@@ -83,8 +84,8 @@ class LengthFunctionTest {
             LengthFunction function = createFunction(options);
 
             try {
-                boolean result = function.execute(target);
-                assertFalse(result, "Expected input to fall below min length of 4");
+                FunctionResult result = function.execute(target);
+                assertFalse(result.passed, "Expected input to fall below min length of 4");
             } catch (InvalidRulesetException e) {
                 // Handle exception, optionally log
                 fail("Exception thrown: " + e.getMessage());
@@ -102,8 +103,8 @@ class LengthFunctionTest {
             LengthFunction function = createFunction(options);
 
             try {
-                boolean result = function.execute(target);
-                assertTrue(result, "Expected input to be within min and max length of 3");
+                FunctionResult result = function.execute(target);
+                assertTrue(result.passed, "Expected input to be within min and max length of 3");
             } catch (InvalidRulesetException e) {
                 // Handle exception, optionally log
                 fail("Exception thrown: " + e.getMessage());
@@ -123,8 +124,8 @@ class LengthFunctionTest {
             LengthFunction function = createFunction(validOption);
             try {
                 // Validate that no exception is thrown during execution
-                boolean result = function.execute(new LintTarget(new ArrayList<>(), "123"));
-                assertTrue(result, "Expected no exception for valid options.");
+                FunctionResult result = function.execute(new LintTarget(new ArrayList<>(), "123"));
+                assertTrue(result.passed, "Expected no exception for valid options.");
             } catch (InvalidRulesetException e) {
                 // Handle exception, optionally log
                 fail("Exception thrown: " + e.getMessage());
