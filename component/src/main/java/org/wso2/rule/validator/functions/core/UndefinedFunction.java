@@ -19,6 +19,7 @@ package org.wso2.rule.validator.functions.core;
 
 import org.wso2.rule.validator.document.LintTarget;
 import org.wso2.rule.validator.functions.FunctionName;
+import org.wso2.rule.validator.functions.FunctionResult;
 import org.wso2.rule.validator.functions.LintFunction;
 
 import java.util.ArrayList;
@@ -46,7 +47,11 @@ public class UndefinedFunction extends LintFunction {
         return errors;
     }
 
-    public boolean executeFunction(LintTarget target) {
-        return target.value == null;
+    public FunctionResult executeFunction(LintTarget target) {
+        if (target.value == null) {
+            return new FunctionResult(true, null);
+        } else {
+            return new FunctionResult(false, target.getTargetName() + " is not undefined");
+        }
     }
 }
