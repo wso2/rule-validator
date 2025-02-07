@@ -34,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class LengthFunctionTest {
+public class LengthFunctionTest {
 
     private List<Object> inputs; // Common input values to test
     private Map<String, Object> options; // Common options map
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         // Initialize common inputs
         inputs = List.of(
                 "123",                  // String
@@ -58,7 +58,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testExceedsMaxLength() {
+    public void testExceedsMaxLength() {
         options.put(Constants.RULESET_LENGTH_MAX, 2); // Max length: 2
 
         for (Object input : inputs) {
@@ -76,7 +76,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testFallsBelowMinLength() {
+    public void testFallsBelowMinLength() {
         options.put(Constants.RULESET_LENGTH_MIN, 4); // Min length: 4
 
         for (Object input : inputs) {
@@ -94,7 +94,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testWithinMinAndMaxLength() {
+    public void testWithinMinAndMaxLength() {
         options.put(Constants.RULESET_LENGTH_MIN, 3); // Min length: 3
         options.put(Constants.RULESET_LENGTH_MAX, 3); // Max length: 3
 
@@ -113,7 +113,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testValidOptions() {
+    public void testValidOptions() {
         Map<String, Object>[] validOptions = new Map[]{
                 Map.of(Constants.RULESET_LENGTH_MIN, 2),
                 Map.of(Constants.RULESET_LENGTH_MAX, 4),
@@ -134,7 +134,7 @@ class LengthFunctionTest {
     }
 
     @Test
-    void testInvalidOptions() {
+    public void testInvalidOptions() {
         Map<String, Object>[] invalidOptions = new Map[]{
                 null,                       // Null options
                 Map.of("foo", true),        // Unsupported key

@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class FalsyFunctionTest {
-    private final FalsyFunction falsy = new FalsyFunction(null);
+    public final FalsyFunction falsy = new FalsyFunction(null);
 
     @Test
-    void givenFalsyInputsShouldReturnNoErrorMessage() {
+    public void givenFalsyInputsShouldReturnNoErrorMessage() {
         List<Object> falsyInputs = new ArrayList<>();
         falsyInputs.add(false);
         falsyInputs.add(null);
@@ -55,7 +55,7 @@ public class FalsyFunctionTest {
     }
 
     @Test
-    void givenTruthyInputsShouldReturnErrorMessage() {
+    public void givenTruthyInputsShouldReturnErrorMessage() {
         List<Object> truthyInputs = List.of(true, 1, new ArrayList<>(List.of(1)),
                 new HashMap<>(Map.of("key", "value")));
 
@@ -71,7 +71,7 @@ public class FalsyFunctionTest {
     }
 
     @Test
-    void validationTestForInvalidOptions() {
+    public void validationTestForInvalidOptions() {
         Map<String, Object> invalidOption = Map.of("unsupportedKey", true); // Unsupported key
 
         FalsyFunction function = new FalsyFunction(invalidOption);

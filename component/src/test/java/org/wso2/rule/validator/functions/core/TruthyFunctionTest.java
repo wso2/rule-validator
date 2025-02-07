@@ -32,12 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class TruthyFunctionTest {
+public class TruthyFunctionTest {
 
     private final TruthyFunction truthy = new TruthyFunction(null);
 
     @Test
-    void givenTruthyInputsShouldReturnNoErrorMessage() {
+    public void givenTruthyInputsShouldReturnNoErrorMessage() {
         List<Object> truthyInputs = List.of(true, 1, new ArrayList<>(List.of(1)),
                 new HashMap<>(Map.of("key", "value")));
 
@@ -53,7 +53,7 @@ class TruthyFunctionTest {
     }
 
     @Test
-    void givenFalsyInputsShouldReturnErrorMessage() {
+    public void givenFalsyInputsShouldReturnErrorMessage() {
         List<Object> falsyInputs = new ArrayList<>();
         falsyInputs.add(false);
         falsyInputs.add(null);
@@ -72,7 +72,7 @@ class TruthyFunctionTest {
     }
 
     @Test
-    void validationTestForInvalidOptions() {
+    public void validationTestForInvalidOptions() {
         Map<String, Object> invalidOption = Map.of("unsupportedKey", true); // Unsupported key
 
         TruthyFunction function = new TruthyFunction(invalidOption);
