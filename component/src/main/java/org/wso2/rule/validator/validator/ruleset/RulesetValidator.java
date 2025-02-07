@@ -133,7 +133,9 @@ public abstract class RulesetValidator {
             }
 
             // Validate severity
-            if (rule.containsKey(Constants.RULESET_SEVERITY) &&
+            if (!rule.containsKey(Constants.RULESET_SEVERITY)) {
+                errors.add(new RulesetValidationError(key, "Rule does not contain a 'severity' field."));
+            } else if (rule.containsKey(Constants.RULESET_SEVERITY) &&
                     !(rule.get(Constants.RULESET_SEVERITY) instanceof String)) {
                 errors.add(new RulesetValidationError(key, "'severity' field of a rule should be a string"));
             } else if (rule.containsKey(Constants.RULESET_SEVERITY)) {
@@ -236,6 +238,7 @@ public abstract class RulesetValidator {
             String function = (String) then.get(Constants.RULESET_FUNCTION);
             if (!FunctionFactory.isFunction(function)) {
                 errors.add(new RulesetValidationError(ruleName, "Unknown function: " + function));
+                return errors;
             }
         }
 
@@ -250,7 +253,13 @@ public abstract class RulesetValidator {
                         "'functionOptions' field of a then object should be an object"));
             }
         }
-        LintFunction lintFunction = FunctionFactory.getFunction(function, functionOptions);
+        LintFunction lintFunction;
+        try {
+            lintFunction = FunctionFactory.getFunction(function, functionOptions);
+        } catch (Exception e) {
+            errors.add(new RulesetValidationError(ruleName, e.getMessage()));
+            return errors;
+        }
         List<String> functionErrors = lintFunction.validateFunctionOptions();
         for (String error : functionErrors) {
             errors.add(new RulesetValidationError(ruleName, error));

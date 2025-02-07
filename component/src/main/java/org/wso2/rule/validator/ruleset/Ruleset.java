@@ -16,6 +16,7 @@
  * under the License.
  */
 package org.wso2.rule.validator.ruleset;
+
 import org.wso2.rule.validator.Constants;
 
 import java.util.ArrayList;
