@@ -133,9 +133,7 @@ public abstract class RulesetValidator {
             }
 
             // Validate severity
-            if (!rule.containsKey(Constants.RULESET_SEVERITY)) {
-                errors.add(new RulesetValidationError(key, "Rule does not contain a 'severity' field."));
-            } else if (rule.containsKey(Constants.RULESET_SEVERITY) &&
+            if (rule.containsKey(Constants.RULESET_SEVERITY) &&
                     !(rule.get(Constants.RULESET_SEVERITY) instanceof String)) {
                 errors.add(new RulesetValidationError(key, "'severity' field of a rule should be a string"));
             } else if (rule.containsKey(Constants.RULESET_SEVERITY)) {

@@ -95,7 +95,7 @@ public class Document {
             for (String given : rule.given) {
                 if (given.startsWith(Constants.ALIAS_PREFIX)) {
                     List<Format> aliasFormats;
-                    if (!this.formats.isEmpty()) {
+                    if (this.formats != null && !this.formats.isEmpty()) {
                         aliasFormats = this.formats;
                     } else {
                         aliasFormats = null;
