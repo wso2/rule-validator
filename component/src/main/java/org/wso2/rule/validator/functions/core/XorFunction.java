@@ -77,7 +77,7 @@ public class XorFunction extends LintFunction {
                     count++;
                 }
             } else {
-                throw new RuntimeException("Xor function can only be used with objects");
+                return new FunctionResult(true, "Xor function can only be applied to objects");
             }
         }
 

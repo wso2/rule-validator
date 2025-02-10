@@ -236,6 +236,7 @@ public abstract class RulesetValidator {
             String function = (String) then.get(Constants.RULESET_FUNCTION);
             if (!FunctionFactory.isFunction(function)) {
                 errors.add(new RulesetValidationError(ruleName, "Unknown function: " + function));
+                return errors;
             }
         }
 
@@ -250,7 +251,13 @@ public abstract class RulesetValidator {
                         "'functionOptions' field of a then object should be an object"));
             }
         }
-        LintFunction lintFunction = FunctionFactory.getFunction(function, functionOptions);
+        LintFunction lintFunction;
+        try {
+            lintFunction = FunctionFactory.getFunction(function, functionOptions);
+        } catch (Exception e) {
+            errors.add(new RulesetValidationError(ruleName, e.getMessage()));
+            return errors;
+        }
         List<String> functionErrors = lintFunction.validateFunctionOptions();
         for (String error : functionErrors) {
             errors.add(new RulesetValidationError(ruleName, error));

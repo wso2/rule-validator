@@ -18,7 +18,6 @@
 package org.wso2.rule.validator.ruleset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.DiagnosticSeverity;
 
 import java.util.ArrayList;
@@ -99,24 +98,7 @@ public class Rule {
             this.given.add((String) givenObject);
         }
 
-        // resolve given aliases
-        List<String> resolvedGiven = new ArrayList<>();
-        for (String given : this.given) {
-            if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                List<Format> aliasFormats;
-                if (!this.formats.isEmpty()) {
-                    aliasFormats = this.formats;
-                } else if (!this.rulesetFormats.isEmpty()) {
-                    aliasFormats = this.rulesetFormats;
-                } else {
-                    aliasFormats = null;
-                }
-                resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, aliases, aliasFormats));
-            } else {
-                resolvedGiven.add(given);
-            }
-        }
-        this.given = resolvedGiven;
+        // Aliases are resolved when document is being validated
     }
 
 }
