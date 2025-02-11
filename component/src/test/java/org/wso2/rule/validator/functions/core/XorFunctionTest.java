@@ -29,7 +29,7 @@ public class XorFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), document);
 
         try {
-            assertFalse(xorFunction.execute(target));
+            assertFalse(xorFunction.execute(target).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -47,7 +47,7 @@ public class XorFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), document);
 
         try {
-            assertFalse(xorFunction.execute(target));
+            assertFalse(xorFunction.execute(target).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -64,7 +64,7 @@ public class XorFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), document);
 
         try {
-            assertFalse(xorFunction.execute(target));
+            assertFalse(xorFunction.execute(target).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -77,7 +77,7 @@ public class XorFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), null);
 
         try {
-            assertTrue(xorFunction.execute(target));
+            assertTrue(xorFunction.execute(target).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -95,7 +95,7 @@ public class XorFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), document);
 
         try {
-            assertTrue(xorFunction.execute(target));
+            assertTrue(xorFunction.execute(target).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }

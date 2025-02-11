@@ -19,7 +19,7 @@ public class PatternFunctionTest {
 
         PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -32,7 +32,7 @@ public class PatternFunctionTest {
 
         PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -45,7 +45,7 @@ public class PatternFunctionTest {
 
         PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "aBc")));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "aBc")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -58,9 +58,9 @@ public class PatternFunctionTest {
 
         PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
-            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
-            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")).passed);
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")).passed);
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "abc")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -82,7 +82,7 @@ public class PatternFunctionTest {
 
         PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "def")));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "def")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -96,7 +96,7 @@ public class PatternFunctionTest {
 
         PatternFunction patternFunction = new PatternFunction(options);
         try {
-            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "def")));
+            assertTrue(patternFunction.execute(new LintTarget(new ArrayList<>(), "def")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }

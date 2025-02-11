@@ -23,7 +23,7 @@ public class AlphabeticalFunctionTest {
     public void testFalsyTargetShouldReturnNoError() {
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertTrue(function.execute(new LintTarget(new ArrayList<>(), false)));
+            assertTrue(function.execute(new LintTarget(new ArrayList<>(), false)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -33,7 +33,7 @@ public class AlphabeticalFunctionTest {
     public void testSingleElementTargetShouldReturnNoError() {
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertTrue(function.execute(new LintTarget(new ArrayList<>(), "a")));
+            assertTrue(function.execute(new LintTarget(new ArrayList<>(), "a")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -47,7 +47,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -61,7 +61,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -75,7 +75,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -89,7 +89,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertTrue(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertTrue(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -103,7 +103,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -117,7 +117,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -133,7 +133,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(null);
         try {
-            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -150,7 +150,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(options);
         try {
-            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertFalse(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -168,7 +168,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(options);
         try {
-            assertTrue(function.execute(new LintTarget(new ArrayList<>(), input)));
+            assertTrue(function.execute(new LintTarget(new ArrayList<>(), input)).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -185,7 +185,7 @@ public class AlphabeticalFunctionTest {
 
         AlphabeticalFunction function = new AlphabeticalFunction(options);
         try {
-            assertFalse(function.execute(new LintTarget(new ArrayList<>(), Arrays.asList(100, 1))));
+            assertFalse(function.execute(new LintTarget(new ArrayList<>(), Arrays.asList(100, 1))).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,11 +26,10 @@ public class CasingFunctionTest {
         CasingFunction casingFunction = new CasingFunction(Map.of("type", "camel"));
 
         try {
-            boolean result1 = casingFunction.execute(new LintTarget(new ArrayList<>(), false));
-            assertTrue(result1, "Boolean input should return true (no error).");
-
-            boolean result2 = casingFunction.execute(new LintTarget(new ArrayList<>(), 1));
-            assertTrue(result2, "Integer input should return true (no error).");
+            assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), false)).passed,
+                    "Boolean input should return true (no error).");
+            assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), 1)).passed,
+                    "Integer input should return true (no error).");
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception for non-string inputs.");
         }
@@ -40,9 +40,8 @@ public class CasingFunctionTest {
         CasingFunction casingFunction = new CasingFunction(Map.of("type", "camel"));
 
         try {
-            boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), ""));
-            assertTrue(result, "Empty string input should return true (no error).");
-
+            assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), "")).passed,
+                    "Empty string input should return true (no error).");
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception for empty string input.");
         }
@@ -61,8 +60,8 @@ public class CasingFunctionTest {
 
             for (String input : invalidInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertFalse(result, "Expected invalid input '" + input + "' to fail flat casing validation.");
+                    assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected invalid input '" + input + "' to fail flat casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -75,8 +74,8 @@ public class CasingFunctionTest {
 
             for (String input : validInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result, "Expected valid input '" + input + "' to pass flat casing validation.");
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected valid input '" + input + "' to pass flat casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -84,8 +83,7 @@ public class CasingFunctionTest {
 
             for (String input : validWithDigits) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result,
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                             "Expected valid input '" + input + "' to pass flat casing validation with digits.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
@@ -102,8 +100,8 @@ public class CasingFunctionTest {
 
                 for (String input : invalidInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected invalid input '" + input + "' to fail flat casing validation.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected invalid input '" + input + "' to fail flat casing validation.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -111,8 +109,8 @@ public class CasingFunctionTest {
 
                 for (String input : validWithDigits) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected input '" + input + "' to fail due to digit restriction.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected input '" + input + "' to fail due to digit restriction.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -125,8 +123,7 @@ public class CasingFunctionTest {
 
                 for (String input : validInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertTrue(result,
+                        assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                                 "Expected valid input '" + input + "' to pass flat casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
@@ -149,8 +146,8 @@ public class CasingFunctionTest {
 
             for (String input : invalidInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertFalse(result, "Expected invalid input '" + input + "' to fail camel casing validation.");
+                    assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected invalid input '" + input + "' to fail camel casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -163,8 +160,8 @@ public class CasingFunctionTest {
 
             for (String input : validInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result, "Expected valid input '" + input + "' to pass camel casing validation.");
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected valid input '" + input + "' to pass camel casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -172,8 +169,7 @@ public class CasingFunctionTest {
 
             for (String input : validWithDigits) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result,
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                             "Expected valid input '" + input + "' to pass camel casing validation with digits.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
@@ -190,8 +186,8 @@ public class CasingFunctionTest {
 
                 for (String input : invalidInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected invalid input '" + input + "' to fail camel casing validation.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected invalid input '" + input + "' to fail camel casing validation.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -199,8 +195,8 @@ public class CasingFunctionTest {
 
                 for (String input : validWithDigits) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected input '" + input + "' to fail due to digit restriction.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected input '" + input + "' to fail due to digit restriction.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -213,8 +209,7 @@ public class CasingFunctionTest {
 
                 for (String input : validInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertTrue(result,
+                        assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                                 "Expected valid input '" + input + "' to pass camel casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
@@ -238,8 +233,8 @@ public class CasingFunctionTest {
 
             for (String input : invalidInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertFalse(result, "Expected invalid input '" + input + "' to fail Pascal casing validation.");
+                    assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected invalid input '" + input + "' to fail Pascal casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -252,8 +247,8 @@ public class CasingFunctionTest {
 
             for (String input : validInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result, "Expected valid input '" + input + "' to pass Pascal casing validation.");
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected valid input '" + input + "' to pass Pascal casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -261,8 +256,7 @@ public class CasingFunctionTest {
 
             for (String input : validWithDigits) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result,
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                             "Expected valid input '" + input + "' to pass Pascal casing validation with digits.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
@@ -279,8 +273,8 @@ public class CasingFunctionTest {
 
                 for (String input : invalidInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected invalid input '" + input + "' to fail Pascal casing validation.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected invalid input '" + input + "' to fail Pascal casing validation.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -288,8 +282,8 @@ public class CasingFunctionTest {
 
                 for (String input : validWithDigits) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected input '" + input + "' to fail due to digit restriction.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected input '" + input + "' to fail due to digit restriction.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -302,10 +296,8 @@ public class CasingFunctionTest {
 
                 for (String input : validInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertTrue(result,
-                                "Expected valid input '" + input
-                                        + "' to pass Pascal casing validation without digits.");
+                        assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected valid input '" + input + "' to pass Pascal casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -329,8 +321,8 @@ public class CasingFunctionTest {
 
             for (String input : invalidInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertFalse(result, "Expected invalid input '" + input + "' to fail Kebab casing validation.");
+                    assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected invalid input '" + input + "' to fail Kebab casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -343,8 +335,8 @@ public class CasingFunctionTest {
 
             for (String input : validInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result, "Expected valid input '" + input + "' to pass Kebab casing validation.");
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected valid input '" + input + "' to pass Kebab casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -352,8 +344,7 @@ public class CasingFunctionTest {
 
             for (String input : validWithDigits) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result,
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                             "Expected valid input '" + input + "' to pass Kebab casing validation with digits.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
@@ -370,8 +361,8 @@ public class CasingFunctionTest {
 
                 for (String input : invalidInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected invalid input '" + input + "' to fail Kebab casing validation.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected invalid input '" + input + "' to fail Kebab casing validation.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -379,8 +370,8 @@ public class CasingFunctionTest {
 
                 for (String input : validWithDigits) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected input '" + input + "' to fail due to digit restriction.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected input '" + input + "' to fail due to digit restriction.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -393,8 +384,7 @@ public class CasingFunctionTest {
 
                 for (String input : validInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertTrue(result,
+                        assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                                 "Expected valid input '" + input + "' to pass Kebab casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
@@ -419,8 +409,8 @@ public class CasingFunctionTest {
 
             for (String input : invalidInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertFalse(result, "Expected invalid input '" + input + "' to fail COBOL casing validation.");
+                    assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected invalid input '" + input + "' to fail COBOL casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -433,8 +423,8 @@ public class CasingFunctionTest {
 
             for (String input : validInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result, "Expected valid input '" + input + "' to pass COBOL casing validation.");
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected valid input '" + input + "' to pass COBOL casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -442,8 +432,7 @@ public class CasingFunctionTest {
 
             for (String input : validWithDigits) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result,
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                             "Expected valid input '" + input + "' to pass COBOL casing validation with digits.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
@@ -460,8 +449,8 @@ public class CasingFunctionTest {
 
                 for (String input : invalidInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected invalid input '" + input + "' to fail COBOL casing validation.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected invalid input '" + input + "' to fail COBOL casing validation.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -469,8 +458,8 @@ public class CasingFunctionTest {
 
                 for (String input : validWithDigits) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected input '" + input + "' to fail due to digit restriction.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected input '" + input + "' to fail due to digit restriction.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -483,8 +472,7 @@ public class CasingFunctionTest {
 
                 for (String input : validInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertTrue(result,
+                        assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                                 "Expected valid input '" + input + "' to pass COBOL casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
@@ -509,8 +497,8 @@ public class CasingFunctionTest {
 
             for (String input : invalidInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertFalse(result, "Expected invalid input '" + input + "' to fail snake casing validation.");
+                    assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected invalid input '" + input + "' to fail snake casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -523,8 +511,8 @@ public class CasingFunctionTest {
 
             for (String input : validInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result, "Expected valid input '" + input + "' to pass snake casing validation.");
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected valid input '" + input + "' to pass snake casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -532,8 +520,7 @@ public class CasingFunctionTest {
 
             for (String input : validWithDigits) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result,
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                             "Expected valid input '" + input + "' to pass snake casing validation with digits.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
@@ -550,8 +537,8 @@ public class CasingFunctionTest {
 
                 for (String input : invalidInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected invalid input '" + input + "' to fail snake casing validation.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected invalid input '" + input + "' to fail snake casing validation.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -559,8 +546,8 @@ public class CasingFunctionTest {
 
                 for (String input : validWithDigits) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected input '" + input + "' to fail due to digit restriction.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected input '" + input + "' to fail due to digit restriction.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -573,8 +560,7 @@ public class CasingFunctionTest {
 
                 for (String input : validInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertTrue(result,
+                        assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                                 "Expected valid input '" + input + "' to pass snake casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
@@ -599,8 +585,8 @@ public class CasingFunctionTest {
 
             for (String input : invalidInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertFalse(result, "Expected invalid input '" + input + "' to fail macro casing validation.");
+                    assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected invalid input '" + input + "' to fail macro casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -613,8 +599,8 @@ public class CasingFunctionTest {
 
             for (String input : validInputs) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result, "Expected valid input '" + input + "' to pass macro casing validation.");
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                            "Expected valid input '" + input + "' to pass macro casing validation.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
                 }
@@ -622,8 +608,7 @@ public class CasingFunctionTest {
 
             for (String input : validWithDigits) {
                 try {
-                    boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                    assertTrue(result,
+                    assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                             "Expected valid input '" + input + "' to pass macro casing validation with digits.");
                 } catch (InvalidRulesetException e) {
                     fail("Execution should not throw an exception for input: " + input);
@@ -640,8 +625,8 @@ public class CasingFunctionTest {
 
                 for (String input : invalidInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected invalid input '" + input + "' to fail macro casing validation.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected invalid input '" + input + "' to fail macro casing validation.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -649,8 +634,8 @@ public class CasingFunctionTest {
 
                 for (String input : validWithDigits) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertFalse(result, "Expected input '" + input + "' to fail due to digit restriction.");
+                        assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
+                                "Expected input '" + input + "' to fail due to digit restriction.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -663,8 +648,7 @@ public class CasingFunctionTest {
 
                 for (String input : validInputs) {
                     try {
-                        boolean result = casingFunction.execute(new LintTarget(new ArrayList<>(), input));
-                        assertTrue(result,
+                        assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
                                 "Expected valid input '" + input + "' to pass macro casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
@@ -704,13 +688,14 @@ public class CasingFunctionTest {
             CasingFunction casingFunction = new CasingFunction(options);
 
             try {
-                assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), simple + charSeparator + simple)));
+                assertTrue(casingFunction.execute(
+                        new LintTarget(new ArrayList<>(), simple + charSeparator + simple)).passed);
 
-                assertFalse(
-                        casingFunction.execute(new LintTarget(new ArrayList<>(), simple + charSeparator + invalid)));
+                assertFalse(casingFunction.execute(
+                        new LintTarget(new ArrayList<>(), simple + charSeparator + invalid)).passed);
 
                 boolean digitsResult = casingFunction.execute(
-                        new LintTarget(new ArrayList<>(), withDigits + charSeparator + simple));
+                        new LintTarget(new ArrayList<>(), withDigits + charSeparator + simple)).passed;
                 if (!disallowDigits) {
                     assertTrue(digitsResult);
                 } else {
@@ -718,7 +703,7 @@ public class CasingFunctionTest {
                 }
 
                 boolean leadingSepResult = casingFunction.execute(
-                        new LintTarget(new ArrayList<>(), charSeparator + simple + charSeparator + simple));
+                        new LintTarget(new ArrayList<>(), charSeparator + simple + charSeparator + simple)).passed;
                 if (allowLeading) {
                     assertTrue(leadingSepResult);
                 } else {
@@ -739,8 +724,8 @@ public class CasingFunctionTest {
         CasingFunction casingFunction = new CasingFunction(options);
 
         try {
-            assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), "/")));
-            assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), "//")));
+            assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), "/")).passed);
+            assertFalse(casingFunction.execute(new LintTarget(new ArrayList<>(), "//")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception for leading separator validation.");
         }
@@ -753,7 +738,7 @@ public class CasingFunctionTest {
         CasingFunction pascalCasingFunction = new CasingFunction(pascalCaseOptions);
 
         try {
-            assertTrue(pascalCasingFunction.execute(new LintTarget(new ArrayList<>(), "X-MyAmazing-Header")));
+            assertTrue(pascalCasingFunction.execute(new LintTarget(new ArrayList<>(), "X-MyAmazing-Header")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception for Pascal case validation.");
         }
@@ -763,7 +748,7 @@ public class CasingFunctionTest {
         CasingFunction camelCasingFunction = new CasingFunction(camelCaseOptions);
 
         try {
-            assertTrue(camelCasingFunction.execute(new LintTarget(new ArrayList<>(), "/path/to/myResource")));
+            assertTrue(camelCasingFunction.execute(new LintTarget(new ArrayList<>(), "/path/to/myResource")).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception for Camel case validation.");
         }
@@ -782,32 +767,23 @@ public class CasingFunctionTest {
 
             for (Map<String, Object> validOption : validOptions) {
                 CasingFunction function = new CasingFunction(validOption);
-                try {
-                    // Validate that no exception is thrown during execution
-                    boolean result = function.execute(new LintTarget(new ArrayList<>(), "foo"));
-                } catch (InvalidRulesetException e) {
-                    // Handle exception, optionally log
-                    fail("Exception thrown: " + e.getMessage());
-                }
+                assertDoesNotThrow(() -> function.execute(new LintTarget(new ArrayList<>(), "foo")));
             }
         }
     }
 
     @Test
     public void shouldThrowExceptionForInvalidOptions() {
-        Map<String, Object>[] invalidOptions = new Map[] { Map.of("type", "macro", "foo", true), // Invalid option foo
+        Map<String, Object>[] invalidOptions = new Map[] { Map.of("type", "macro", "foo", true),
                 Map.of("type", "pascal", "disallowDigits", false, "separator", Map.of()),
-                // Missing separator char option
                 Map.of("type", "pascal", "disallowDigits", false, "separator", Map.of("allowLeading", true)),
-                // Missing separator char option
-                Map.of("type", "snake", "separator", Map.of("char", "a", "foo", true)), // Invalid separator option foo
-                Map.of("type", "pascal", "separator", Map.of("char", "fo")), // Invalid char option value
-                new HashMap<String, Object>() {{
-                    put("type", "pascal");
-                    put("separator", new HashMap<String, Object>() {{
-                        put("char", null); // Invalid char option value (null)
-                    }});
-                }} };
+                Map.of("type", "snake", "separator", Map.of("char", "a", "foo", true)),
+                Map.of("type", "pascal", "separator", Map.of("char", "fo")), new HashMap<String, Object>() {{
+            put("type", "pascal");
+            put("separator", new HashMap<String, Object>() {{
+                put("char", null);
+            }});
+        }} };
 
         for (Map<String, Object> invalidOption : invalidOptions) {
             CasingFunction function = new CasingFunction(invalidOption);

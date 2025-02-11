@@ -25,7 +25,7 @@ public class EnumerationFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), "x");
 
         try {
-            assertTrue(function.execute(target));
+            assertTrue(function.execute(target).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -40,7 +40,7 @@ public class EnumerationFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), "x");
 
         try {
-            assertFalse(function.execute(target));
+            assertFalse(function.execute(target).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -55,7 +55,7 @@ public class EnumerationFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), new Object());
 
         try {
-            assertTrue(function.execute(target));
+            assertTrue(function.execute(target).passed);
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }

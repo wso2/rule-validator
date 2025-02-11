@@ -29,7 +29,8 @@ public class SchemaFunctionTest {
 
         boolean result = false;
         try {
-            assertFalse(schemaFunction.execute(target), "Validation should fail when value is 2 with exclusiveMaximum");
+            assertFalse(schemaFunction.execute(target).passed,
+                    "Validation should fail when value is 2 with exclusiveMaximum");
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -37,7 +38,8 @@ public class SchemaFunctionTest {
         options.put("dialect", "auto");
         schemaFunction = new SchemaFunction(options);
         try {
-            assertFalse(schemaFunction.execute(target), "Validation should fail when value is 2 with exclusiveMaximum");
+            assertFalse(schemaFunction.execute(target).passed,
+                    "Validation should fail when value is 2 with exclusiveMaximum");
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -56,11 +58,13 @@ public class SchemaFunctionTest {
 
         LintTarget target = new LintTarget(new ArrayList<>(), 2);
 
-        assertFalse(schemaFunction.executeFunction(target), "Validation should fail when value type is not string");
+        assertFalse(schemaFunction.executeFunction(target).passed,
+                "Validation should fail when value type is not string");
 
         options.put("dialect", "auto");
         schemaFunction = new SchemaFunction(options);
-        assertFalse(schemaFunction.executeFunction(target), "Validation should fail when value type is not string");
+        assertFalse(schemaFunction.executeFunction(target).passed,
+                "Validation should fail when value type is not string");
     }
 
     @Test
@@ -77,8 +81,7 @@ public class SchemaFunctionTest {
         LintTarget target = new LintTarget(new ArrayList<>(), 2);
 
         try {
-            assertFalse(schemaFunction.execute(target),
-                    "Validation should fail as value type is not a string");
+            assertFalse(schemaFunction.execute(target).passed, "Validation should fail as value type is not a string");
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
@@ -94,8 +97,7 @@ public class SchemaFunctionTest {
         schemaFunction = new SchemaFunction(options);
 
         try {
-            assertFalse(schemaFunction.execute(target),
-                    "Validation should fail as value type is not a string");
+            assertFalse(schemaFunction.execute(target).passed, "Validation should fail as value type is not a string");
         } catch (InvalidRulesetException e) {
             fail("Execution should not throw an exception.");
         }
