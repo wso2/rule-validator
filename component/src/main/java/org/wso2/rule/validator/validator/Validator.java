@@ -65,7 +65,7 @@ public class Validator {
             if (lintResult.passed) {
                 continue;
             }
-            results.add(new DocumentValidationResult(lintResult.path, lintResult.rule.message,
+            results.add(new DocumentValidationResult(lintResult.path, lintResult.message,
                     lintResult.rule.name, lintResult.rule.severity));
         }
         return gson.toJson(results);

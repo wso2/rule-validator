@@ -142,7 +142,7 @@ public class CasingFunction extends LintFunction {
         } else if (baseCase.equals("macro")) {
             basePattern = macro;
         } else {
-            throw new RuntimeException("Invalid case type");
+            basePattern = flat;
         }
 
         String pattern = basePattern.replace("{__DIGITS__}", allowdigits ? digitPattern : "");

@@ -47,12 +47,12 @@ public class FunctionFactory {
     public static LintFunction getFunction(String functionName, Map<String, Object> functionOptions) {
         Class<? extends LintFunction> functionClass = functionRegistry.get(StringUtils.toRootLowerCase(functionName));
         if (functionClass == null) {
-            throw new IllegalArgumentException("Unknown function: " + functionName);
+            throw new RuntimeException("Unknown function: " + functionName);
         }
         try {
             return (LintFunction) functionClass.getDeclaredConstructors()[0].newInstance(functionOptions);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Error creating function instance", e);
+            throw new RuntimeException("Error creating function instance: " + e.getMessage());
         }
     }
 
