@@ -18,6 +18,7 @@
 package org.wso2.rule.validator.ruleset;
 
 import org.wso2.rule.validator.Constants;
+import org.wso2.rule.validator.InvalidRulesetException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +62,11 @@ public class Ruleset {
                     this.hasComplexAliases = true;
                 }
             }
-            resolveAliasesInAliases();
+            try {
+                RulesetAliasDefinition.resolveAliasesInAliases(this.aliases);
+            } catch (InvalidRulesetException e) {
+                // Ignore. Should be caught in the ruleset validation
+            }
         }
 
         // Read rules
@@ -70,57 +75,5 @@ public class Ruleset {
             Rule rule = new Rule(ruleName, (Map<String, Object>) entry.getValue(), this.aliases, this.formats);
             this.rules.put(ruleName, rule);
         }
-    }
-
-    private void resolveAliasesInAliases() {
-        while (!allAliasesResolved()) {
-            for (RulesetAliasDefinition alias : this.aliases.values()) {
-                if (!alias.isComplexAlias()) {
-                    List<String> resolvedGiven = new ArrayList<>();
-                    for (String given : alias.given) {
-                        if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                            resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(given, this.aliases, null));
-                        } else {
-                            resolvedGiven.add(given);
-                        }
-                    }
-                    alias.given = resolvedGiven;
-                } else {
-                    for (RulesetAliasTarget target: alias.targets) {
-                        List<String> resolvedGiven = new ArrayList<>();
-                        for (String given: target.given) {
-                            if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                                resolvedGiven.addAll(RulesetAliasDefinition.resolveAliasGiven(
-                                        given, this.aliases, target.formats));
-                            } else {
-                                resolvedGiven.add(given);
-                            }
-                        }
-                        target.given = resolvedGiven;
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean allAliasesResolved() {
-        for (RulesetAliasDefinition alias : this.aliases.values()) {
-            if (!alias.isComplexAlias()) {
-                for (String given : alias.given) {
-                    if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                        return false;
-                    }
-                }
-            } else {
-                for (RulesetAliasTarget target: alias.targets) {
-                    for (String given: target.given) {
-                        if (given.startsWith(Constants.ALIAS_PREFIX)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
     }
 }
