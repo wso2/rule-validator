@@ -1,7 +1,6 @@
 package org.wso2.rule.validator.functions.core;
 
 import org.junit.jupiter.api.Test;
-import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
 
@@ -123,7 +122,6 @@ public class AlphabeticalFunctionTest {
         }
     }
 
-
     @Test
     void testArrayContainingInvalidValuesShouldReturnError() {
         List<Object> input = new ArrayList<>();
@@ -145,8 +143,8 @@ public class AlphabeticalFunctionTest {
         options.put("keyedBy", "a");
 
         List<Object> input = new ArrayList<>();
-        input.add(Map.of( "a", "10"));
-        input.add(Map.of( "a", "1"));
+        input.add(Map.of("a", "10"));
+        input.add(Map.of("a", "1"));
 
         AlphabeticalFunction function = new AlphabeticalFunction(options);
         try {
@@ -162,9 +160,9 @@ public class AlphabeticalFunctionTest {
         options.put("keyedBy", "a");
 
         List<Object> input = new ArrayList<>();
-        input.add(Map.of( "a", "1"));
-        input.add(Map.of( "a", "2"));
-        input.add(Map.of( "a", "2"));
+        input.add(Map.of("a", "1"));
+        input.add(Map.of("a", "2"));
+        input.add(Map.of("a", "2"));
 
         AlphabeticalFunction function = new AlphabeticalFunction(options);
         try {
@@ -193,11 +191,7 @@ public class AlphabeticalFunctionTest {
 
     @Test
     void testValidFunctionOptionsShouldNotThrow() {
-        Map<String, Object>[] validOptions = new Map[]{
-                null,
-                Map.of(),
-                Map.of("keyedBy", "bar"),
-        };
+        Map<String, Object>[] validOptions = new Map[] { null, Map.of(), Map.of("keyedBy", "bar"), };
 
         for (Map<String, Object> validOption : validOptions) {
             AlphabeticalFunction function = new AlphabeticalFunction(validOption);
@@ -207,14 +201,12 @@ public class AlphabeticalFunctionTest {
 
     @Test
     void testInvalidFunctionOptionsShouldNotThrow() {
-        Map<String, Object>[] invalidOptions = new Map[]{
-                Map.of("foo", true),
-                Map.of("keyedBy", 2),
-        };
+        Map<String, Object>[] invalidOptions = new Map[] { Map.of("foo", true), Map.of("keyedBy", 2), };
 
         for (Map<String, Object> invalidOption : invalidOptions) {
             AlphabeticalFunction function = new AlphabeticalFunction(invalidOption);
-            assertThrows(InvalidRulesetException.class, () -> function.execute(new LintTarget(new ArrayList<>(), List.of())),
+            assertThrows(InvalidRulesetException.class,
+                    () -> function.execute(new LintTarget(new ArrayList<>(), List.of())),
                     "Expected InvalidRulesetException for invalid options.");
         }
     }
