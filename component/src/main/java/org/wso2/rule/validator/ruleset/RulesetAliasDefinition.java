@@ -37,7 +37,7 @@ public class RulesetAliasDefinition {
     private String description;
     public List<RulesetAliasTarget> targets;
     private boolean isComplexAlias;
-    private List<String> given;
+    public List<String> given;
 
     public RulesetAliasDefinition(String name, Object aliasObject) {
         this.name = name;

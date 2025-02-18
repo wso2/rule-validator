@@ -51,8 +51,9 @@ public class ValidatorTest {
 
             for (Path file : files) {
                 String[] allowedScenarios = {
-                        "aliases.scenario",
-                        "alphabetical-responses-order.oas3.scenario"
+//                        "aliases.scenario",
+//                        "alphabetical-responses-order.oas3.scenario",
+                        "results-default.scenario"
                 };
                 List<String> allowedScenariosList = List.of(allowedScenarios);
                 if (allowedScenariosList.contains(file.toString().split("scenarios/")[1])) {

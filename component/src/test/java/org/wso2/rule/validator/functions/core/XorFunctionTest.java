@@ -112,8 +112,8 @@ public class XorFunctionTest {
 
     @Test
     public void givenInvalidOptions_shouldThrow() {
-        List<Object> invalidOptionsList = Arrays.asList(Map.of("properties", new ArrayList<>(List.of("foo", 2))),
-                Map.of("properties", new ArrayList<>(List.of("foo"))), Map.of("properties", new ArrayList<>(List.of())),
+        List<Object> invalidOptionsList = Arrays.asList(2, Map.of("properties", new ArrayList<>(List.of("foo"))),
+                Map.of("properties", new ArrayList<>(List.of())),
                 Map.of("properties", new ArrayList<>(List.of("foo", new HashMap<>()))),
                 Map.of("properties", new ArrayList<>(List.of("foo", "bar")), "foo", true));
 

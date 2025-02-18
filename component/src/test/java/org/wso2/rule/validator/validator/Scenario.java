@@ -100,8 +100,12 @@ public class Scenario {
     private String processRuleset(String rulesetKey) {
         String jsRuleset = this.assets.get(rulesetKey);
         String rulesetPrefix = "module.exports = ";
-        String ruleset = jsRuleset.substring(jsRuleset.indexOf(rulesetPrefix) + rulesetPrefix.length());
-        return ruleset;
+        int rulesetPrefixIndex = jsRuleset.indexOf(rulesetPrefix);
+        if (rulesetPrefixIndex > 0) {
+            return jsRuleset.substring(rulesetPrefixIndex + rulesetPrefix.length());
+        } else {
+            return jsRuleset;
+        }
     }
 
     private static Map<String, String> extractSections(String content) {
