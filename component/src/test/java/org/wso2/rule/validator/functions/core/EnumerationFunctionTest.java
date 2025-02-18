@@ -47,7 +47,7 @@ public class EnumerationFunctionTest {
     }
 
     @Test
-    public void givenNonPrimitiveValueShouldReturnFalse() {
+    public void givenNonPrimitiveValueShouldReturnTrue() {
         Map<String, Object> options = new HashMap<>();
         options.put("values", new String[]{"test"});
 
