@@ -76,11 +76,13 @@ public class CasingFunction extends LintFunction {
 
                 Map<String, Object> separator = (Map<String, Object>) options.get(entry.getKey());
 
-                if (!separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR) && !separator.containsKey(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING)) {
+                if (!separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR) &&
+                        !separator.containsKey(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING)) {
                     errors.add("The separator object should not be empty if it is defined.");
                 }
 
-                if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING) && !separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR)) {
+                if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING)
+                        && !separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR)) {
                     errors.add("Separator char must be present if allowLeading is specified.");
                 }
 
@@ -89,11 +91,13 @@ public class CasingFunction extends LintFunction {
                     errors.add("The '" + Constants.RULESET_CASING_SEPARATOR_CHAR +
                             "' key in the '" + Constants.RULESET_CASING_SEPARATOR + "' option should be a string.");
                 }
-                if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR) && separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR) == null) {
+                if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR) &&
+                        separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR) == null) {
                     errors.add("Separator char should not be null");
                     return errors;
                 }
-                if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR) && ((String)separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR)).length() > 1) {
+                if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_CHAR) &&
+                        ((String) separator.get(Constants.RULESET_CASING_SEPARATOR_CHAR)).length() > 1) {
                     errors.add("Separator char is not a single character.");
                 }
                 if (separator.containsKey(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING) &&
@@ -103,11 +107,12 @@ public class CasingFunction extends LintFunction {
                 }
 
                 for (String separatorKey : separator.keySet()) {
-                    if (!separatorKey.equals(Constants.RULESET_CASING_SEPARATOR_CHAR) && !separatorKey.equals(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING)) {
+                    if (!separatorKey.equals(Constants.RULESET_CASING_SEPARATOR_CHAR) &&
+                            !separatorKey.equals(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING)) {
                         errors.add("Invalid option in separator object: " + separatorKey);
                     }
                 }
-            } else if (!entry.getKey().equals(Constants.RULESET_CASING_TYPE) && !entry.getKey().equals(Constants.RULESET_CASING_DISALLOW_DIGITS)){
+            } else if (!entry.getKey().equals(Constants.RULESET_CASING_TYPE)) {
                 errors.add("Invalid function option for the casing function: " + entry.getKey());
             }
         }
@@ -147,7 +152,8 @@ public class CasingFunction extends LintFunction {
         if (targetString.matches(getPattern(options))) {
             return new FunctionResult(true, null);
         } else {
-            return new FunctionResult(false, target.getTargetName() + " does not match the specified casing pattern.");
+            return new FunctionResult(false, target.getTargetName() +
+                    " does not match the specified casing pattern.");
         }
     }
 

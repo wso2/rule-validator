@@ -41,6 +41,8 @@ public class RulesetAliasDefinition {
 
     public RulesetAliasDefinition(String name, Object aliasObject) {
         this.name = name;
+        this.given = new ArrayList<>();
+        this.targets = new ArrayList<>();
 
         if (aliasObject instanceof List) {
             isComplexAlias = false;
@@ -51,9 +53,11 @@ public class RulesetAliasDefinition {
             this.description = (String) aliasMap.get(Constants.DESCRIPTION);
             this.targets = new ArrayList<>();
             List<Object> targets = (List<Object>) aliasMap.get(Constants.RULESET_ALIAS_TARGETS);
-            for (Object target : targets) {
-                RulesetAliasTarget aliasTarget = new RulesetAliasTarget(target);
-                this.targets.add(aliasTarget);
+            if (targets != null) {
+                for (Object target : targets) {
+                    RulesetAliasTarget aliasTarget = new RulesetAliasTarget(target);
+                    this.targets.add(aliasTarget);
+                }
             }
         }
     }
@@ -154,6 +158,10 @@ public class RulesetAliasDefinition {
             }
         }
         return true;
+    }
+
+    public List<String> getGiven() {
+        return new ArrayList<>(given);
     }
 }
 

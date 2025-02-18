@@ -51,11 +51,20 @@ public class EnumerationFunction extends LintFunction {
             return errors;
         }
 
+        if (!(options.get("values") instanceof List)) {
+            errors.add("Enumeration function values options needs to be a list");
+        }
+
         return errors;
     }
 
     public FunctionResult executeFunction(LintTarget target) {
-        String[] values = (String[]) options.get(Constants.RULESET_ENUMERATION_VALUES);
+        List<String> values = (List<String>) options.get(Constants.RULESET_ENUMERATION_VALUES);
+
+        if (!(target.value instanceof Integer) && !(target.value instanceof String)) {
+            return new FunctionResult(true, null);
+        }
+
         for (String value : values) {
             if (target.value.equals(value)) {
                 return new FunctionResult(true, null);

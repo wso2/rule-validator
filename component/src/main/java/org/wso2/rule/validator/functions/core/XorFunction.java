@@ -64,6 +64,17 @@ public class XorFunction extends LintFunction {
             }
         }
 
+        if (properties.size() <= 1) {
+            errors.add("Xor functions requires more than 1 property.");
+            return errors;
+        }
+
+        for (String key : options.keySet()) {
+            if (!key.equals(Constants.RULESET_XOR_PROPERTIES)) {
+                errors.add("Unknown option for the Xor function: " + key);
+            }
+        }
+
         return errors;
     }
 
