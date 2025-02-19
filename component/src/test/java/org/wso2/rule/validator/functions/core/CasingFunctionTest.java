@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
 
@@ -41,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class CasingFunctionTest {
     @Test
     public void givenNonStringInputShouldReturnNoErrorMessage() {
-        CasingFunction casingFunction = new CasingFunction(Map.of("type", "camel"));
+        CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "camel"));
 
         try {
             assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), false)).passed,
@@ -55,7 +56,7 @@ public class CasingFunctionTest {
 
     @Test
     public void givenEmptyStringInputShouldReturnNoErrorMessage() {
-        CasingFunction casingFunction = new CasingFunction(Map.of("type", "camel"));
+        CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "camel"));
 
         try {
             assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), "")).passed,
@@ -74,7 +75,7 @@ public class CasingFunctionTest {
 
         @Test
         public void shouldRecognizeInvalidInputForFlatCase() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "sdf"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "sdf"));
 
             for (String input : invalidInputs) {
                 try {
@@ -88,7 +89,7 @@ public class CasingFunctionTest {
 
         @Test
         public void givenValidFlatCaseInputShouldReturnNoErrorMessage() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "flat"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "flat"));
 
             for (String input : validInputs) {
                 try {
@@ -114,7 +115,8 @@ public class CasingFunctionTest {
 
             @Test
             public void shouldRecognizeInvalidInputForFlatCaseWhenDigitsAreDisallowed() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "flat", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "flat", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : invalidInputs) {
                     try {
@@ -137,7 +139,8 @@ public class CasingFunctionTest {
 
             @Test
             public void givenValidFlatCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "flat", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "flat", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : validInputs) {
                     try {
@@ -160,7 +163,7 @@ public class CasingFunctionTest {
 
         @Test
         public void shouldRecognizeInvalidInputForCamelCase() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "camel"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "camel"));
 
             for (String input : invalidInputs) {
                 try {
@@ -174,7 +177,7 @@ public class CasingFunctionTest {
 
         @Test
         public void givenValidCamelCaseInputShouldReturnNoErrorMessage() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "camel"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "camel"));
 
             for (String input : validInputs) {
                 try {
@@ -200,7 +203,8 @@ public class CasingFunctionTest {
 
             @Test
             public void shouldRecognizeInvalidInputForCamelCaseWhenDigitsAreDisallowed() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "camel", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "camel", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : invalidInputs) {
                     try {
@@ -223,7 +227,8 @@ public class CasingFunctionTest {
 
             @Test
             public void givenValidCamelCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "camel", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "camel", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : validInputs) {
                     try {
@@ -247,7 +252,7 @@ public class CasingFunctionTest {
 
         @Test
         public void shouldRecognizeInvalidInputForPascalCase() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "pascal"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "pascal"));
 
             for (String input : invalidInputs) {
                 try {
@@ -261,7 +266,7 @@ public class CasingFunctionTest {
 
         @Test
         public void givenValidPascalCaseInputShouldReturnNoErrorMessage() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "pascal"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "pascal"));
 
             for (String input : validInputs) {
                 try {
@@ -287,7 +292,9 @@ public class CasingFunctionTest {
 
             @Test
             public void shouldRecognizeInvalidInputForPascalCaseWhenDigitsAreDisallowed() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "pascal", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "pascal", Constants.RULESET_CASING_DISALLOW_DIGITS,
+                                true));
 
                 for (String input : invalidInputs) {
                     try {
@@ -310,13 +317,14 @@ public class CasingFunctionTest {
 
             @Test
             public void givenValidPascalCaseInputWithoutDigits_shouldReturnNoErrorMessage() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "pascal", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "pascal", Constants.RULESET_CASING_DISALLOW_DIGITS,
+                                true));
 
                 for (String input : validInputs) {
                     try {
                         assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
-                                "Expected valid input '" + input
-                                        + "' to pass Pascal casing validation without digits.");
+                                "Expected valid input '" + input + "' to pass Pascal casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -336,7 +344,7 @@ public class CasingFunctionTest {
 
         @Test
         public void shouldRecognizeInvalidInputForKebabCase() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "kebab"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "kebab"));
 
             for (String input : invalidInputs) {
                 try {
@@ -350,7 +358,7 @@ public class CasingFunctionTest {
 
         @Test
         public void givenValidKebabCaseInputShouldReturnNoErrorMessage() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "kebab"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "kebab"));
 
             for (String input : validInputs) {
                 try {
@@ -376,7 +384,8 @@ public class CasingFunctionTest {
 
             @Test
             public void shouldRecognizeInvalidInputForKebabCaseWhenDigitsAreDisallowed() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "kebab", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "kebab", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : invalidInputs) {
                     try {
@@ -399,7 +408,8 @@ public class CasingFunctionTest {
 
             @Test
             public void givenValidKebabCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "kebab", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "kebab", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : validInputs) {
                     try {
@@ -424,7 +434,7 @@ public class CasingFunctionTest {
 
         @Test
         public void shouldRecognizeInvalidInputForCobolCase() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "cobol"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "cobol"));
 
             for (String input : invalidInputs) {
                 try {
@@ -438,7 +448,7 @@ public class CasingFunctionTest {
 
         @Test
         public void givenValidCobolCaseInput_shouldReturnNoErrorMessage() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "cobol"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "cobol"));
 
             for (String input : validInputs) {
                 try {
@@ -464,7 +474,8 @@ public class CasingFunctionTest {
 
             @Test
             public void shouldRecognizeInvalidInputForCobolCaseWhenDigitsAreDisallowed() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "cobol", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "cobol", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : invalidInputs) {
                     try {
@@ -487,7 +498,8 @@ public class CasingFunctionTest {
 
             @Test
             public void givenValidCobolCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "cobol", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "cobol", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : validInputs) {
                     try {
@@ -512,7 +524,7 @@ public class CasingFunctionTest {
 
         @Test
         public void shouldRecognizeInvalidInputForSnakeCase() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "snake"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "snake"));
 
             for (String input : invalidInputs) {
                 try {
@@ -526,7 +538,7 @@ public class CasingFunctionTest {
 
         @Test
         public void givenValidSnakeCaseInputShouldReturnNoErrorMessage() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "snake"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "snake"));
 
             for (String input : validInputs) {
                 try {
@@ -552,7 +564,8 @@ public class CasingFunctionTest {
 
             @Test
             public void shouldRecognizeInvalidInputForSnakeCaseWhenDigitsAreDisallowed() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "snake", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "snake", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : invalidInputs) {
                     try {
@@ -575,7 +588,8 @@ public class CasingFunctionTest {
 
             @Test
             public void givenValidSnakeCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "snake", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "snake", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : validInputs) {
                     try {
@@ -600,7 +614,7 @@ public class CasingFunctionTest {
 
         @Test
         public void shouldRecognizeInvalidInputForMacroCase() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "macro"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "macro"));
 
             for (String input : invalidInputs) {
                 try {
@@ -614,7 +628,7 @@ public class CasingFunctionTest {
 
         @Test
         public void givenValidMacroCaseInputShouldReturnNoErrorMessage() {
-            CasingFunction casingFunction = new CasingFunction(Map.of("type", "macro"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "macro"));
 
             for (String input : validInputs) {
                 try {
@@ -640,7 +654,8 @@ public class CasingFunctionTest {
 
             @Test
             public void shouldRecognizeInvalidInputForMacroCaseWhenDigitsAreDisallowed() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "macro", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "macro", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : invalidInputs) {
                     try {
@@ -663,7 +678,8 @@ public class CasingFunctionTest {
 
             @Test
             public void givenValidMacroCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
-                CasingFunction casingFunction = new CasingFunction(Map.of("type", "macro", "disallowDigits", true));
+                CasingFunction casingFunction = new CasingFunction(
+                        Map.of(Constants.RULESET_CASING_TYPE, "macro", Constants.RULESET_CASING_DISALLOW_DIGITS, true));
 
                 for (String input : validInputs) {
                     try {
@@ -702,8 +718,10 @@ public class CasingFunctionTest {
         @MethodSource("org.wso2.rule.validator.functions.core.CasingFunctionTest#provideTestCases")
         public void shouldProperlyDetectValidCases(String type, boolean disallowDigits, String charSeparator,
                 boolean allowLeading, String simple, String withDigits, String invalid) {
-            Map<String, Object> options = Map.of("type", type, "disallowDigits", disallowDigits, "separator",
-                    Map.of("char", charSeparator, "allowLeading", allowLeading));
+            Map<String, Object> options = Map.of(Constants.RULESET_CASING_TYPE, type,
+                    Constants.RULESET_CASING_DISALLOW_DIGITS, disallowDigits, Constants.RULESET_CASING_SEPARATOR,
+                    Map.of(Constants.RULESET_CASING_SEPARATOR_CHAR, charSeparator,
+                            Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING, allowLeading));
             CasingFunction casingFunction = new CasingFunction(options);
 
             try {
@@ -738,8 +756,10 @@ public class CasingFunctionTest {
     @ParameterizedTest
     @CsvSource({ "flat", "camel", "pascal", "snake", "macro" })
     public void shouldProperlyDetectLeadingCharForCasingType(String type) {
-        Map<String, Object> options = Map.of("type", type, "disallowDigits", true, "separator",
-                Map.of("allowLeading", true, "char", "/"));
+        Map<String, Object> options = Map.of(Constants.RULESET_CASING_TYPE, type,
+                Constants.RULESET_CASING_DISALLOW_DIGITS, true, Constants.RULESET_CASING_SEPARATOR,
+                Map.of(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING, true, Constants.RULESET_CASING_SEPARATOR_CHAR,
+                        "/"));
         CasingFunction casingFunction = new CasingFunction(options);
 
         try {
@@ -752,8 +772,9 @@ public class CasingFunctionTest {
 
     @Test
     public void shouldAllowAdvancedScenarios() {
-        Map<String, Object> pascalCaseOptions = Map.of("type", "pascal", "disallowDigits", true, "separator",
-                Map.of("char", "-"));
+        Map<String, Object> pascalCaseOptions = Map.of(Constants.RULESET_CASING_TYPE, "pascal",
+                Constants.RULESET_CASING_DISALLOW_DIGITS, true, Constants.RULESET_CASING_SEPARATOR,
+                Map.of(Constants.RULESET_CASING_SEPARATOR_CHAR, "-"));
         CasingFunction pascalCasingFunction = new CasingFunction(pascalCaseOptions);
 
         try {
@@ -762,8 +783,10 @@ public class CasingFunctionTest {
             fail("Execution should not throw an exception for Pascal case validation.");
         }
 
-        Map<String, Object> camelCaseOptions = Map.of("type", "camel", "disallowDigits", true, "separator",
-                Map.of("char", "/", "allowLeading", true));
+        Map<String, Object> camelCaseOptions = Map.of(Constants.RULESET_CASING_TYPE, "camel",
+                Constants.RULESET_CASING_DISALLOW_DIGITS, true, Constants.RULESET_CASING_SEPARATOR,
+                Map.of(Constants.RULESET_CASING_SEPARATOR_CHAR, "/", Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING,
+                        true));
         CasingFunction camelCasingFunction = new CasingFunction(camelCaseOptions);
 
         try {
@@ -778,11 +801,13 @@ public class CasingFunctionTest {
 
         @Test
         public void shouldNotThrowExceptionForValidOptions() {
-            Map<String, Object>[] validOptions = new Map[] { Map.of("type", "cobol"),
-                    Map.of("type", "macro", "disallowDigits", true),
-                    Map.of("type", "snake", "disallowDigits", true, "separator", Map.of("char", "a")),
-                    Map.of("type", "pascal", "disallowDigits", false, "separator",
-                            Map.of("char", "b", "allowLeading", true)), };
+            Map<String, Object>[] validOptions = new Map[] { Map.of(Constants.RULESET_CASING_TYPE, "cobol"),
+                    Map.of(Constants.RULESET_CASING_TYPE, "macro", Constants.RULESET_CASING_DISALLOW_DIGITS, true),
+                    Map.of(Constants.RULESET_CASING_TYPE, "snake", Constants.RULESET_CASING_DISALLOW_DIGITS, true,
+                            Constants.RULESET_CASING_SEPARATOR, Map.of(Constants.RULESET_CASING_SEPARATOR_CHAR, "a")),
+                    Map.of(Constants.RULESET_CASING_TYPE, "pascal", Constants.RULESET_CASING_DISALLOW_DIGITS, false,
+                            Constants.RULESET_CASING_SEPARATOR, Map.of(Constants.RULESET_CASING_SEPARATOR_CHAR, "b",
+                                    Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING, true)), };
 
             for (Map<String, Object> validOption : validOptions) {
                 CasingFunction function = new CasingFunction(validOption);
@@ -793,14 +818,19 @@ public class CasingFunctionTest {
 
     @Test
     public void shouldThrowExceptionForInvalidOptions() {
-        Map<String, Object>[] invalidOptions = new Map[] { Map.of("type", "macro", "foo", true),
-                Map.of("type", "pascal", "disallowDigits", false, "separator", Map.of()),
-                Map.of("type", "pascal", "disallowDigits", false, "separator", Map.of("allowLeading", true)),
-                Map.of("type", "snake", "separator", Map.of("char", "a", "foo", true)),
-                Map.of("type", "pascal", "separator", Map.of("char", "fo")), new HashMap<String, Object>() {{
-            put("type", "pascal");
-            put("separator", new HashMap<String, Object>() {{
-                put("char", null);
+        Map<String, Object>[] invalidOptions = new Map[] { Map.of(Constants.RULESET_CASING_TYPE, "macro", "foo", true),
+                Map.of(Constants.RULESET_CASING_TYPE, "pascal", Constants.RULESET_CASING_DISALLOW_DIGITS, false,
+                        Constants.RULESET_CASING_SEPARATOR, Map.of()),
+                Map.of(Constants.RULESET_CASING_TYPE, "pascal", Constants.RULESET_CASING_DISALLOW_DIGITS, false,
+                        Constants.RULESET_CASING_SEPARATOR,
+                        Map.of(Constants.RULESET_CASING_SEPARATOR_ALLOW_LEADING, true)),
+                Map.of(Constants.RULESET_CASING_TYPE, "snake", Constants.RULESET_CASING_SEPARATOR,
+                        Map.of(Constants.RULESET_CASING_SEPARATOR_CHAR, "a", "foo", true)),
+                Map.of(Constants.RULESET_CASING_TYPE, "pascal", Constants.RULESET_CASING_SEPARATOR,
+                        Map.of(Constants.RULESET_CASING_SEPARATOR_CHAR, "fo")), new HashMap<String, Object>() {{
+            put(Constants.RULESET_CASING_TYPE, "pascal");
+            put(Constants.RULESET_CASING_SEPARATOR, new HashMap<String, Object>() {{
+                put(Constants.RULESET_CASING_SEPARATOR_CHAR, null);
             }});
         }} };
 

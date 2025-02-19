@@ -19,6 +19,7 @@
 package org.wso2.rule.validator.functions.core;
 
 import org.junit.jupiter.api.Test;
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
 
@@ -158,7 +159,7 @@ public class AlphabeticalFunctionTest {
     @Test
     void testKeyedByWithUnsortedPropValuesShouldReturnError() {
         Map<String, Object> options = new HashMap<>();
-        options.put("keyedBy", "a");
+        options.put(Constants.RULESET_ALPHABETICAL_KEYED_BY, "a");
 
         List<Object> input = new ArrayList<>();
         input.add(Map.of("a", "10"));
@@ -175,7 +176,7 @@ public class AlphabeticalFunctionTest {
     @Test
     void testKeyedByWithSortedPropValuesShouldReturnNoError() {
         Map<String, Object> options = new HashMap<>();
-        options.put("keyedBy", "a");
+        options.put(Constants.RULESET_ALPHABETICAL_KEYED_BY, "a");
 
         List<Object> input = new ArrayList<>();
         input.add(Map.of("a", "1"));
@@ -193,7 +194,7 @@ public class AlphabeticalFunctionTest {
     @Test
     void testKeyedByWithArrayOfPrimitivesShouldReturnError() {
         Map<String, Object> options = new HashMap<>();
-        options.put("keyedBy", "a");
+        options.put(Constants.RULESET_ALPHABETICAL_KEYED_BY, "a");
 
         List<Object> input = new ArrayList<>();
         input.add(100);
@@ -209,7 +210,8 @@ public class AlphabeticalFunctionTest {
 
     @Test
     void testValidFunctionOptionsShouldNotThrow() {
-        Map<String, Object>[] validOptions = new Map[] { null, Map.of(), Map.of("keyedBy", "bar"), };
+        Map<String, Object>[] validOptions = new Map[] { null, Map.of(),
+                Map.of(Constants.RULESET_ALPHABETICAL_KEYED_BY, "bar"), };
 
         for (Map<String, Object> validOption : validOptions) {
             AlphabeticalFunction function = new AlphabeticalFunction(validOption);
@@ -219,7 +221,8 @@ public class AlphabeticalFunctionTest {
 
     @Test
     void testInvalidFunctionOptionsShouldNotThrow() {
-        Map<String, Object>[] invalidOptions = new Map[] { Map.of("foo", true), Map.of("keyedBy", 2), };
+        Map<String, Object>[] invalidOptions = new Map[] { Map.of("foo", true),
+                Map.of(Constants.RULESET_ALPHABETICAL_KEYED_BY, 2), };
 
         for (Map<String, Object> invalidOption : invalidOptions) {
             AlphabeticalFunction function = new AlphabeticalFunction(invalidOption);

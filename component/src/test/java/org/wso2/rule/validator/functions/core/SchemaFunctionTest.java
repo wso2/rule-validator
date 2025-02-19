@@ -19,6 +19,7 @@
 package org.wso2.rule.validator.functions.core;
 
 import org.junit.jupiter.api.Test;
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
 
@@ -39,7 +40,7 @@ public class SchemaFunctionTest {
         schema.put("exclusiveMaximum", true);
 
         Map<String, Object> options = new HashMap<>();
-        options.put("schema", schema);
+        options.put(Constants.RULESET_SCHEMA_SCHEMA, schema);
 
         SchemaFunction schemaFunction = new SchemaFunction(options);
 
@@ -53,7 +54,7 @@ public class SchemaFunctionTest {
             fail("Execution should not throw an exception.");
         }
 
-        options.put("dialect", "auto");
+        options.put(Constants.RULESET_SCHEMA_DIALECT, "auto");
         schemaFunction = new SchemaFunction(options);
         try {
             assertFalse(schemaFunction.execute(target).passed,
@@ -70,7 +71,7 @@ public class SchemaFunctionTest {
         schema.put("type", "string");
 
         Map<String, Object> options = new HashMap<>();
-        options.put("schema", schema);
+        options.put(Constants.RULESET_SCHEMA_SCHEMA, schema);
 
         SchemaFunction schemaFunction = new SchemaFunction(options);
 
@@ -79,7 +80,7 @@ public class SchemaFunctionTest {
         assertFalse(schemaFunction.executeFunction(target).passed,
                 "Validation should fail when value type is not string");
 
-        options.put("dialect", "auto");
+        options.put(Constants.RULESET_SCHEMA_DIALECT, "auto");
         schemaFunction = new SchemaFunction(options);
         assertFalse(schemaFunction.executeFunction(target).passed,
                 "Validation should fail when value type is not string");
@@ -93,7 +94,7 @@ public class SchemaFunctionTest {
         schema.put("pattern", "[\\-_]");
 
         Map<String, Object> options = new HashMap<>();
-        options.put("schema", schema);
+        options.put(Constants.RULESET_SCHEMA_SCHEMA, schema);
 
         SchemaFunction schemaFunction = new SchemaFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), 2);
@@ -110,7 +111,7 @@ public class SchemaFunctionTest {
         schema.put("pattern", "[\\_-]");
 
         options = new HashMap<>();
-        options.put("schema", schema);
+        options.put(Constants.RULESET_SCHEMA_SCHEMA, schema);
 
         schemaFunction = new SchemaFunction(options);
 

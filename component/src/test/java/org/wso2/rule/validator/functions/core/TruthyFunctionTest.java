@@ -74,7 +74,7 @@ public class TruthyFunctionTest {
 
     @Test
     public void validationTestForInvalidOptions() {
-        Map<String, Object> invalidOption = Map.of("unsupportedKey", true); // Unsupported key
+        Map<String, Object> invalidOption = Map.of("unsupportedKey", true);
 
         TruthyFunction function = new TruthyFunction(invalidOption);
         LintTarget target = new LintTarget(new ArrayList<>(), null);

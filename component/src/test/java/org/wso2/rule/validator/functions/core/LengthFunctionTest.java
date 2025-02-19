@@ -37,12 +37,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class LengthFunctionTest {
 
-    private List<Object> inputs; // Common input values to test
-    private Map<String, Object> options; // Common options map
+    private List<Object> inputs;
+    private Map<String, Object> options;
 
     @BeforeEach
     public void setUp() {
-        // Initialize common inputs
         inputs = List.of(
                 "123",
                 3,

@@ -19,6 +19,7 @@
 package org.wso2.rule.validator.functions.core;
 
 import org.junit.jupiter.api.Test;
+import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.document.LintTarget;
 
@@ -42,7 +43,8 @@ public class XorFunctionTest {
         document.put("title", "Swagger Petstore");
         document.put("termsOfService", "http://swagger.io/terms/");
 
-        Map<String, Object> options = Map.of("properties", new ArrayList<>(List.of("yada-yada", "whatever", "foo")));
+        Map<String, Object> options = Map.of(Constants.RULESET_XOR_PROPERTIES,
+                new ArrayList<>(List.of("yada-yada", "whatever", "foo")));
         XorFunction xorFunction = new XorFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), document);
 
@@ -60,7 +62,8 @@ public class XorFunctionTest {
         document.put("title", "Swagger Petstore");
         document.put("termsOfService", "http://swagger.io/terms/");
 
-        Map<String, Object> options = Map.of("properties", new ArrayList<>(List.of("yada-yada", "whatever", "foo")));
+        Map<String, Object> options = Map.of(Constants.RULESET_XOR_PROPERTIES,
+                new ArrayList<>(List.of("yada-yada", "whatever", "foo")));
         XorFunction xorFunction = new XorFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), document);
 
@@ -77,7 +80,8 @@ public class XorFunctionTest {
         document.put("version", "1.0.0");
         document.put("title", "Swagger Petstore");
 
-        Map<String, Object> options = Map.of("properties", new ArrayList<>(List.of("version", "title")));
+        Map<String, Object> options = Map.of(Constants.RULESET_XOR_PROPERTIES,
+                new ArrayList<>(List.of("version", "title")));
         XorFunction xorFunction = new XorFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), document);
 
@@ -90,7 +94,8 @@ public class XorFunctionTest {
 
     @Test
     public void givenInvalidInputShouldReturnNoErrorMessage() {
-        Map<String, Object> options = Map.of("properties", new ArrayList<>(List.of("version", "title")));
+        Map<String, Object> options = Map.of(Constants.RULESET_XOR_PROPERTIES,
+                new ArrayList<>(List.of("version", "title")));
         XorFunction xorFunction = new XorFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), null);
 
@@ -108,7 +113,8 @@ public class XorFunctionTest {
         document.put("title", "Swagger Petstore");
         document.put("termsOfService", "http://swagger.io/terms/");
 
-        Map<String, Object> options = Map.of("properties", new ArrayList<>(List.of("something", "title")));
+        Map<String, Object> options = Map.of(Constants.RULESET_XOR_PROPERTIES,
+                new ArrayList<>(List.of("something", "title")));
         XorFunction xorFunction = new XorFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), document);
 
@@ -121,7 +127,7 @@ public class XorFunctionTest {
 
     @Test
     public void givenValidOptionsShouldNotThrow() {
-        Map<String, Object> options = Map.of("properties", new ArrayList<>(List.of("foo", "bar")));
+        Map<String, Object> options = Map.of(Constants.RULESET_XOR_PROPERTIES, new ArrayList<>(List.of("foo", "bar")));
         XorFunction xorFunction = new XorFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), new HashMap<>());
 
@@ -131,10 +137,10 @@ public class XorFunctionTest {
     @Test
     public void givenInvalidOptionsShouldThrow() {
         List<Object> invalidOptionsList = Arrays.asList(
-                Map.of("properties", new ArrayList<>(List.of("foo"))),
-                Map.of("properties", new ArrayList<>(List.of())),
-                Map.of("properties", new ArrayList<>(List.of("foo", new HashMap<>()))),
-                Map.of("properties", new ArrayList<>(List.of("foo", "bar")), "foo", true));
+                Map.of(Constants.RULESET_XOR_PROPERTIES, new ArrayList<>(List.of("foo"))),
+                Map.of(Constants.RULESET_XOR_PROPERTIES, new ArrayList<>(List.of())),
+                Map.of(Constants.RULESET_XOR_PROPERTIES, new ArrayList<>(List.of("foo", new HashMap<>()))),
+                Map.of(Constants.RULESET_XOR_PROPERTIES, new ArrayList<>(List.of("foo", "bar")), "foo", true));
 
         assertThrows(InvalidRulesetException.class,
                 () -> new XorFunction(null).execute(new LintTarget(new ArrayList<>(), new HashMap<>())));
