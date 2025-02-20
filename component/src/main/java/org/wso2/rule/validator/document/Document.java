@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 public class Document {
 
     private String documentString;
-    private Object document;
+    private Object document = null;
     List<Format> formats;
 
     public Document(String documentString) {
@@ -85,6 +85,10 @@ public class Document {
                 this.formats.add(Format.OAS2);
             }
         }
+    }
+
+    public boolean isNull() {
+        return this.document == null;
     }
 
     public List<LintResult> lint(Ruleset ruleset) throws InvalidRulesetException {

@@ -59,14 +59,18 @@ public class Validator {
 
         Document document = new Document(documentFile);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-        List<LintResult> lintResults = document.lint(ruleset);
         List<DocumentValidationResult> results = new ArrayList<>();
-        for (LintResult lintResult : lintResults) {
-            if (lintResult.passed) {
-                continue;
+        if (!document.isNull()) {
+            List<LintResult> lintResults = document.lint(ruleset);
+            for (LintResult lintResult : lintResults) {
+                if (lintResult.passed) {
+                    continue;
+                }
+                results.add(new DocumentValidationResult(lintResult.path, lintResult.message,
+                        lintResult.rule.name, lintResult.rule.severity));
             }
-            results.add(new DocumentValidationResult(lintResult.path, lintResult.message,
-                    lintResult.rule.name, lintResult.rule.severity));
+        } else {
+            throw new InvalidContentTypeException("Document is empty.");
         }
         return gson.toJson(results);
     }
