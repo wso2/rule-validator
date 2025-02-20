@@ -20,7 +20,7 @@
 
     <groupId>org.wso2.carbon</groupId>
     <artifactId>rule-validator-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <packaging>pom</packaging>
 
     <name>WSO2 - Rule Validator POM</name>
@@ -140,7 +140,7 @@
         <url>https://github.com/wso2/rule-validator.git</url>
         <developerConnection>scm:git:https://github.com/wso2/rule-validator.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/rule-validator.git</connection>
-        <tag>HEAD</tag>
+        <tag>v0.2.0</tag>
     </scm>
 
     <properties>
