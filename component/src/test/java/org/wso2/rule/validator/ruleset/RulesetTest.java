@@ -19,7 +19,7 @@
 package org.wso2.rule.validator.ruleset;
 
 import com.jayway.jsonpath.JsonPath;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.wso2.rule.validator.InvalidContentTypeException;

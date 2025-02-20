@@ -38,7 +38,7 @@ public class EnumerationFunctionTest {
     @Test
     public void givenValidInputShouldReturnTrue() {
         Map<String, Object> options = new HashMap<>();
-        options.put(Constants.RULESET_ENUMERATION_VALUES, new String[] { "x", "y", "z" });
+        options.put(Constants.RULESET_ENUMERATION_VALUES, List.of(new String[] { "x", "y", "z" }));
 
         EnumerationFunction function = new EnumerationFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), "x");
@@ -53,7 +53,7 @@ public class EnumerationFunctionTest {
     @Test
     public void givenInvalidInputShouldReturnFalse() {
         Map<String, Object> options = new HashMap<>();
-        options.put(Constants.RULESET_ENUMERATION_VALUES, new String[] { "y", "z" });
+        options.put(Constants.RULESET_ENUMERATION_VALUES, List.of(new String[] { "y", "z" }));
 
         EnumerationFunction function = new EnumerationFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), "x");
@@ -68,7 +68,7 @@ public class EnumerationFunctionTest {
     @Test
     public void givenNonPrimitiveValueShouldReturnTrue() {
         Map<String, Object> options = new HashMap<>();
-        options.put(Constants.RULESET_ENUMERATION_VALUES, new String[] { "test" });
+        options.put(Constants.RULESET_ENUMERATION_VALUES, List.of(new String[] { "test" }));
 
         EnumerationFunction function = new EnumerationFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), new Object());
@@ -83,7 +83,7 @@ public class EnumerationFunctionTest {
     @Test
     public void givenValidOptionsShouldNotThrow() {
         Map<String, Object> options = new HashMap<>();
-        options.put(Constants.RULESET_ENUMERATION_VALUES, new String[] { "foo", "2" });
+        options.put(Constants.RULESET_ENUMERATION_VALUES, List.of(new String[] { "foo", "2" }));
 
         EnumerationFunction function = new EnumerationFunction(options);
         LintTarget target = new LintTarget(new ArrayList<>(), "foo");
@@ -94,8 +94,8 @@ public class EnumerationFunctionTest {
     @Test
     public void givenInvalidOptionsShouldThrowInvalidRulesetException() {
         List<Map<String, Object>> invalidOptionsList = new ArrayList<>(
-                List.of(Map.of(Constants.RULESET_ENUMERATION_VALUES, new String[] { "foo", "2" }, "foo", true),
-                        Map.of(Constants.RULESET_ENUMERATION_VALUES, new Object[] {}),
+                List.of(Map.of(Constants.RULESET_ENUMERATION_VALUES, List.of(new String[] { "foo", "2" }), "foo", true),
+                        Map.of(Constants.RULESET_ENUMERATION_VALUES, List.of(new Object[] {})),
                         Map.of(Constants.RULESET_ENUMERATION_VALUES, 2)));
 
         invalidOptionsList.add(null);
