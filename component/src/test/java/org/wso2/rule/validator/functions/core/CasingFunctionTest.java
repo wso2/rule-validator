@@ -324,7 +324,8 @@ public class CasingFunctionTest {
                 for (String input : validInputs) {
                     try {
                         assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
-                                "Expected valid input '" + input + "' to pass Pascal casing validation without digits.");
+                                "Expected valid input '" + input +
+                                        "' to pass Pascal casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }

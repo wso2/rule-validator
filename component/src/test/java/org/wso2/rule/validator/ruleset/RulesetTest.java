@@ -61,17 +61,17 @@ public class RulesetTest {
             Ruleset yaml = new Ruleset(yamlRuleset);
 
             assertTrue(json.aliases.containsKey("HeaderNames") && Objects.equals(
-                    json.aliases.get("HeaderNames").given.get(0), "$..parameters.[?(@.in === 'header')].name"));
-            assertTrue(json.aliases.containsKey("Info") && Objects.equals(json.aliases.get("Info").given.get(0),
+                    json.aliases.get("HeaderNames").getGiven().get(0), "$..parameters.[?(@.in === 'header')].name"));
+            assertTrue(json.aliases.containsKey("Info") && Objects.equals(json.aliases.get("Info").getGiven().get(0),
                     "$..info"));
-            assertTrue(json.aliases.containsKey("Paths") && Objects.equals(json.aliases.get("Paths").given.get(0),
+            assertTrue(json.aliases.containsKey("Paths") && Objects.equals(json.aliases.get("Paths").getGiven().get(0),
                     "$.paths[*]~"));
 
             assertTrue(yaml.aliases.containsKey("HeaderNames") && Objects.equals(
-                    yaml.aliases.get("HeaderNames").given.get(0), "$..parameters.[?(@.in === 'header')].name"));
-            assertTrue(yaml.aliases.containsKey("Info") && Objects.equals(yaml.aliases.get("Info").given.get(0),
+                    yaml.aliases.get("HeaderNames").getGiven().get(0), "$..parameters.[?(@.in === 'header')].name"));
+            assertTrue(yaml.aliases.containsKey("Info") && Objects.equals(yaml.aliases.get("Info").getGiven().get(0),
                     "$..info"));
-            assertTrue(yaml.aliases.containsKey("Paths") && Objects.equals(yaml.aliases.get("Paths").given.get(0),
+            assertTrue(yaml.aliases.containsKey("Paths") && Objects.equals(yaml.aliases.get("Paths").getGiven().get(0),
                     "$.paths[*]~"));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -93,14 +93,14 @@ public class RulesetTest {
             Ruleset yaml = new Ruleset(yamlRuleset);
 
             assertTrue(json.aliases.containsKey("InfoDescription") && Objects.equals(
-                    json.aliases.get("InfoDescription").given.get(0), "$..info.description"));
+                    json.aliases.get("InfoDescription").getGiven().get(0), "$..info.description"));
             assertTrue(json.aliases.containsKey("InfoContact") && Objects.equals(
-                    json.aliases.get("InfoContact").given.get(0), "$..info.contact"));
+                    json.aliases.get("InfoContact").getGiven().get(0), "$..info.contact"));
 
             assertTrue(yaml.aliases.containsKey("InfoDescription") && Objects.equals(
-                    yaml.aliases.get("InfoDescription").given.get(0), "$..info.description"));
+                    yaml.aliases.get("InfoDescription").getGiven().get(0), "$..info.description"));
             assertTrue(yaml.aliases.containsKey("InfoContact") && Objects.equals(
-                    yaml.aliases.get("InfoContact").given.get(0), "$..info.contact"));
+                    yaml.aliases.get("InfoContact").getGiven().get(0), "$..info.contact"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
