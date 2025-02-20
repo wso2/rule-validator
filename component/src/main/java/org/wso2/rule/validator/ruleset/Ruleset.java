@@ -34,6 +34,8 @@ public class Ruleset {
     private boolean hasComplexAliases;
     public List<Format> formats;
     private List<Ruleset> extendsRulesets;
+    private boolean initialized = true;
+    private String initializationErrorMessage = "";
 
     public Ruleset(Map<String, Object> datamap) {
         this.rules = new HashMap<>();
@@ -73,7 +75,21 @@ public class Ruleset {
         for (Map.Entry<String, Object> entry : ruleMap.entrySet()) {
             String ruleName = entry.getKey();
             Rule rule = new Rule(ruleName, (Map<String, Object>) entry.getValue(), this.aliases, this.formats);
-            this.rules.put(ruleName, rule);
+            if (rule.isInitialized()) {
+                this.rules.put(ruleName, rule);
+            } else {
+                this.initialized = false;
+                this.initializationErrorMessage = rule.getInitializationErrorMessage();
+                return;
+            }
         }
+    }
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public String getInitializationErrorMessage() {
+        return initializationErrorMessage;
     }
 }

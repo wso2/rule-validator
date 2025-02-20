@@ -57,6 +57,10 @@ public class Validator {
             ruleset = new JsonRuleset(rulesetFile);
         }
 
+        if (!ruleset.isInitialized()) {
+            throw new InvalidRulesetException(ruleset.getInitializationErrorMessage());
+        }
+
         Document document = new Document(documentFile);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         List<DocumentValidationResult> results = new ArrayList<>();

@@ -60,6 +60,13 @@ public class RulesetTest {
             Ruleset json = new Ruleset(jsonRuleset);
             Ruleset yaml = new Ruleset(yamlRuleset);
 
+            if (!json.isInitialized()) {
+                throw new RuntimeException("Ruleset initialization failed: " + json.getInitializationErrorMessage());
+            }
+            if (!yaml.isInitialized()) {
+                throw new RuntimeException("Ruleset initialization failed: " + yaml.getInitializationErrorMessage());
+            }
+
             assertTrue(json.aliases.containsKey("HeaderNames") && Objects.equals(
                     json.aliases.get("HeaderNames").getGiven().get(0), "$..parameters.[?(@.in === 'header')].name"));
             assertTrue(json.aliases.containsKey("Info") && Objects.equals(json.aliases.get("Info").getGiven().get(0),
@@ -92,6 +99,13 @@ public class RulesetTest {
             Ruleset json = new Ruleset(jsonRuleset);
             Ruleset yaml = new Ruleset(yamlRuleset);
 
+            if (!json.isInitialized()) {
+                throw new RuntimeException("Ruleset initialization failed: " + json.getInitializationErrorMessage());
+            }
+            if (!yaml.isInitialized()) {
+                throw new RuntimeException("Ruleset initialization failed: " + yaml.getInitializationErrorMessage());
+            }
+
             assertTrue(json.aliases.containsKey("InfoDescription") && Objects.equals(
                     json.aliases.get("InfoDescription").getGiven().get(0), "$..info.description"));
             assertTrue(json.aliases.containsKey("InfoContact") && Objects.equals(
@@ -119,6 +133,13 @@ public class RulesetTest {
 
             Ruleset json = new Ruleset(jsonRuleset);
             Ruleset yaml = new Ruleset(yamlRuleset);
+
+            if (!json.isInitialized()) {
+                throw new RuntimeException("Ruleset initialization failed: " + json.getInitializationErrorMessage());
+            }
+            if (!yaml.isInitialized()) {
+                throw new RuntimeException("Ruleset initialization failed: " + yaml.getInitializationErrorMessage());
+            }
 
             List<Object> expectedGivenOAS = List.of(
                     "$.paths[*].parameters[*]",
