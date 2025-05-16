@@ -126,11 +126,10 @@ public class Document {
                     for (String path : paths) {
                         results.addAll(lintNode(path, rule));
                     }
-                    // log("Json Path resolved: " + given);
                 } catch (PathNotFoundException e) {
-                    // log("Json Path not found: " + given);
+
                 } catch (InvalidPathException e) {
-                    // log("Unsupported Json Path: " + given);
+
                 }
             }
         }
