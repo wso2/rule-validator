@@ -36,7 +36,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link AlphabeticalFunction} class.
+ */
 public class AlphabeticalFunctionTest {
+
+    /**
+     * Tests that a falsy target returns no error.
+     */
     @Test
     public void testFalsyTargetShouldReturnNoError() {
         AlphabeticalFunction function = new AlphabeticalFunction(null);
@@ -47,6 +54,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that a single element target returns no error.
+     */
     @Test
     public void testSingleElementTargetShouldReturnNoError() {
         AlphabeticalFunction function = new AlphabeticalFunction(null);
@@ -57,6 +67,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that object keys not in order return an error.
+     */
     @Test
     public void testObjectKeysNotInOrderShouldReturnError() {
         Map<String, Object> input = new LinkedHashMap<>();
@@ -71,6 +84,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that unsorted properties with numeric keys return an error.
+     */
     @Test
     public void testUnsortedPropertiesWithNumericKeysShouldReturnError() {
         Map<String, Object> input = new LinkedHashMap<>();
@@ -85,6 +101,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that an unsorted array of strings returns an error.
+     */
     @Test
     public void testUnsortedArrayOfStringsShouldReturnError() {
         List<Object> input = new ArrayList<>();
@@ -99,6 +118,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that a sorted array of strings returns no error.
+     */
     @Test
     public void testSortedArrayOfStringsShouldReturnNoError() {
         List<Object> input = new ArrayList<>();
@@ -113,6 +135,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that an unsorted array of numbers returns an error.
+     */
     @Test
     public void testUnsortedArrayOfNumbersShouldReturnError() {
         List<Object> input = new ArrayList<>();
@@ -127,6 +152,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that an array of objects returns an error.
+     */
     @Test
     public void testArrayOfObjectsShouldReturnError() throws InvalidRulesetException {
         List<Object> input = new ArrayList<>();
@@ -141,6 +169,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that an array containing invalid values returns an error.
+     */
     @Test
     void testArrayContainingInvalidValuesShouldReturnError() {
         List<Object> input = new ArrayList<>();
@@ -156,6 +187,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that keyed by with unsorted property values returns an error.
+     */
     @Test
     void testKeyedByWithUnsortedPropValuesShouldReturnError() {
         Map<String, Object> options = new HashMap<>();
@@ -173,6 +207,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that keyed by with sorted property values returns no error.
+     */
     @Test
     void testKeyedByWithSortedPropValuesShouldReturnNoError() {
         Map<String, Object> options = new HashMap<>();
@@ -191,6 +228,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that keyed by with an array of primitives returns an error.
+     */
     @Test
     void testKeyedByWithArrayOfPrimitivesShouldReturnError() {
         Map<String, Object> options = new HashMap<>();
@@ -208,6 +248,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that valid function options do not throw an exception.
+     */
     @Test
     void testValidFunctionOptionsShouldNotThrow() {
         Map<String, Object>[] validOptions = new Map[] { null, Map.of(),
@@ -219,6 +262,9 @@ public class AlphabeticalFunctionTest {
         }
     }
 
+    /**
+     * Tests that invalid function options throw an InvalidRulesetException.
+     */
     @Test
     void testInvalidFunctionOptionsShouldNotThrow() {
         Map<String, Object>[] invalidOptions = new Map[] { Map.of("foo", true),

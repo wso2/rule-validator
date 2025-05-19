@@ -30,7 +30,14 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link SchemaFunction} class.
+ */
 public class SchemaFunctionTest {
+
+    /**
+     * Tests that the function validates a schema with draft-04.
+     */
     @Test
     public void validatesDraft4() {
         Map<String, Object> schema = new HashMap<>();
@@ -64,6 +71,9 @@ public class SchemaFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function validates a schema with draft-06.
+     */
     @Test
     public void validatesDraft6() {
         Map<String, Object> schema = new HashMap<>();
@@ -86,6 +96,9 @@ public class SchemaFunctionTest {
                 "Validation should fail when value type is not string");
     }
 
+    /**
+     * Tests that the function allows redundant escapes in the schema pattern.
+     */
     @Test
     public void allowsRedundantEscapes() {
         Map<String, Object> schema = new HashMap<>();
@@ -122,4 +135,3 @@ public class SchemaFunctionTest {
         }
     }
 }
-
