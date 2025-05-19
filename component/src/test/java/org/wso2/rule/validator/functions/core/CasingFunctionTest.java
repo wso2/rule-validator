@@ -994,4 +994,3 @@ public class CasingFunctionTest {
         }
     }
 }
-
