@@ -52,20 +52,24 @@ public class LengthFunction extends LintFunction {
         }
 
         if (options.containsKey(Constants.RULESET_LENGTH_MIN) &&
-                !(options.get(Constants.RULESET_LENGTH_MIN) instanceof Integer)) {
-            errors.add("Length function min value should be an integer.");
+                !(options.get(Constants.RULESET_LENGTH_MIN) instanceof Integer ||
+                options.get(Constants.RULESET_LENGTH_MIN) instanceof Float || 
+                options.get(Constants.RULESET_LENGTH_MIN) instanceof Double)) {
+            errors.add("Length function min value should be a number.");
         }
 
         if (options.containsKey(Constants.RULESET_LENGTH_MAX) &&
-                !(options.get(Constants.RULESET_LENGTH_MAX) instanceof Integer)) {
-            errors.add("Length function max value should be an integer.");
+                !(options.get(Constants.RULESET_LENGTH_MAX) instanceof Integer ||
+                options.get(Constants.RULESET_LENGTH_MAX) instanceof Float || 
+                options.get(Constants.RULESET_LENGTH_MAX) instanceof Double)) {
+            errors.add("Length function max value should be a number.");
         }
 
         return errors;
     }
 
     public FunctionResult executeFunction(LintTarget target) {
-        int length;
+        Number length;
 
         if (target.value instanceof String) {
             length = ((String) target.value).length();
@@ -73,31 +77,33 @@ public class LengthFunction extends LintFunction {
             length = ((List) target.value).size();
         } else if (target.value instanceof Map) {
             length = ((Map) target.value).size();
-        } else if (target.value instanceof Integer) {
-            length = (int) target.value;
+        } else if (target.value instanceof Integer || target.value instanceof Float ||
+                   target.value instanceof Double) {
+            length = (Number) target.value;
         } else {
             // Following Stoplight Spectral's logic
             return new FunctionResult(true, null);
         }
 
         if (options.containsKey(Constants.RULESET_LENGTH_MIN) && options.containsKey(Constants.RULESET_LENGTH_MAX)) {
-            int min = (int) options.get(Constants.RULESET_LENGTH_MIN);
-            int max = (int) options.get(Constants.RULESET_LENGTH_MAX);
-            if (length >= min && length <= max) {
+            Number min = (Number) options.get(Constants.RULESET_LENGTH_MIN);
+            Number max = (Number) options.get(Constants.RULESET_LENGTH_MAX);
+
+            if (length.doubleValue() >= min.doubleValue() && length.doubleValue() <= max.doubleValue()) {
                 return new FunctionResult(true, null);
             } else {
                 return new FunctionResult(false, "Length should be between " + min + " and " + max);
             }
         } else  if (options.containsKey(Constants.RULESET_LENGTH_MIN)) {
-            int min = (int) options.get(Constants.RULESET_LENGTH_MIN);
-            if (length >= min) {
+            Number min = (Number) options.get(Constants.RULESET_LENGTH_MIN);
+            if (length.doubleValue() >= min.doubleValue()) {
                 return new FunctionResult(true, null);
             } else {
                 return new FunctionResult(false, "Length should be at least " + min);
             }
         } else if (options.containsKey(Constants.RULESET_LENGTH_MAX)) {
-            int max = (int) options.get(Constants.RULESET_LENGTH_MAX);
-            if (length <= max) {
+            Number max = (Number) options.get(Constants.RULESET_LENGTH_MAX);
+            if (length.doubleValue() <= max.doubleValue()) {
                 return new FunctionResult(true, null);
             } else {
                 return new FunctionResult(false, "Length should be at most " + max);
@@ -107,3 +113,4 @@ public class LengthFunction extends LintFunction {
         }
     }
 }
+
