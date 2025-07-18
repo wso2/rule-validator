@@ -18,6 +18,7 @@
 package org.wso2.rule.validator.document;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a lint target in a document.
@@ -46,4 +47,14 @@ public class LintTarget {
             return "";
         }
     }
+    
+    public String getValueAsString() {
+        if (value instanceof Map)
+            return "Object";
+        else if (value instanceof List)
+            return "List";
+        else
+            return String.valueOf(value);
+    }
+
 }
