@@ -53,16 +53,16 @@ public class LengthFunction extends LintFunction {
 
         if (options.containsKey(Constants.RULESET_LENGTH_MIN) &&
                 !(options.get(Constants.RULESET_LENGTH_MIN) instanceof Integer ||
-                options.get(Constants.RULESET_LENGTH_MIN) instanceof Float || 
+                options.get(Constants.RULESET_LENGTH_MIN) instanceof Float ||
                 options.get(Constants.RULESET_LENGTH_MIN) instanceof Double)) {
-            errors.add("Length function min value should be a number.");
+                    errors.add("Length function min value should be a number.");
         }
 
         if (options.containsKey(Constants.RULESET_LENGTH_MAX) &&
                 !(options.get(Constants.RULESET_LENGTH_MAX) instanceof Integer ||
-                options.get(Constants.RULESET_LENGTH_MAX) instanceof Float || 
+                options.get(Constants.RULESET_LENGTH_MAX) instanceof Float ||
                 options.get(Constants.RULESET_LENGTH_MAX) instanceof Double)) {
-            errors.add("Length function max value should be a number.");
+                    errors.add("Length function max value should be a number.");
         }
 
         return errors;
@@ -113,4 +113,3 @@ public class LengthFunction extends LintFunction {
         }
     }
 }
-

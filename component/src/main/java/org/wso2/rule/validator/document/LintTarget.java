@@ -49,12 +49,12 @@ public class LintTarget {
     }
     
     public String getValueAsString() {
-        if (value instanceof Map)
+        if (value instanceof Map) {
             return "Object";
-        else if (value instanceof List)
+        } else if (value instanceof List) {
             return "List";
-        else
+        } else {
             return String.valueOf(value);
+        }
     }
-
 }

@@ -170,7 +170,6 @@ public class Document {
         }
         for (RuleThen then : rule.then) {
             List<LintTarget> lintTargets = getLintTargets(node, then);
-
             for (LintTarget target : lintTargets) {
                 List<String> parentPath = splitJsonPath(path);
                 parentPath.addAll(target.jsonPath);
@@ -178,7 +177,7 @@ public class Document {
                 target.jsonPath = parentPath;
                 FunctionResult result = then.lintFunction.execute(target);
                 MessagePlaceholder placeholder = new MessagePlaceholder(
-                    rule.getDescription(), result.message, target.getTargetName(), 
+                    rule.getDescription(), result.message, target.getTargetName(),
                     targetPath, target.getValueAsString());
                 String finalMessage;
                 if (rule.message != null) {
