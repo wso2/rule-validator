@@ -176,11 +176,11 @@ public class Document {
                 String targetPath = LintTarget.getPathString(parentPath);
                 target.jsonPath = parentPath;
                 FunctionResult result = then.lintFunction.execute(target);
-                MessagePlaceholder placeholder = new MessagePlaceholder(
-                    rule.getDescription(), result.message, target.getTargetName(),
-                    targetPath, target.getValueAsString());
                 String finalMessage;
                 if (rule.message != null) {
+                    MessagePlaceholder placeholder = new MessagePlaceholder(
+                        rule.getDescription(), result.message, target.getTargetName(),
+                        targetPath, target.getValueAsString());
                     finalMessage = placeholder.replacePlaceholders(rule.message);
                 } else {
                     finalMessage = result.message;
