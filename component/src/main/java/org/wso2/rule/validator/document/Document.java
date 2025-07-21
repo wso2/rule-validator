@@ -34,6 +34,7 @@ import org.wso2.rule.validator.ruleset.RuleThen;
 import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.ruleset.RulesetAliasDefinition;
 import org.wso2.rule.validator.utils.Util;
+import org.wso2.rule.validator.validator.MessagePlaceholder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -169,15 +170,22 @@ public class Document {
         }
         for (RuleThen then : rule.then) {
             List<LintTarget> lintTargets = getLintTargets(node, then);
-
             for (LintTarget target : lintTargets) {
                 List<String> parentPath = splitJsonPath(path);
                 parentPath.addAll(target.jsonPath);
                 String targetPath = LintTarget.getPathString(parentPath);
                 target.jsonPath = parentPath;
                 FunctionResult result = then.lintFunction.execute(target);
-                results.add(new LintResult(result.passed, targetPath, rule,
-                        rule.message == null ? result.message : rule.message));
+                String finalMessage;
+                if (rule.message != null) {
+                    MessagePlaceholder placeholder = new MessagePlaceholder(
+                        rule.getDescription(), result.message, target.getTargetName(),
+                        targetPath, target.getValueAsString());
+                    finalMessage = placeholder.replacePlaceholders(rule.message);
+                } else {
+                    finalMessage = result.message;
+                }
+                results.add(new LintResult(result.passed, targetPath, rule, finalMessage));
             }
         }
         return results;

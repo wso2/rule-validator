@@ -125,4 +125,8 @@ public class Rule {
         return initializationErrorMessage;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
 }
