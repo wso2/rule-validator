@@ -32,8 +32,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link PatternFunction} class.
+ */
 public class PatternFunctionTest {
 
+    /**
+     * Tests that the function returns true for a matching pattern without slashes.
+     */
     @Test
     public void testMatchingPatternWithoutSlashes() {
         Map<String, Object> options = new HashMap<>();
@@ -47,6 +53,9 @@ public class PatternFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns true for a matching pattern with slashes.
+     */
     @Test
     public void testMatchingPatternWithSlashes() {
         Map<String, Object> options = new HashMap<>();
@@ -60,6 +69,9 @@ public class PatternFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns true for a matching pattern with slashes and modifiers.
+     */
     @Test
     public void testMatchingPatternWithSlashesAndModifiers() {
         Map<String, Object> options = new HashMap<>();
@@ -73,6 +85,9 @@ public class PatternFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns true for a matching pattern with the global modifier.
+     */
     @Test
     public void testMatchingPatternWithGlobalModifier() {
         Map<String, Object> options = new HashMap<>();
@@ -88,6 +103,9 @@ public class PatternFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function throws an InvalidRulesetException for invalid regex flags.
+     */
     @Test
     public void testInvalidRegexFlags() {
         Map<String, Object> options = new HashMap<>();
@@ -98,6 +116,9 @@ public class PatternFunctionTest {
                 () -> patternFunction.execute(new LintTarget(new ArrayList<>(), "aBc")));
     }
 
+    /**
+     * Tests that the function returns true for a non-matching notMatch pattern.
+     */
     @Test
     public void testNonMatchingNotMatchPattern() {
         Map<String, Object> options = new HashMap<>();
@@ -111,6 +132,9 @@ public class PatternFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns true for both match and notMatch patterns.
+     */
     @Test
     public void testMatchingBothMatchAndNotMatch() {
         Map<String, Object> options = new HashMap<>();
@@ -125,6 +149,9 @@ public class PatternFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function does not throw an exception for valid function options.
+     */
     @Test
     public void testValidFunctionOptions() {
         Map<String, Object> options1 = new HashMap<>();
@@ -144,6 +171,9 @@ public class PatternFunctionTest {
         assertDoesNotThrow(() -> patternFunction3.execute(new LintTarget(new ArrayList<>(), "def")));
     }
 
+    /**
+     * Tests that the function throws an InvalidRulesetException for invalid function options.
+     */
     @Test
     public void testInvalidFunctionOptions() {
         Map<String, Object> options1 = null;

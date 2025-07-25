@@ -37,15 +37,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.wso2.rule.validator.validator.Validator.validateRuleset;
 
 /**
- * Ruleset test
- * should test following:
- * 1. Both Yaml and json rulesets
- * 2. Nested aliases
- * 3. With formats
- * 4. Invalid aliases
+ * Test class for the {@link Ruleset} class.
  */
-
 public class RulesetTest {
+
+    /**
+     * Tests that valid JSON and YAML rulesets with aliases are correctly parsed.
+     */
     @Test
     public void validJsonOrYamlAliases() {
         Path jsonRulesetPath = Paths.get("src/test/resources/rulesets/valid-json.ruleset");
@@ -85,6 +83,9 @@ public class RulesetTest {
         }
     }
 
+    /**
+     * Tests that valid JSON and YAML rulesets with nested aliases are correctly parsed.
+     */
     @Test
     public void validJsonOrYamlNestedAliases() {
         Path jsonRulesetPath = Paths.get("src/test/resources/rulesets/valid-json-nested.ruleset");
@@ -120,6 +121,9 @@ public class RulesetTest {
         }
     }
 
+    /**
+     * Tests that valid JSON and YAML rulesets with formats are correctly parsed.
+     */
     @Test
     public void validJsonOrYamlAliasesWithFormats() {
         Path jsonRulesetPath = Paths.get("src/test/resources/rulesets/valid-json-with-formats.ruleset");
@@ -160,6 +164,9 @@ public class RulesetTest {
         }
     }
 
+    /**
+     * Tests that invalid JSON and YAML rulesets with circular aliases are correctly identified.
+     */
     @Test
     public void invalidCircularAliases() {
         Path jsonRulesetPath = Paths.get("src/test/resources/rulesets/invalid-circular-json.ruleset");
@@ -178,6 +185,9 @@ public class RulesetTest {
         }
     }
 
+    /**
+     * Tests that invalid JSON and YAML rulesets with undefined aliases are correctly identified.
+     */
     @Test
     public void invalidUndefinedAliases() {
         Path jsonRulesetPath = Paths.get("src/test/resources/rulesets/invalid-undefined-json.ruleset");

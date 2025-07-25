@@ -35,11 +35,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link LengthFunction} class.
+ */
 public class LengthFunctionTest {
 
+    /**
+     * List of inputs to be used in the tests.
+     */
     private List<Object> inputs;
+
+    /**
+     * Options map to be used in the tests.
+     */
     private Map<String, Object> options;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         inputs = List.of(
@@ -52,10 +65,19 @@ public class LengthFunctionTest {
         options = new HashMap<>();
     }
 
+    /**
+     * Creates a new instance of the LengthFunction with the given options.
+     *
+     * @param customOptions the options to be used for the function
+     * @return a new instance of the LengthFunction
+     */
     private LengthFunction createFunction(Map<String, Object> customOptions) {
         return new LengthFunction(customOptions);
     }
 
+    /**
+     * Tests that the function returns false when the input exceeds the maximum length.
+     */
     @Test
     public void testExceedsMaxLength() {
         options.put(Constants.RULESET_LENGTH_MAX, 2);
@@ -73,6 +95,9 @@ public class LengthFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns false when the input falls below the minimum length.
+     */
     @Test
     public void testFallsBelowMinLength() {
         options.put(Constants.RULESET_LENGTH_MIN, 4);
@@ -90,6 +115,9 @@ public class LengthFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns true when the input is within the minimum and maximum length.
+     */
     @Test
     public void testWithinMinAndMaxLength() {
         options.put(Constants.RULESET_LENGTH_MIN, 3);
@@ -108,6 +136,9 @@ public class LengthFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function does not throw an exception for valid options.
+     */
     @Test
     public void testValidOptions() {
         Map<String, Object>[] validOptions = new Map[]{
@@ -127,6 +158,9 @@ public class LengthFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function throws an InvalidRulesetException for invalid options.
+     */
     @Test
     public void testInvalidOptions() {
         Map<String, Object>[] invalidOptions = new Map[]{

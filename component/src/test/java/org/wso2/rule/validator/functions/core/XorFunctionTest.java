@@ -35,7 +35,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link XorFunction} class.
+ */
 public class XorFunctionTest {
+
+    /**
+     * Tests that the function returns an error message when no properties are present.
+     */
     @Test
     public void givenNoPropertiesShouldReturnErrorMessage() {
         Map<String, Object> document = new HashMap<>();
@@ -55,6 +62,9 @@ public class XorFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns an error message when multiple properties do not match.
+     */
     @Test
     public void givenMultiplePropertiesThatDoNotMatchShouldReturnErrorMessage() {
         Map<String, Object> document = new HashMap<>();
@@ -74,6 +84,9 @@ public class XorFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns an error message when both properties are present.
+     */
     @Test
     public void givenBothPropertiesShouldReturnErrorMessage() {
         Map<String, Object> document = new HashMap<>();
@@ -92,6 +105,9 @@ public class XorFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns no error message for invalid input.
+     */
     @Test
     public void givenInvalidInputShouldReturnNoErrorMessage() {
         Map<String, Object> options = Map.of(Constants.RULESET_XOR_PROPERTIES,
@@ -106,6 +122,9 @@ public class XorFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns no error message when only one property is present.
+     */
     @Test
     public void givenOnlyOnePropertyShouldReturnNoErrorMessage() {
         Map<String, Object> document = new HashMap<>();
@@ -125,6 +144,9 @@ public class XorFunctionTest {
         }
     }
 
+    /**
+     * Tests that valid function options do not throw an exception.
+     */
     @Test
     public void givenValidOptionsShouldNotThrow() {
         Map<String, Object> options = Map.of(Constants.RULESET_XOR_PROPERTIES, new ArrayList<>(List.of("foo", "bar")));
@@ -134,6 +156,9 @@ public class XorFunctionTest {
         assertDoesNotThrow(() -> xorFunction.execute(target));
     }
 
+    /**
+     * Tests that invalid function options throw an InvalidRulesetException.
+     */
     @Test
     public void givenInvalidOptionsShouldThrow() {
         List<Object> invalidOptionsList = Arrays.asList(

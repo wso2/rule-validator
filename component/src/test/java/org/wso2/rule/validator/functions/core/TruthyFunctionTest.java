@@ -33,10 +33,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link TruthyFunction} class.
+ */
 public class TruthyFunctionTest {
 
     private final TruthyFunction truthy = new TruthyFunction(null);
 
+    /**
+     * Tests that the function returns no error message for truthy inputs.
+     */
     @Test
     public void givenTruthyInputsShouldReturnNoErrorMessage() {
         List<Object> truthyInputs = List.of(true, 1, new ArrayList<>(List.of(1)),
@@ -53,6 +59,9 @@ public class TruthyFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns an error message for falsy inputs.
+     */
     @Test
     public void givenFalsyInputsShouldReturnErrorMessage() {
         List<Object> falsyInputs = new ArrayList<>();
@@ -72,6 +81,9 @@ public class TruthyFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function throws an InvalidRulesetException for invalid options.
+     */
     @Test
     public void validationTestForInvalidOptions() {
         Map<String, Object> invalidOption = Map.of("unsupportedKey", true);
@@ -82,5 +94,4 @@ public class TruthyFunctionTest {
         assertThrows(InvalidRulesetException.class, () -> function.execute(target),
                 "Expected InvalidRulesetException for invalid option: " + invalidOption);
     }
-
 }

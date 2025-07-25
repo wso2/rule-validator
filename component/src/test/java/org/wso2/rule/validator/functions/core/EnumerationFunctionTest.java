@@ -34,7 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link EnumerationFunction} class.
+ */
 public class EnumerationFunctionTest {
+
+    /**
+     * Tests that the function returns true for a valid input.
+     */
     @Test
     public void givenValidInputShouldReturnTrue() {
         Map<String, Object> options = new HashMap<>();
@@ -50,6 +57,9 @@ public class EnumerationFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns true for a valid input.
+     */
     @Test
     public void givenInvalidInputShouldReturnFalse() {
         Map<String, Object> options = new HashMap<>();
@@ -65,6 +75,9 @@ public class EnumerationFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns true for a non-primitive value.
+     */
     @Test
     public void givenNonPrimitiveValueShouldReturnTrue() {
         Map<String, Object> options = new HashMap<>();
@@ -80,6 +93,9 @@ public class EnumerationFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function does not throw an exception for valid options.
+     */
     @Test
     public void givenValidOptionsShouldNotThrow() {
         Map<String, Object> options = new HashMap<>();
@@ -91,6 +107,9 @@ public class EnumerationFunctionTest {
         assertDoesNotThrow(() -> function.execute(target));
     }
 
+    /**
+     * Tests that the function throws an InvalidRulesetException for invalid options.
+     */
     @Test
     public void givenInvalidOptionsShouldThrowInvalidRulesetException() {
         List<Map<String, Object>> invalidOptionsList = new ArrayList<>(

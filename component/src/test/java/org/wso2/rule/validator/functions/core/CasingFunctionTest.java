@@ -39,7 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link CasingFunction} class.
+ */
 public class CasingFunctionTest {
+
+    /**
+     * Tests that non-string input returns no error message.
+     */
     @Test
     public void givenNonStringInputShouldReturnNoErrorMessage() {
         CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "camel"));
@@ -54,6 +61,9 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Tests that empty string input returns no error message.
+     */
     @Test
     public void givenEmptyStringInputShouldReturnNoErrorMessage() {
         CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "camel"));
@@ -66,6 +76,9 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Nested class for flat casing type
+     */
     @Nested
     public class CasingTypeFlat {
 
@@ -73,9 +86,12 @@ public class CasingFunctionTest {
         private final List<String> validInputs = List.of("foo", "foobar");
         private final List<String> validWithDigits = List.of("foo9bar", "foo24baz", "foo1");
 
+        /**
+         * Tests that invalid input fails flat casing validation.
+         */
         @Test
         public void shouldRecognizeInvalidInputForFlatCase() {
-            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "sdf"));
+            CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "flat"));
 
             for (String input : invalidInputs) {
                 try {
@@ -87,6 +103,9 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests that valid flat case input returns no error message.
+         */
         @Test
         public void givenValidFlatCaseInputShouldReturnNoErrorMessage() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "flat"));
@@ -113,6 +132,9 @@ public class CasingFunctionTest {
         @Nested
         public class WhenDigitsAreDisallowed {
 
+            /**
+             * Tests that invalid input fails flat casing validation when digits are disallowed.
+             */
             @Test
             public void shouldRecognizeInvalidInputForFlatCaseWhenDigitsAreDisallowed() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -137,6 +159,9 @@ public class CasingFunctionTest {
                 }
             }
 
+            /**
+             * Tests that valid flat case input without digits returns no error message.
+             */
             @Test
             public void givenValidFlatCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -161,6 +186,9 @@ public class CasingFunctionTest {
         private final List<String> validInputs = List.of("foo", "fooBar", "fooBarBaz", "coordinateX");
         private final List<String> validWithDigits = List.of("foo1", "foo24Bar", "fooBar0Baz323");
 
+        /**
+         * Tests that invalid input fails camel casing validation.
+         */
         @Test
         public void shouldRecognizeInvalidInputForCamelCase() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "camel"));
@@ -175,6 +203,9 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests that valid camel case input returns no error message.
+         */
         @Test
         public void givenValidCamelCaseInputShouldReturnNoErrorMessage() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "camel"));
@@ -201,6 +232,9 @@ public class CasingFunctionTest {
         @Nested
         public class WhenDigitsAreDisallowed {
 
+            /**
+             * Tests that invalid input fails camel casing validation when digits are disallowed.
+             */
             @Test
             public void shouldRecognizeInvalidInputForCamelCaseWhenDigitsAreDisallowed() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -225,6 +259,9 @@ public class CasingFunctionTest {
                 }
             }
 
+            /**
+             * Tests that valid camel case input without digits returns no error message.
+             */
             @Test
             public void givenValidCamelCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -250,6 +287,9 @@ public class CasingFunctionTest {
         private final List<String> validInputs = List.of("Foo", "FooBar", "FooBarBaz", "CoordinateZ");
         private final List<String> validWithDigits = List.of("Foo1", "FooBarBaz1");
 
+        /**
+         * Tests that invalid input fails Pascal casing validation.
+         */
         @Test
         public void shouldRecognizeInvalidInputForPascalCase() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "pascal"));
@@ -264,6 +304,9 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests that valid Pascal case input returns no error message.
+         */
         @Test
         public void givenValidPascalCaseInputShouldReturnNoErrorMessage() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "pascal"));
@@ -290,6 +333,9 @@ public class CasingFunctionTest {
         @Nested
         public class WhenDigitsAreDisallowed {
 
+            /**
+             * Tests that invalid input fails Pascal casing validation when digits are disallowed.
+             */
             @Test
             public void shouldRecognizeInvalidInputForPascalCaseWhenDigitsAreDisallowed() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -315,6 +361,9 @@ public class CasingFunctionTest {
                 }
             }
 
+            /**
+             * Tests that valid Pascal case input without digits returns no error message.
+             */
             @Test
             public void givenValidPascalCaseInputWithoutDigits_shouldReturnNoErrorMessage() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -324,8 +373,8 @@ public class CasingFunctionTest {
                 for (String input : validInputs) {
                     try {
                         assertTrue(casingFunction.execute(new LintTarget(new ArrayList<>(), input)).passed,
-                                "Expected valid input '" + input +
-                                        "' to pass Pascal casing validation without digits.");
+                                "Expected valid input '" + input
+                                        + "' to pass Pascal casing validation without digits.");
                     } catch (InvalidRulesetException e) {
                         fail("Execution should not throw an exception for input: " + input);
                     }
@@ -343,6 +392,9 @@ public class CasingFunctionTest {
         private final List<String> validInputs = List.of("foo", "foo-bar", "foo-bar-baz");
         private final List<String> validWithDigits = List.of("foo-bar1", "foo1-2bar");
 
+        /**
+         * Tests that invalid input fails Kebab casing validation.
+         */
         @Test
         public void shouldRecognizeInvalidInputForKebabCase() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "kebab"));
@@ -357,6 +409,9 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests that valid Kebab case input returns no error message.
+         */
         @Test
         public void givenValidKebabCaseInputShouldReturnNoErrorMessage() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "kebab"));
@@ -383,6 +438,9 @@ public class CasingFunctionTest {
         @Nested
         public class WhenDigitsAreDisallowed {
 
+            /**
+             * Tests that invalid input fails Kebab casing validation when digits are disallowed.
+             */
             @Test
             public void shouldRecognizeInvalidInputForKebabCaseWhenDigitsAreDisallowed() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -407,6 +465,9 @@ public class CasingFunctionTest {
                 }
             }
 
+            /**
+             * Tests that valid Kebab case input without digits returns no error message.
+             */
             @Test
             public void givenValidKebabCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -424,6 +485,9 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Tests for COBOL casing type.
+     */
     @Nested
     public class CasingTypeCobol {
 
@@ -433,6 +497,9 @@ public class CasingFunctionTest {
         private final List<String> validInputs = List.of("FOO", "FOO-BAR", "FOO-BAR-BAZ");
         private final List<String> validWithDigits = List.of("FOO-BAR1", "FOO2-3BAR1");
 
+        /**
+         * Tests that invalid inputs fail COBOL casing validation.
+         */
         @Test
         public void shouldRecognizeInvalidInputForCobolCase() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "cobol"));
@@ -447,6 +514,9 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests that valid inputs pass COBOL casing validation.
+         */
         @Test
         public void givenValidCobolCaseInput_shouldReturnNoErrorMessage() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "cobol"));
@@ -470,9 +540,15 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests for COBOL casing type when digits are disallowed.
+         */
         @Nested
         public class WhenDigitsAreDisallowed {
 
+            /**
+             * Tests that invalid inputs fail COBOL casing validation when digits are disallowed.
+             */
             @Test
             public void shouldRecognizeInvalidInputForCobolCaseWhenDigitsAreDisallowed() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -497,6 +573,9 @@ public class CasingFunctionTest {
                 }
             }
 
+            /**
+             * Tests that valid inputs pass COBOL casing validation without digits.
+             */
             @Test
             public void givenValidCobolCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -514,6 +593,9 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Tests for snake casing type.
+     */
     @Nested
     public class CasingTypeSnake {
 
@@ -523,6 +605,9 @@ public class CasingFunctionTest {
         private final List<String> validInputs = List.of("foo", "foo_bar", "foo_bar_baz");
         private final List<String> validWithDigits = List.of("foo_bar1", "foo2_4bar1");
 
+        /**
+         * Tests that invalid inputs fail snake casing validation.
+         */
         @Test
         public void shouldRecognizeInvalidInputForSnakeCase() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "snake"));
@@ -537,6 +622,9 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests that valid inputs pass snake casing validation.
+         */
         @Test
         public void givenValidSnakeCaseInputShouldReturnNoErrorMessage() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "snake"));
@@ -560,9 +648,15 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests for snake casing type when digits are disallowed.
+         */
         @Nested
         public class WhenDigitsAreDisallowed {
 
+            /**
+             * Tests that invalid inputs fail snake casing validation when digits are disallowed.
+             */
             @Test
             public void shouldRecognizeInvalidInputForSnakeCaseWhenDigitsAreDisallowed() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -587,6 +681,9 @@ public class CasingFunctionTest {
                 }
             }
 
+            /**
+             * Tests that valid inputs pass snake casing validation without digits.
+             */
             @Test
             public void givenValidSnakeCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -604,6 +701,9 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Tests for macro casing type.
+     */
     @Nested
     public class CasingTypeMacro {
 
@@ -613,6 +713,9 @@ public class CasingFunctionTest {
         private final List<String> validInputs = List.of("FOO", "FOO_BAR", "FOO_BAR_BAZ");
         private final List<String> validWithDigits = List.of("FOO_BAR1", "FOO2_4BAR1", "FOO2_4_2");
 
+        /**
+         * Tests that invalid inputs fail macro casing validation.
+         */
         @Test
         public void shouldRecognizeInvalidInputForMacroCase() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "macro"));
@@ -627,6 +730,9 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests that valid inputs pass macro casing validation.
+         */
         @Test
         public void givenValidMacroCaseInputShouldReturnNoErrorMessage() {
             CasingFunction casingFunction = new CasingFunction(Map.of(Constants.RULESET_CASING_TYPE, "macro"));
@@ -650,9 +756,15 @@ public class CasingFunctionTest {
             }
         }
 
+        /**
+         * Tests for macro casing type when digits are disallowed.
+         */
         @Nested
         public class WhenDigitsAreDisallowed {
 
+            /**
+             * Tests that invalid inputs fail macro casing validation when digits are disallowed.
+             */
             @Test
             public void shouldRecognizeInvalidInputForMacroCaseWhenDigitsAreDisallowed() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -677,6 +789,9 @@ public class CasingFunctionTest {
                 }
             }
 
+            /**
+             * Tests that valid inputs pass macro casing validation without digits.
+             */
             @Test
             public void givenValidMacroCaseInputWithoutDigitsShouldReturnNoErrorMessage() {
                 CasingFunction casingFunction = new CasingFunction(
@@ -694,6 +809,11 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Provides test cases for casing validation.
+     *
+     * @return a stream of test cases
+     */
     private static Stream<Object[]> provideTestCases() {
         List<Object[]> testCases = new ArrayList<>();
         List<Object[]> baseData = List.of(new Object[][] { new Object[] { "flat", "flat", "flat01", "Nope" } });
@@ -712,9 +832,23 @@ public class CasingFunctionTest {
         return testCases.stream();
     }
 
+    /**
+     * Tests for valid casing detection.
+     */
     @Nested
     public class ValidCasingDetection {
 
+        /**
+         * Tests that valid cases are properly detected.
+         *
+         * @param type           the casing type
+         * @param disallowDigits whether digits are disallowed
+         * @param charSeparator  the character separator
+         * @param allowLeading   whether leading characters are allowed
+         * @param simple         a simple valid input
+         * @param withDigits     a valid input with digits
+         * @param invalid        an invalid input
+         */
         @ParameterizedTest
         @MethodSource("org.wso2.rule.validator.functions.core.CasingFunctionTest#provideTestCases")
         public void shouldProperlyDetectValidCases(String type, boolean disallowDigits, String charSeparator,
@@ -754,6 +888,11 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Tests for leading character detection for different casing types.
+     *
+     * @param type the casing type
+     */
     @ParameterizedTest
     @CsvSource({ "flat", "camel", "pascal", "snake", "macro" })
     public void shouldProperlyDetectLeadingCharForCasingType(String type) {
@@ -771,6 +910,9 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Tests for advanced casing scenarios.
+     */
     @Test
     public void shouldAllowAdvancedScenarios() {
         Map<String, Object> pascalCaseOptions = Map.of(Constants.RULESET_CASING_TYPE, "pascal",
@@ -797,9 +939,15 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Nested class to test valid and invalid options for the CasingFunction.
+     */
     @Nested
     public class ValidInvalidOptions {
 
+        /**
+         * Tests that valid options do not throw an exception.
+         */
         @Test
         public void shouldNotThrowExceptionForValidOptions() {
             Map<String, Object>[] validOptions = new Map[] { Map.of(Constants.RULESET_CASING_TYPE, "cobol"),
@@ -817,6 +965,9 @@ public class CasingFunctionTest {
         }
     }
 
+    /**
+     * Tests that invalid options throw an InvalidRulesetException.
+     */
     @Test
     public void shouldThrowExceptionForInvalidOptions() {
         Map<String, Object>[] invalidOptions = new Map[] { Map.of(Constants.RULESET_CASING_TYPE, "macro", "foo", true),
@@ -842,5 +993,4 @@ public class CasingFunctionTest {
                     "Expected InvalidRulesetException for invalid options.");
         }
     }
-
 }

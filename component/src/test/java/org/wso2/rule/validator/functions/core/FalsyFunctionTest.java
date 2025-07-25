@@ -33,9 +33,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Test class for the {@link FalsyFunction} class.
+ */
 public class FalsyFunctionTest {
     private final FalsyFunction falsy = new FalsyFunction(null);
 
+    /**
+     * Tests that the function returns no error message for falsy inputs.
+     */
     @Test
     public void givenFalsyInputsShouldReturnNoErrorMessage() {
         List<Object> falsyInputs = new ArrayList<>();
@@ -55,6 +61,9 @@ public class FalsyFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function returns an error message for truthy inputs.
+     */
     @Test
     public void givenTruthyInputsShouldReturnErrorMessage() {
         List<Object> truthyInputs = List.of(true, 1, new ArrayList<>(List.of(1)),
@@ -71,6 +80,9 @@ public class FalsyFunctionTest {
         }
     }
 
+    /**
+     * Tests that the function throws an InvalidRulesetException for invalid options.
+     */
     @Test
     public void validationTestForInvalidOptions() {
         Map<String, Object> invalidOption = Map.of("unsupportedKey", true);
