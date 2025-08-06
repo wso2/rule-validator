@@ -400,7 +400,6 @@ public class Document {
             logger.info("Property: " + getMetaData(entry.getKey(), NodeMetaData.PROPERTY));
             logger.info("----------");
         }
-
     }
-
 }
+
