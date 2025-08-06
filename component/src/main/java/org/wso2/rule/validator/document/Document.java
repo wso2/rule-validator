@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.rule.validator.document;
 
 import com.google.gson.Gson;
@@ -34,14 +35,19 @@ import org.wso2.rule.validator.ruleset.RuleThen;
 import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.ruleset.RulesetAliasDefinition;
 import org.wso2.rule.validator.utils.Util;
+import org.wso2.rule.validator.validator.Main;
 import org.wso2.rule.validator.validator.MessagePlaceholder;
+import org.wso2.rule.validator.validator.NodeMetaData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 /**
  * Document class to represent a target document for rules to be applied.
@@ -51,10 +57,12 @@ public class Document {
     private String documentString;
     private Object document = null;
     List<Format> formats;
+    private static final IdentityHashMap<Object, Object> parentMap = new IdentityHashMap<>();
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    //private Object fields;
 
     public Document(String documentString) {
         Object yamlData = Util.loadYaml(documentString);
-
         if (yamlData == null) {
             return;
         }
@@ -123,7 +131,16 @@ public class Document {
             for (String given : rule.given) {
                 try {
                     Configuration config = Configuration.builder().options(Option.AS_PATH_LIST).build();
+                    //if no any advanced features then the given below line. Otherwise it should be replaced with
+                    // the predicate.
+                    //Main method should be there only for writing the tests.
                     List<String> paths = JsonPath.using(config).parse(this.document).read(given);
+
+                    logger.info("Matched paths for " + given + ":");
+                    for (String path : paths) {
+                        logger.info("  -> " + path);
+                    }
+
                     for (String path : paths) {
                         results.addAll(lintNode(path, rule));
                     }
@@ -179,8 +196,8 @@ public class Document {
                 String finalMessage;
                 if (rule.message != null) {
                     MessagePlaceholder placeholder = new MessagePlaceholder(
-                        rule.getDescription(), result.message, target.getTargetName(),
-                        targetPath, target.getValueAsString());
+                            rule.getDescription(), result.message, target.getTargetName(),
+                            targetPath, target.getValueAsString());
                     finalMessage = placeholder.replacePlaceholders(rule.message);
                 } else {
                     finalMessage = result.message;
@@ -290,4 +307,100 @@ public class Document {
 
         return segments;
     }
+
+    public Object getRootDocument() {
+        return this.document;
+    }
+
+    public static void generateParentChildMap(Object current, Object parent) {
+        if (parent != null) {
+            parentMap.put(current, parent);
+        }
+
+        if (current instanceof Map) {
+            for (Map.Entry<?, ?> entry: ((Map<?, ?>) current).entrySet()) {
+                if (entry.getKey() instanceof String) {
+                    generateParentChildMap(entry.getValue(), current);
+                }
+            }
+        } else if (current instanceof List) {
+            List<?> list = (List<?>) current;
+            for (int i = 0; i < list.size(); i++) {
+                generateParentChildMap(list.get(i), current);
+            }
+        }
+    }
+    public static void printParentChildRelations() {
+        logger.info("Child → Parent Relations:");
+        for (Map.Entry<Object, Object> entry : parentMap.entrySet()) {
+            logger.info("Child: " + entry.getKey());
+            logger.info("Parent: " + entry.getValue());
+            logger.info("----------");
+        }
+    }
+
+    public static String getPropertyName(Object node) {
+        Object parent = parentMap.get(node);
+        if (parent == null) {
+            return null;
+        }
+
+        if (parent instanceof Map) {
+            Map<?, ?> map = (Map<?, ?>) parent;
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                if (entry.getValue() == node) {
+                    return entry.getKey().toString();
+                }
+            }
+        } else if (parent instanceof ArrayList) {
+            List<?> list = (List<?>) parent;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i) == node) {
+                    return String.valueOf(i);
+                }
+            }
+        }
+        return null;
+    }
+    public static Object getMetaData(Object currentNode, NodeMetaData key) {
+        switch(key) {
+            case LENGTH:
+                if (currentNode instanceof List) {
+                    return ((List<?>) currentNode).size();
+                } else if (currentNode instanceof Map) {
+                    return ((Map<?, ?>) currentNode).size();
+                } else {
+                    return null;
+                }
+            case PROPERTY:
+                return getPropertyName(currentNode);
+            case PARENT_PROPERTY:
+                Object parent = parentMap.get(currentNode);
+                if (parent != null) {
+                    return getPropertyName(parent);
+                } else {
+                    return null;
+                }
+
+            case PARENT:
+                return parentMap.get(currentNode);
+
+            default:
+                return null;
+
+
+        }
+    }
+    public static void printPropertyNames() {
+        logger.info("Property values of the nodes");
+        for (Map.Entry<Object, Object> entry : parentMap.entrySet()) {
+            logger.info("Length: " + getMetaData(entry.getKey(), NodeMetaData.LENGTH));
+            logger.info("Parent Property: " + getMetaData(entry.getKey(), NodeMetaData.PARENT_PROPERTY));
+            logger.info("Parent: " + getMetaData(entry.getKey(), NodeMetaData.PARENT));
+            logger.info("Property: " + getMetaData(entry.getKey(), NodeMetaData.PROPERTY));
+            logger.info("----------");
+        }
+
+    }
+
 }
