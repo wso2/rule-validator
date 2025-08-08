@@ -158,7 +158,6 @@
         <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
         <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
-        <root.basedir>${project.basedir}</root.basedir>
         <maven.spotbugsplugin.exclude.file>spotbugs-exclude.xml</maven.spotbugsplugin.exclude.file>
     </properties>
 </project>
