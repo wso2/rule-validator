@@ -87,9 +87,7 @@
                         <id>validate</id>
                         <phase>compile</phase>
                         <configuration>
-                            <configLocation>
-                                https://raw.githubusercontent.com/wso2/code-quality-tools/v1.2/checkstyle/checkstyle.xml
-                            </configLocation>
+                            <configLocation>${session.topLevelProject.basedir}/checkstyle.xml</configLocation>
                             <suppressionsLocation>suppressions.xml</suppressionsLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
@@ -145,7 +143,7 @@
 
     <properties>
         <project.scm.id>scm-server</project.scm.id>
-        <maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
+        <maven.checkstyle.plugin.version>3.3.0</maven.checkstyle.plugin.version>
         <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
         <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
         <org.snakeyaml.snakeyaml.engine.version>2.9</org.snakeyaml.snakeyaml.engine.version>
