@@ -33,7 +33,7 @@ public class YamlRulesetValidator extends RulesetValidator {
             throws InvalidContentTypeException {
         Object yamlContent = Util.loadYaml(rulesetString);
         if (!(yamlContent instanceof Map)) {
-            throw new InvalidContentTypeException("Invalid YAML content.");
+            throw new InvalidContentTypeException("Invalid YAML ruleset content.");
         }
         return RulesetValidator.validate((Map<String, Object>) yamlContent);
     }

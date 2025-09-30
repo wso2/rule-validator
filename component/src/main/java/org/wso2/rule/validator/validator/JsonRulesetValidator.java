@@ -33,7 +33,7 @@ public class JsonRulesetValidator extends RulesetValidator {
             throws InvalidContentTypeException {
         Object jsonContent = JsonPath.parse(rulesetString).json();
         if (!(jsonContent instanceof Map)) {
-            throw new InvalidContentTypeException("Invalid JSON content.");
+            throw new InvalidContentTypeException("Invalid JSON ruleset content.");
         }
         return RulesetValidator.validate((Map<String, Object>) jsonContent);
     }
