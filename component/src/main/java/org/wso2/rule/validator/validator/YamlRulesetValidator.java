@@ -18,6 +18,7 @@
 
 package org.wso2.rule.validator.validator;
 
+import org.wso2.rule.validator.InvalidContentTypeException;
 import org.wso2.rule.validator.utils.Util;
 import org.wso2.rule.validator.validator.ruleset.RulesetValidator;
 
@@ -28,7 +29,12 @@ import java.util.Map;
  * Ruleset validation for YAML files
  */
 public class YamlRulesetValidator extends RulesetValidator {
-    public static List<RulesetValidationError> validateRuleset(String rulesetString) {
-        return RulesetValidator.validate((Map<String, Object>) Util.loadYaml(rulesetString));
+    public static List<RulesetValidationError> validateRuleset(String rulesetString)
+            throws InvalidContentTypeException {
+        Object yamlContent = Util.loadYaml(rulesetString);
+        if (!(yamlContent instanceof Map)) {
+            throw new InvalidContentTypeException("Invalid YAML ruleset content.");
+        }
+        return RulesetValidator.validate((Map<String, Object>) yamlContent);
     }
 }

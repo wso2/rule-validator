@@ -19,6 +19,7 @@
 package org.wso2.rule.validator.validator;
 
 import com.jayway.jsonpath.JsonPath;
+import org.wso2.rule.validator.InvalidContentTypeException;
 import org.wso2.rule.validator.validator.ruleset.RulesetValidator;
 
 import java.util.List;
@@ -28,7 +29,12 @@ import java.util.Map;
  * Ruleset validation for JSON files
  */
 public class JsonRulesetValidator extends RulesetValidator {
-    public static List<RulesetValidationError> validateRuleset(String rulesetString) {
-        return RulesetValidator.validate((Map<String, Object>) JsonPath.parse(rulesetString).json());
+    public static List<RulesetValidationError> validateRuleset(String rulesetString)
+            throws InvalidContentTypeException {
+        Object jsonContent = JsonPath.parse(rulesetString).json();
+        if (!(jsonContent instanceof Map)) {
+            throw new InvalidContentTypeException("Invalid JSON ruleset content.");
+        }
+        return RulesetValidator.validate((Map<String, Object>) jsonContent);
     }
 }
