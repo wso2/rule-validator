@@ -34,7 +34,7 @@ public class JSONPathEvaluator {
         this.evaluator = new Evaluator(rootDoc);
     }
 
-    public List<String> jsonPathEvaluation(String jsonPathExpression) throws Exception {
+    public List<String> jsonPathEvaluate(String jsonPathExpression) throws Exception {
         return evaluator.evaluate(jsonPathExpression , rootDoc);
     }
 }
