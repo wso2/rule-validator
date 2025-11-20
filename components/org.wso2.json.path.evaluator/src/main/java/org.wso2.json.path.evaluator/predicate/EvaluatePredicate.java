@@ -41,7 +41,7 @@ public class EvaluatePredicate {
         private final String jsonPathExpression;
         private Object rootDocument;
         private TraversalMapData traversalInstance;
-        private static final Logger logger = LoggerFactory.getLogger(Evaluator.class);
+        private static final Logger logger = LoggerFactory.getLogger(EvaluatePredicate.class);
 
         public PredicateFeatures(String jsonPathExpression, Document doc) {
             this.jsonPathExpression = jsonPathExpression;
@@ -69,10 +69,9 @@ public class EvaluatePredicate {
                 endIndex = expression.indexOf("]", startIndex);
                 reducedExpr = expression.substring(startIndex , endIndex);
             }
-            logger.info("Reduced Expression: " + reducedExpr);
             reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance,
                     reducedExpr, rootDocument);
-            logger.info("Substituted Expression: " + reducedExpr);
+
             Object value = Util.evaluateExpression(reducedExpr);
             Object parent = Util.returnValuesForAdvancedFeatures(traversalInstance,
                     currentNode, AdvancedFeatures.PARENT);
@@ -86,7 +85,7 @@ public class EvaluatePredicate {
                 value = Util.isTruthy(value);
                 boolResult = (Boolean) value;
             }
-            logger.info("*****************************");
+
             return boolResult;
         }
     }

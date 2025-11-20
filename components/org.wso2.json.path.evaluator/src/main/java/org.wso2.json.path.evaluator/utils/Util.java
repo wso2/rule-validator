@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  * Util methods
  */
 public class Util {
-    private static final Logger logger = LoggerFactory.getLogger(Evaluator.class);
+    private static final Logger logger = LoggerFactory.getLogger(Util.class);
     public static Object returnValuesForAdvancedFeatures(TraversalMapData traversalInstance,
                                                          Object currentNode, AdvancedFeatures key) {
         Object parentNode = traversalInstance.getParent(currentNode);
@@ -186,7 +186,7 @@ public class Util {
         String result = jsonPathExpression;
         Object getLengthObject = returnValuesForAdvancedFeatures(
                 traversalInstance, currentNode, AdvancedFeatures.LENGTH);
-        logger.info("Length: " + getLengthObject);
+
         if (getLengthObject instanceof Integer) {
             result = result.replace("@.length", String.valueOf(getLengthObject));
         }
@@ -198,7 +198,7 @@ public class Util {
         String result = jsonPathExpression;
         Object getPropertyObject = returnValuesForAdvancedFeatures(traversalInstance ,
                 currentNode, AdvancedFeatures.PROPERTY);
-        logger.info((String) getPropertyObject);
+
         try {
             Integer.parseInt(String.valueOf(getPropertyObject));
         } catch (Exception e) {
@@ -310,7 +310,7 @@ public class Util {
                         "(?:\\\"|')?\\$+(?:\\.?[A-Za-z0-9_\\[\\]\\.']+)+(?:\\\"|')?.*";
 
         if (expression.matches(pathsOnBothSides)) {
-            logger.info("Skipped substitution since both sides are JSONPaths : " + expression);
+
             Pattern pattern = Pattern.compile(
                     "(\\$+(?:\\.?[A-Za-z0-9_\\[\\]'\".]+)+)\\s*(===|!==|==|!=|>=|<=|>|<)\\s*" +
                             "(\\$+(?:\\.?[A-Za-z0-9_\\[\\]'\".]+)+)");
@@ -326,11 +326,10 @@ public class Util {
                 String newLeftPath = "\"" + traversalInstance.getPath(leftVal) + "\"";
                 String newRightPath = "\"" + traversalInstance.getPath(rightVal) + "\"";
 
-                logger.info("Left Path: " + newLeftPath);
-                logger.info("Right Path: " + newRightPath);
+
                 expression = expression.replace(leftPath, newLeftPath);
                 expression = expression.replace(rightPath, newRightPath);
-                logger.info(expression);
+
             }
             return expression;
         }
@@ -406,12 +405,12 @@ public class Util {
                 String base = matcher.group(1);
                 String functionName = matcher.group(2);
                 String argument = matcher.group(3).trim();
-                logger.info("Argument: " + argument);
+
 
                 String result;
                 try {
                     String arg = argument.replaceAll("^'|'$", "");
-                    logger.info("Argument: " + arg);
+
                     switch (functionName) {
                         case "charAt":
                             result = String.valueOf(base.charAt(Integer.parseInt(arg)));

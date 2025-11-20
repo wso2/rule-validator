@@ -186,7 +186,6 @@ public class Evaluator {
                             } else {
                                 Predicate predicate = new EvaluatePredicate.PredicateFeatures(replaceExpression, doc);
                                 replaceExpression = replaceExpression.replace(advancedFeatures.get(i).expression, "?");
-                                logger.info("Replace Expression :" + replaceExpression);
                                 int predicateIndex = replaceExpression.indexOf("?");
                                 replaceExpression = replaceExpression.substring(0, predicateIndex + 2);
                                 List<String> predicateResults = JsonPath.using(CONFIG).parse(root).read(
@@ -271,7 +270,6 @@ public class Evaluator {
         }
         paths = JsonPath.using(CONFIG).parse(root).read(jsonPathExpression);
         filteredPaths.addAll(paths);
-        logger.info("Paths before ? : " + filteredPaths);
         return filteredPaths;
     }
 
@@ -287,7 +285,7 @@ public class Evaluator {
                 if (!removeDuplicatesInArray.contains(path)) {
                     expanded.add(path);
                     removeDuplicatesInArray.add(path);
-                    logger.info("Expanded Path: " + path);
+
                 }
 
 
@@ -302,7 +300,7 @@ public class Evaluator {
                             removeDuplicatesInArray.add(childPath);
                         }
                         expandedAnObjectToArrayList.add(childPath);
-                        logger.info("Expanded Path : " + childPath);
+
                     }
                 } else {
                     if (!removeDuplicatesInArray.contains(path)) {
@@ -312,7 +310,6 @@ public class Evaluator {
                         } else {
                             expanded.add(path);
                             removeDuplicatesInArray.add(path);
-                            logger.info("Expanded Path :" + path);
                         }
                     }
                 }
@@ -328,7 +325,7 @@ public class Evaluator {
                             removeDuplicatesInArray.add(childPath);
                         }
                         expandedAnObjectToArrayList.add(childPath);
-                        logger.info("Expanded Path : " + childPath);
+
                     }
                 } else {
                     if (!removeDuplicatesInArray.contains(path)) {
@@ -338,7 +335,7 @@ public class Evaluator {
                         } else {
                             expanded.add(path);
                             removeDuplicatesInArray.add(path);
-                            logger.info("Expanded Path :" + path);
+
                         }
                     }
                 }
@@ -350,7 +347,7 @@ public class Evaluator {
     // Filter operations cannot be applied to primitives in Jayways. Manually handling
     private List<String> handlePrimitives(Object node, String subStringPath , Object root) {
         List<String> primitiveResults = new ArrayList<>();
-        logger.info("Node is a Primitive: " + node);
+
         boolean truthy = true;
         int index = 0;
         int endIndex = 0;
@@ -366,10 +363,10 @@ public class Evaluator {
             reducedExpr = expression.substring(index + 1, endIndex);
         }
         reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance , reducedExpr , root);
-        logger.info("EvaluateExpression : " + reducedExpr);
+
         Object evaluatedResult = Util.evaluateExpression(reducedExpr);
         evaluatedResult = Util.isTruthy(evaluatedResult);
-        logger.info("Processed Value: " + evaluatedResult);
+
         truthy = (Boolean) evaluatedResult;
         if (truthy) {
             String path = traversalInstance.getPath(node);
@@ -380,7 +377,7 @@ public class Evaluator {
 
     private List<String> handleArrays(Object node, String subStringPath , Object root) {
         List<String> arrayResults = new ArrayList<>();
-        logger.info("Node is an Array Expanded from an Object: " + node);
+
         int index = 0;
         int endIndex = 0;
         boolean truthy = true;
@@ -396,10 +393,10 @@ public class Evaluator {
             reducedExpr = expression.substring(index + 1, endIndex);
         }
         reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance , reducedExpr , root);
-        logger.info("EvaluateExpression : " + reducedExpr);
+
         Object evaluatedResult = Util.evaluateExpression(reducedExpr);
         evaluatedResult = Util.isTruthy(evaluatedResult);
-        logger.info("Processed Value: " + evaluatedResult);
+
         truthy = (Boolean) evaluatedResult;
         if (truthy) {
             String path = traversalInstance.getPath(node);
@@ -412,7 +409,7 @@ public class Evaluator {
                                                            String remainingString, List<String> filteredResults) {
         if (!remainingString.isEmpty()) {
             try {
-                logger.info("Path of the remaining string to apply: " + remainingString);
+
                 String normalizedPath = remainingString.startsWith("$") ? remainingString : "$" + remainingString;
 
                 for (String path : intermediateResults) {
@@ -463,7 +460,6 @@ public class Evaluator {
                 strValue = strValue.substring(1, strValue.length() - 1);
             }
 
-            logger.info("EvaluatedValue: " + strValue);
             int flagBits = 0;
             if (flags != null) {
                 if (flags.contains("i")) {
