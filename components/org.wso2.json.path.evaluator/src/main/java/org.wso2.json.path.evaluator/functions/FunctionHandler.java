@@ -70,7 +70,7 @@ public class FunctionHandler {
             }
         }
         if (function.equals("@array()")) {
-            return node instanceof List<?>;
+            return node instanceof List;
         }
         if (function.equals("@object()")) {
             return (node instanceof Map || (node instanceof List));

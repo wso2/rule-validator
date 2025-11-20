@@ -397,6 +397,7 @@ public class Util {
         String previousExpression;
 
         do {
+            //E.g. :"hello".toLowerCase().indexOf("e")
             previousExpression = expression;
             Matcher matcher = functionPattern.matcher(expression);
             StringBuffer sb = new StringBuffer();
