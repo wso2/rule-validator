@@ -24,7 +24,7 @@
         <version>1.0.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>evaluator</artifactId>
+    <artifactId>org.wso2.json.path.evaluator</artifactId>
     <name>WSO2 - JSONPath Evaluator POM</name>
 
     <build>

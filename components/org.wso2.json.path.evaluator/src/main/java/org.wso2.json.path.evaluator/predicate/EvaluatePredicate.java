@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.json.path.evaluator.document.AdvancedFeatures;
 import org.wso2.json.path.evaluator.document.Document;
 import org.wso2.json.path.evaluator.document.TraversalMapData;
-import org.wso2.json.path.evaluator.evaluate.Evaluator;
 import org.wso2.json.path.evaluator.utils.Util;
 
 import java.util.ArrayList;

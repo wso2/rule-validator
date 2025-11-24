@@ -32,7 +32,7 @@ import org.wso2.json.path.evaluator.document.TraversalMapData;
 import org.wso2.json.path.evaluator.document.wrappers.BooleanWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.NumberWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.StringWrapper;
-import org.wso2.json.path.evaluator.evaluate.Evaluator;
+
 
 import java.util.ArrayList;
 import java.util.List;
