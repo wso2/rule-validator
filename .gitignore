@@ -13,6 +13,9 @@
 # Config and data files
 Config.toml
 
+#Executable class
+Main.java
+
 # Package Files #
 *.jar
 *.war
