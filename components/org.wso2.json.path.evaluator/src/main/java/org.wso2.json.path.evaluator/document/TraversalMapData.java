@@ -41,14 +41,12 @@ public class TraversalMapData {
         if (current instanceof Map) {
             for (Map.Entry<Object, Object> entry: ((Map<Object, Object>) current).entrySet()) {
                 Object value = (entry.getValue());
-                ((Map<Object , Object>) current).put(entry.getKey() , value);
                 generateParentChildMap(value , current);
             }
         } else if (current instanceof List) {
             List<Object> list = (List<Object>) current;
             for (int i = 0; i < list.size(); i++) {
                 Object item = (list.get(i));
-                list.set(i , item);
                 generateParentChildMap(item, current);
             }
         }
@@ -56,7 +54,9 @@ public class TraversalMapData {
 
     // To make paths look in the same format
     private void generatePathMap(Object node , String path) {
-        pathMap.put(node , path);
+        if (node != null) {
+            pathMap.put(node, path);
+        }
         if (node instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) node;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -71,6 +71,9 @@ public class TraversalMapData {
     }
 
     public String getPath(Object currentNode) {
+        if (currentNode == null) {
+            return null;
+        }
         return pathMap.get(currentNode);
     }
 

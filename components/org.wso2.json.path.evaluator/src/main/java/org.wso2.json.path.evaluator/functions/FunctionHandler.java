@@ -17,8 +17,6 @@
  */
 package org.wso2.json.path.evaluator.functions;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
 
 import org.wso2.json.path.evaluator.document.wrappers.BooleanWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.NumberWrapper;
@@ -64,16 +62,15 @@ public class FunctionHandler {
         }
         if (function.equals("@integer()")) {
             if (node instanceof NumberWrapper) {
-                if (!(String.valueOf(node).contains("."))) {
-                    return true;
-                }
+                Number num = ((NumberWrapper) node).value;
+                return num.doubleValue() == num.longValue();
             }
         }
         if (function.equals("@array()")) {
             return node instanceof List;
         }
         if (function.equals("@object()")) {
-            return (node instanceof Map || (node instanceof List));
+            return (node instanceof Map);
         }
         if (function.equals("@null()")) {
             return (node == null);
@@ -85,7 +82,7 @@ public class FunctionHandler {
         return false;
     }
 
-    public static List<String> processFunctions(String jsonPathExpression , Object root) {
+    public static List<String> processFunctions(String jsonPathExpression , Object node) {
         List<String> finalResults = new ArrayList<>();
         String advancedFunction = null;
         int functionStart = -1;
@@ -100,8 +97,6 @@ public class FunctionHandler {
             return finalResults;
         }
         String basePathSubString = jsonPathExpression.substring(0 , functionStart);
-        Configuration config = Configuration.builder().options().build();
-        Object node = JsonPath.using(config).parse(root).read(basePathSubString);
         if (matchesFunction(node , advancedFunction)) {
             finalResults.add(basePathSubString);
         }

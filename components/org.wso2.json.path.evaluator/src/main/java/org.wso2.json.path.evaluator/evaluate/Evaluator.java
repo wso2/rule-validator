@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.wso2.json.path.evaluator.InvalidJSONPathException;
+import org.wso2.json.path.evaluator.JSONPathException;
 import org.wso2.json.path.evaluator.document.Document;
 import org.wso2.json.path.evaluator.document.TraversalMapData;
 import org.wso2.json.path.evaluator.document.wrappers.BooleanWrapper;
@@ -52,21 +53,19 @@ import java.util.regex.Pattern;
  */
 public class Evaluator {
     private final TraversalMapData traversalInstance;
-    private List<String> expandedAnObjectToArrayList;
+    private List<String> expandedArray;
     private List<AdvancedFeatureBlock> advancedFeatures;
     public static final Configuration CONFIG = Configuration.builder().options(Option.AS_PATH_LIST).build();
     private static final Logger logger = LoggerFactory.getLogger(Evaluator.class);
 
 
     public Evaluator(Document root) {
-        this.advancedFeatures = new ArrayList<>();
-        this.expandedAnObjectToArrayList = new ArrayList<>();
         this.traversalInstance = root.getTraversalInstanceDetails();
     }
 
-    public List<String> evaluate(String jsonPathExpression, Document doc) throws Exception {
+    public List<String> evaluate(String jsonPathExpression, Document doc) throws JSONPathException {
         this.advancedFeatures = new ArrayList<>();
-        this.expandedAnObjectToArrayList = new ArrayList<>();
+        this.expandedArray = new ArrayList<>();
         Object root = doc.getRootDocument();
         String replaceExpression = "";
         String result = jsonPathExpression;
@@ -129,11 +128,9 @@ public class Evaluator {
                         Object parentNode = traversalInstance.getParent(node);
                         jsonPathExpression = result.replace(subStrBeforeFirstAdvFeature, currentPath);
                         if (i < advancedFeatures.size() - 1) {
-                            logger.info(advancedFeatures.get(i + 1).expression);
                             int nextPredicateIndex = jsonPathExpression.indexOf(advancedFeatures.get(i + 1).expression);
                             remainingString = result.substring(
                                     advancedFeatures.get(i).end + 1, advancedFeatures.get(i + 1).start).trim();
-                            logger.info(String.valueOf(nextPredicateIndex));
                             if (FunctionHandler.hasFunction(advancedFeatures.get(i + 1).expression) ||
                                     advancedFeatures.get(i + 1).expression.equals("^") ||
                                     advancedFeatures.get(i + 1).expression.equals("~")) {
@@ -152,11 +149,8 @@ public class Evaluator {
                                 }
                             }
                         } else {
-                            logger.info("JSONPath Expression : " + jsonPathExpression);
-                            logger.info("Boundaries: " + advancedFeatures.get(i).end +
-                                    1 + "Result Length: " + result.length());
                             remainingString = result.substring(advancedFeatures.get(i).end + 1).trim();
-                            logger.info("Remaining String:" + remainingString);
+
                             int remainingStringIndex = jsonPathExpression.indexOf(remainingString);
                             if (!remainingString.isEmpty()) {
                                 replaceExpression = jsonPathExpression.substring(0, remainingStringIndex);
@@ -167,7 +161,7 @@ public class Evaluator {
                         try {
                             if (FunctionHandler.hasFunction(replaceExpression)) {
                                 List<String> functionResults = FunctionHandler.processFunctions(
-                                        replaceExpression, root);
+                                        replaceExpression, node);
                                 getPathsForRemainingString(root, functionResults, remainingString, filteredResults);
 
                             } else if (replaceExpression.contains(".match")) {
@@ -179,7 +173,7 @@ public class Evaluator {
                                         advancedFeatures.get(i).expression, root);
                                 getPathsForRemainingString(root, primitiveResults, remainingString, filteredResults);
                             } else if (node instanceof List && parentNode instanceof Map &&
-                                    expandedAnObjectToArrayList.contains(currentPath)) {
+                                    expandedArray.contains(currentPath)) {
                                 List<String> arrayResults = handleArrays(node, advancedFeatures.get(i).expression,
                                         root);
                                 getPathsForRemainingString(root, arrayResults, remainingString, filteredResults);
@@ -195,11 +189,9 @@ public class Evaluator {
                         } catch (PathNotFoundException e) {
                             logger.warn("Path not found: " + currentPath);
 
-                        } catch (JsonPathException | IllegalArgumentException e) {
-                            logger.error("Invalid expression at path: " + currentPath + " -> " + e.getMessage());
+                        } catch (JsonPathException e) {
+                            logger.debug("Invalid expression at path: " + currentPath + " -> " + e.getMessage());
 
-                        } catch (Exception e) {
-                            logger.error("Unexpected failure at path: " + currentPath, e);
                         }
                     }
                 }
@@ -276,7 +268,7 @@ public class Evaluator {
     // To expand the paths if the node is an instance of Map
     private List<String> expandPaths(String jsonPathExpression , Object root , List<String> paths) {
         List<String> expanded = new ArrayList<>();
-        expandedAnObjectToArrayList = new ArrayList<>();
+        expandedArray = new ArrayList<>();
         List<String> removeDuplicatesInArray = new ArrayList<>();
         for (String pathObj : paths) {
             String path = pathObj;
@@ -288,7 +280,6 @@ public class Evaluator {
 
                 }
 
-
                 if (node instanceof Map) {
                     Map<Object , Object> mapNode = (Map<Object , Object>) node;
                     for (Map.Entry<Object, Object> entry : mapNode.entrySet()) {
@@ -299,7 +290,7 @@ public class Evaluator {
                             expanded.add(childPath);
                             removeDuplicatesInArray.add(childPath);
                         }
-                        expandedAnObjectToArrayList.add(childPath);
+                        expandedArray.add(childPath);
 
                     }
                 } else {
@@ -324,7 +315,7 @@ public class Evaluator {
                             expanded.add(childPath);
                             removeDuplicatesInArray.add(childPath);
                         }
-                        expandedAnObjectToArrayList.add(childPath);
+                        expandedArray.add(childPath);
 
                     }
                 } else {
@@ -421,9 +412,8 @@ public class Evaluator {
                         filteredResults.add(combined);
                     }
                 }
-
             } catch (Exception e) {
-                logger.info("Error applying intermediate path: " + e.getMessage());
+                logger.debug("Error applying intermediate path: " + e.getMessage());
             }
         } else {
             filteredResults.addAll(intermediateResults);
@@ -432,15 +422,15 @@ public class Evaluator {
     }
 
     private static String setPathsForRemainingString(String base, String relative) {
-        String cleaned = relative.replaceFirst("^\\$\\.?" , "");
+        String replaceDollar = relative.replaceFirst("^\\$\\.?" , "");
         if (base.endsWith("]")) {
-            return base  + cleaned;
+            return base  + replaceDollar;
         } else {
-            return base + "['" + cleaned + "']";
+            return base + "['" + replaceDollar + "']";
         }
     }
 
-    public void handleMatchFunction(String expr, Object currentNode, List<String> filteredResults) {
+    private void handleMatchFunction(String expr, Object currentNode, List<String> filteredResults) {
         Pattern pattern = Pattern.compile("((?:@[a-zA-Z0-9_\\.]*|[a-zA-Z0-9_\\.]+))\\.match\\(/(.*?)/([a-z]*)\\)");
         Matcher matcher = pattern.matcher(expr);
 

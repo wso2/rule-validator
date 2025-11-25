@@ -20,8 +20,8 @@ package org.wso2.json.path.evaluator;
 /**
  * Exception to handle if brackets are not balanced
  */
-public class InvalidJSONPathException extends JSONPathException {
-    public InvalidJSONPathException(String message) {
-        super("Brackets are not balanced in the given Expression" + message);
+public class JSONPathException extends Exception {
+    public JSONPathException(String message) {
+        super("Error in the given Expression" + message);
     }
 }

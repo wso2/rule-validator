@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.json.path.evaluator.entry;
+package org.wso2.json.path.evaluator;
 
 import org.wso2.json.path.evaluator.document.Document;
 import org.wso2.json.path.evaluator.evaluate.Evaluator;
@@ -34,7 +34,7 @@ public class JSONPathEvaluator {
         this.evaluator = new Evaluator(rootDoc);
     }
 
-    public List<String> jsonPathEvaluate(String jsonPathExpression) throws Exception {
+    public List<String> jsonPathEvaluate(String jsonPathExpression) throws JSONPathException {
         return evaluator.evaluate(jsonPathExpression , rootDoc);
     }
 }

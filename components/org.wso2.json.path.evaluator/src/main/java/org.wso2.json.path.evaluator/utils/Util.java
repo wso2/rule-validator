@@ -24,8 +24,6 @@ import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.JexlEngine;
 import org.apache.commons.jexl3.JexlExpression;
 import org.apache.commons.jexl3.MapContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.wso2.json.path.evaluator.document.AdvancedFeatures;
 import org.wso2.json.path.evaluator.document.TraversalMapData;
@@ -45,7 +43,6 @@ import java.util.regex.Pattern;
  * Util methods
  */
 public class Util {
-    private static final Logger logger = LoggerFactory.getLogger(Util.class);
     public static Object returnValuesForAdvancedFeatures(TraversalMapData traversalInstance,
                                                          Object currentNode, AdvancedFeatures key) {
         Object parentNode = traversalInstance.getParent(currentNode);
@@ -131,18 +128,9 @@ public class Util {
                 "includes()",
                 "indexOf()",
                 "lastIndexOf()",
-                "match()",
-                "replace()",
-                "replaceAll()",
-                "split()",
                 "startsWith()",
-                "substring()",
                 "toLowerCase()",
-                "toString()",
-                "toUpperCase()",
-                "trim()",
-                "valueOf()"
-
+                "toUpperCase()"
         };
         for (String strMethod : stringMethods) {
             if (expression.contains(strMethod)) {
@@ -172,7 +160,7 @@ public class Util {
             result = replacePath(traversalInstance, result, currentNode);
         }
         if (jsonPathExpression.contains("@root")) {
-            result = replaceRoot(traversalInstance, result, currentNode);
+            result = replaceRoot(result);
         }
         if (jsonPathExpression.contains("@")) {
             result = replaceAt(traversalInstance, result, currentNode);
@@ -245,8 +233,7 @@ public class Util {
         return result;
     }
 
-    private static String replaceRoot(TraversalMapData traversalInstance, String jsonPathExpression,
-                                      Object currentNode) {
+    private static String replaceRoot(String jsonPathExpression) {
         String result = jsonPathExpression;
         result = result.replace("@root", "$");
         return result;
@@ -352,12 +339,12 @@ public class Util {
             if (finalValue instanceof List) {
                 List<?> list = (List<?>) finalValue;
                 if (list.size() == 1) {
-                    Object single = list.get(0);
-                    if (single instanceof Map && ((Map<Object, Object>) single).size() == 1 &&
-                            ((Map<Object, Object>) single).containsKey("value")) {
-                        finalValue = ((Map<?, ?>) single).get("value");
+                    Object firstElement = list.get(0);
+                    if (firstElement instanceof Map && ((Map<Object, Object>) firstElement).size() == 1 &&
+                            ((Map<Object, Object>) firstElement).containsKey("value")) {
+                        finalValue = ((Map<?, ?>) firstElement).get("value");
                     } else {
-                        finalValue = single;
+                        finalValue = firstElement;
                     }
                 }
             }
@@ -373,12 +360,12 @@ public class Util {
                 try {
                     Integer.parseInt(String.valueOf(finalValue));
                     replacement = String.valueOf(finalValue);
-                } catch (Exception e1) {
+                } catch (Exception e) {
                     try {
                         Double.parseDouble(String.valueOf(finalValue));
                         replacement = String.valueOf(finalValue);
-                    } catch (Exception e2) {
-                        replacement = "\"" + String.valueOf(finalValue) + "\"";
+                    } catch (Exception e1) {
+                        replacement = String.valueOf(finalValue);
                     }
                 }
             }
@@ -465,8 +452,6 @@ public class Util {
         JexlEngine jexl  = new JexlBuilder().create();
         JexlContext context = new MapContext();
         JexlExpression expression = jexl.createExpression(reducedExpression);
-        Object resulting = expression.evaluate(context);
-        logger.info("Resulting : " + resulting);
-        return resulting;
+        return expression.evaluate(context);
     }
 }

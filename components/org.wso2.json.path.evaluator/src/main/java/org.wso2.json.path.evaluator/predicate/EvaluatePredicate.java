@@ -37,7 +37,7 @@ public class EvaluatePredicate {
      * Implementing a predicate
      */
     public static class PredicateFeatures implements Predicate {
-        private final String jsonPathExpression;
+        private String jsonPathExpression;
         private Object rootDocument;
         private TraversalMapData traversalInstance;
         private static final Logger logger = LoggerFactory.getLogger(EvaluatePredicate.class);
@@ -53,36 +53,54 @@ public class EvaluatePredicate {
             Object currentNode = context.item();
             String expression = Util.replaceAdvancedFeaturesWithActualValues(
                     traversalInstance, jsonPathExpression, currentNode);
-            logger.info(expression);
-            int startIndex, endIndex = 0;
-            String reducedExpr = "";
-            List<?> targetNodes = List.of();
-            int newValue = 0;
+            boolean isFilterExpression = expression.contains("?");
+            int startIndex;
+            int endIndex;
+            String reducedExpr;
             boolean boolResult = false;
-            if (expression.contains("?")) {
+            if (isFilterExpression) {
                 startIndex = expression.indexOf("?");
                 endIndex = expression.lastIndexOf("]");
+                if (startIndex < 0 || endIndex <= startIndex) {
+                    logger.warn("Invalid predicate filter expression: {}", expression);
+                    return false;
+                }
                 reducedExpr = expression.substring(startIndex + 1, endIndex);
             } else {
                 startIndex = expression.indexOf("(");
                 endIndex = expression.indexOf("]", startIndex);
-                reducedExpr = expression.substring(startIndex , endIndex);
+                if (startIndex < 0 || endIndex <= startIndex) {
+                    logger.warn("Invalid index-based predicate expression: {}", expression);
+                    return false;
+                }
+                reducedExpr = expression.substring(startIndex, endIndex);
             }
+            //e.g. : ($.store.book === $.store.book)
             reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance,
                     reducedExpr, rootDocument);
 
             Object value = Util.evaluateExpression(reducedExpr);
             Object parent = Util.returnValuesForAdvancedFeatures(traversalInstance,
                     currentNode, AdvancedFeatures.PARENT);
-            if (!expression.contains("?")) {
-                if (parent instanceof List) {
-                    targetNodes = new ArrayList<>((List<?>) parent);
+            if (!isFilterExpression) {
+                if (!(value instanceof Number)) {
+                    logger.warn("Index-based predicate did not evaluate to a number: {} (value={})",
+                            reducedExpr, value);
+                    return false;
                 }
-                newValue = (Integer) value;
-                boolResult = (currentNode.equals(targetNodes.get(newValue)));
+                if (!(parent instanceof List)) {
+                    logger.warn("Index-based predicate requires a list parent, but found: {}",
+                            parent == null ? "null" : parent.getClass().getName());
+                    return false;
+                }
+                List<?> targetNodes = new ArrayList<>((List<?>) parent);
+                int index = ((Number) value).intValue();
+                if (index < 0 || index >= targetNodes.size()) {
+                    return false;
+                }
+                boolResult = currentNode.equals(targetNodes.get(index));
             } else {
-                value = Util.isTruthy(value);
-                boolResult = (Boolean) value;
+                boolResult = Util.isTruthy(value);
             }
 
             return boolResult;
