@@ -25,6 +25,7 @@ import org.apache.commons.jexl3.JexlEngine;
 import org.apache.commons.jexl3.JexlExpression;
 import org.apache.commons.jexl3.MapContext;
 
+import org.wso2.json.path.evaluator.Constants;
 import org.wso2.json.path.evaluator.document.AdvancedFeatures;
 import org.wso2.json.path.evaluator.document.TraversalMapData;
 import org.wso2.json.path.evaluator.document.wrappers.BooleanWrapper;
@@ -89,17 +90,19 @@ public class Util {
             }
         } else if (parent instanceof ArrayList) {
             List<Object> list = (List<Object>) parent;
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i) == node) {
-                    return String.valueOf(i);
+            int index = 0;
+            for (Object item : list) {
+                if(item == node) {
+                    return String.valueOf(index);
                 }
+                index++;
             }
         }
         return null;
     }
 
     public static boolean hasAdvancedFeatures(String givenPath) {
-        String[] unsupportedFeatures = {
+        String[] advancedFeatures = {
                 "@.",
                 "@.length",
                 "@property",
@@ -111,7 +114,7 @@ public class Util {
                 "~"
         };
 
-        for (String pattern : unsupportedFeatures) {
+        for (String pattern : advancedFeatures) {
             if (givenPath.contains(pattern)) {
                 return true;
             }
@@ -144,25 +147,25 @@ public class Util {
     public static String replaceAdvancedFeaturesWithActualValues(TraversalMapData traversalInstance,
                                                                  String jsonPathExpression, Object currentNode) {
         String result = jsonPathExpression;
-        if (jsonPathExpression.contains("@.length")) {
+        if (jsonPathExpression.contains(Constants.ADVANCED_FEATURE_LENGTH)) {
             result = replaceLength(traversalInstance, result, currentNode);
         }
-        if (jsonPathExpression.contains("@property")) {
+        if (jsonPathExpression.contains(Constants.ADVANCED_FEATURE_PROPERTY)) {
             result = replaceProperty(traversalInstance, result, currentNode);
         }
-        if (jsonPathExpression.contains("@parentProperty")) {
+        if (jsonPathExpression.contains(Constants.ADVANCED_FEATURE_PARENT_PROPERTY)) {
             result = replaceParentProperty(traversalInstance, result, currentNode);
         }
-        if (jsonPathExpression.contains("@parent")) {
+        if (jsonPathExpression.contains(Constants.ADVANCED_FEATURE_PARENT)) {
             result = replaceParent(traversalInstance, result, currentNode);
         }
-        if (jsonPathExpression.contains("@path")) {
+        if (jsonPathExpression.contains(Constants.ADVANCED_FEATURE_PATH)) {
             result = replacePath(traversalInstance, result, currentNode);
         }
-        if (jsonPathExpression.contains("@root")) {
+        if (jsonPathExpression.contains(Constants.ADVANCED_FEATURE_ROOT)) {
             result = replaceRoot(result);
         }
-        if (jsonPathExpression.contains("@")) {
+        if (jsonPathExpression.contains(Constants.ADVANCED_FEATURE_AT)) {
             result = replaceAt(traversalInstance, result, currentNode);
         }
         return result;
@@ -176,7 +179,7 @@ public class Util {
                 traversalInstance, currentNode, AdvancedFeatures.LENGTH);
 
         if (getLengthObject instanceof Integer) {
-            result = result.replace("@.length", String.valueOf(getLengthObject));
+            result = result.replace(Constants.ADVANCED_FEATURE_LENGTH, String.valueOf(getLengthObject));
         }
         return result;
     }
@@ -190,9 +193,9 @@ public class Util {
         try {
             Integer.parseInt(String.valueOf(getPropertyObject));
         } catch (Exception e) {
-            getPropertyObject = "\"" + String.valueOf(getPropertyObject) + "\"";
+            getPropertyObject = "\"" + getPropertyObject + "\"";
         }
-        result = result.replace("@property", String.valueOf(getPropertyObject));
+        result = result.replace(Constants.ADVANCED_FEATURE_PROPERTY, String.valueOf(getPropertyObject));
         return result;
     }
 
@@ -204,9 +207,9 @@ public class Util {
         try {
             Integer.parseInt(String.valueOf(getParentObject));
         } catch (Exception e) {
-            getParentObject = "\"" + String.valueOf(getParentObject) + "\"";
+            getParentObject = "\"" + getParentObject + "\"";
         }
-        result = result.replace("@parentProperty", String.valueOf(getParentObject));
+        result = result.replace(Constants.ADVANCED_FEATURE_PARENT_PROPERTY, String.valueOf(getParentObject));
         return result;
     }
 
@@ -217,9 +220,9 @@ public class Util {
         Object parentNode = returnValuesForAdvancedFeatures(traversalInstance, currentNode, AdvancedFeatures.PARENT);
         Object grandParentNode = traversalInstance.getParent(parentNode);
         if (grandParentNode != null) {
-            parentValue = result.replace("@parent", "$.");
+            parentValue = result.replace(Constants.ADVANCED_FEATURE_PARENT, "$.");
         } else {
-            parentValue = result.replace("@parent", "$");
+            parentValue = result.replace(Constants.ADVANCED_FEATURE_PARENT, "$");
         }
 
         return parentValue;
@@ -229,19 +232,19 @@ public class Util {
                                       Object currentNode) {
         String result = jsonPathExpression;
         Object getPath = returnValuesForAdvancedFeatures(traversalInstance, currentNode, AdvancedFeatures.PATH);
-        result = result.replace("@path", "\"" + String.valueOf(getPath) + "\"");
+        result = result.replace(Constants.ADVANCED_FEATURE_PATH, "\"" + getPath + "\"");
         return result;
     }
 
     private static String replaceRoot(String jsonPathExpression) {
         String result = jsonPathExpression;
-        result = result.replace("@root", "$");
+        result = result.replace(Constants.ADVANCED_FEATURE_ROOT, "$");
         return result;
     }
 
     private static String replaceAt(TraversalMapData traversalInstance, String jsonPathExpression, Object currentNode) {
         String result = jsonPathExpression;
-        result = result.replace("@" , String.valueOf(returnValuesForAdvancedFeatures(traversalInstance,
+        result = result.replace(Constants.ADVANCED_FEATURE_AT , String.valueOf(returnValuesForAdvancedFeatures(traversalInstance,
                 currentNode, AdvancedFeatures.PATH)));
         return result;
     }
@@ -292,16 +295,11 @@ public class Util {
     public static String comparisonOfPathsAndReplacingPathsWithActualValues(TraversalMapData traversalInstance,
                                                                             String expression, Object root) {
         // Example scenario : $.store.book[2] === @root..['book'][2]
-        String pathsOnBothSides =
-                ".*(?:\\\"|')?\\$+(?:\\.?[A-Za-z0-9_\\[\\]\\.']+)+(?:\\\"|')?\\s*(?:===|!==|==|!=|>=|<=|>|<)\\s*" +
-                        "(?:\\\"|')?\\$+(?:\\.?[A-Za-z0-9_\\[\\]\\.']+)+(?:\\\"|')?.*";
+        String pathsOnBothSides = String.valueOf(Constants.JSONPATH_COMPARISON_REGEX);
 
         if (expression.matches(pathsOnBothSides)) {
-
-            Pattern pattern = Pattern.compile(
-                    "(\\$+(?:\\.?[A-Za-z0-9_\\[\\]'\".]+)+)\\s*(===|!==|==|!=|>=|<=|>|<)\\s*" +
-                            "(\\$+(?:\\.?[A-Za-z0-9_\\[\\]'\".]+)+)");
-            Matcher matcher = pattern.matcher(expression);
+            //Pattern pattern = Pattern.compile(Constants.JSONPATH_MATCHER_REGEX);
+            Matcher matcher = Constants.JSONPATH_MATCHER_REGEX.matcher(expression);
 
             if (matcher.find()) {
                 String leftPath = matcher.group(1).trim();
@@ -321,7 +319,7 @@ public class Util {
             return expression;
         }
 
-        Pattern pattern = Pattern.compile("\\$(?:\\.\\.?[a-zA-Z0-9_\\$]+|\\[[^\\]]+\\])+");
+        Pattern pattern = Pattern.compile(Constants.NODE_VALUE_JSONPATH_REGEX);
         Matcher matcher = pattern.matcher(expression);
 
         StringBuffer sb = new StringBuffer();
@@ -351,7 +349,7 @@ public class Util {
             int endIdx = matcher.end();
             String afterPath = expression.substring(endIdx);
 
-            boolean hasComparisonAfter = afterPath.matches("\\s*(===|!==|==|!=|>=|<=|>|<).*");
+            boolean hasComparisonAfter = afterPath.matches(Constants.COMPARISON_REGEX);
             String replacement;
             // Example testcase : $.store.book[?(@parent.bicycle)]
             if (!hasComparisonAfter) {
@@ -379,7 +377,7 @@ public class Util {
         return expression;
     }
     public static String handleStringFunctions(String expression) {
-        Pattern functionPattern = Pattern.compile("\"([^\"]+)\"\\.(\\w+)\\(([^)]*)\\)");
+        Pattern functionPattern = Pattern.compile(Constants.STRING_FUNCTIONS_REGEX);
         String previousExpression;
 
         do {
@@ -393,10 +391,9 @@ public class Util {
                 String functionName = matcher.group(2);
                 String argument = matcher.group(3).trim();
 
-
                 String result;
                 try {
-                    String arg = argument.replaceAll("^'|'$", "");
+                    String arg = argument.replaceAll(Constants.SINGLE_QUOTE_REGEX, "");
 
                     switch (functionName) {
                         case "charAt":
@@ -439,8 +436,6 @@ public class Util {
 
                 matcher.appendReplacement(sb, result);
             }
-
-
             matcher.appendTail(sb);
             expression = sb.toString();
         } while(!previousExpression.equals(expression));

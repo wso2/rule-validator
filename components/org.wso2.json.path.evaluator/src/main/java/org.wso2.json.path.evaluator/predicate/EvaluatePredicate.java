@@ -19,8 +19,6 @@ package org.wso2.json.path.evaluator.predicate;
 
 import com.jayway.jsonpath.Predicate;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.json.path.evaluator.document.AdvancedFeatures;
 import org.wso2.json.path.evaluator.document.Document;
 import org.wso2.json.path.evaluator.document.TraversalMapData;
@@ -40,7 +38,6 @@ public class EvaluatePredicate {
         private String jsonPathExpression;
         private Object rootDocument;
         private TraversalMapData traversalInstance;
-        private static final Logger logger = LoggerFactory.getLogger(EvaluatePredicate.class);
 
         public PredicateFeatures(String jsonPathExpression, Document doc) {
             this.jsonPathExpression = jsonPathExpression;
@@ -51,58 +48,34 @@ public class EvaluatePredicate {
         @Override
         public boolean apply(PredicateContext context) {
             Object currentNode = context.item();
-            String expression = Util.replaceAdvancedFeaturesWithActualValues(
-                    traversalInstance, jsonPathExpression, currentNode);
-            boolean isFilterExpression = expression.contains("?");
-            int startIndex;
-            int endIndex;
-            String reducedExpr;
+            String expression = Util.replaceAdvancedFeaturesWithActualValues(traversalInstance,jsonPathExpression, currentNode);
+            int startIndex, endIndex = 0;
+            String reducedExpr = "";
+            List<?> targetNodes = List.of();
+            int newValue = 0;
             boolean boolResult = false;
-            if (isFilterExpression) {
+            if (expression.contains("?")) {
                 startIndex = expression.indexOf("?");
                 endIndex = expression.lastIndexOf("]");
-                if (startIndex < 0 || endIndex <= startIndex) {
-                    logger.warn("Invalid predicate filter expression: {}", expression);
-                    return false;
-                }
                 reducedExpr = expression.substring(startIndex + 1, endIndex);
             } else {
                 startIndex = expression.indexOf("(");
-                endIndex = expression.indexOf("]", startIndex);
-                if (startIndex < 0 || endIndex <= startIndex) {
-                    logger.warn("Invalid index-based predicate expression: {}", expression);
-                    return false;
-                }
-                reducedExpr = expression.substring(startIndex, endIndex);
+                endIndex = expression.indexOf("]",startIndex);
+                reducedExpr = expression.substring(startIndex , endIndex);
             }
-            //e.g. : ($.store.book === $.store.book)
-            reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance,
-                    reducedExpr, rootDocument);
-
-            Object value = Util.evaluateExpression(reducedExpr);
-            Object parent = Util.returnValuesForAdvancedFeatures(traversalInstance,
-                    currentNode, AdvancedFeatures.PARENT);
-            if (!isFilterExpression) {
-                if (!(value instanceof Number)) {
-                    logger.warn("Index-based predicate did not evaluate to a number: {} (value={})",
-                            reducedExpr, value);
-                    return false;
+            reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance,reducedExpr,rootDocument);
+            Object evaluatedValue = Util.evaluateExpression(reducedExpr);
+            Object parent = Util.returnValuesForAdvancedFeatures(traversalInstance,currentNode, AdvancedFeatures.PARENT);
+            if (!expression.contains("?"))
+            {
+                if (parent instanceof List) {
+                    targetNodes = new ArrayList<>((List<?>) parent);
                 }
-                if (!(parent instanceof List)) {
-                    logger.warn("Index-based predicate requires a list parent, but found: {}",
-                            parent == null ? "null" : parent.getClass().getName());
-                    return false;
-                }
-                List<?> targetNodes = new ArrayList<>((List<?>) parent);
-                int index = ((Number) value).intValue();
-                if (index < 0 || index >= targetNodes.size()) {
-                    return false;
-                }
-                boolResult = currentNode.equals(targetNodes.get(index));
+                boolResult = (currentNode.equals(targetNodes.get((Integer) evaluatedValue)));
             } else {
-                boolResult = Util.isTruthy(value);
+                evaluatedValue = Util.isTruthy(evaluatedValue);
+                boolResult = (Boolean) evaluatedValue;
             }
-
             return boolResult;
         }
     }
