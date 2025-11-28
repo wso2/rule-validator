@@ -13,7 +13,7 @@ public class Constants {
             "(\\$+(?:\\.?[A-Za-z0-9_\\[\\]'\".]+)+)\\s*(===|!==|==|!=|>=|<=|>|<)\\s*" +
             "(\\$+(?:\\.?[A-Za-z0-9_\\[\\]'\".]+)+)");
     public static final String NODE_VALUE_JSONPATH_REGEX = "\\$(?:\\.\\.?[a-zA-Z0-9_\\$]+|\\[[^\\]]+\\])+";
-    public static final String COMPARISON_REGEX = "\\s*(===|!==|==|!=|>=|<=|>|<).*";
+    public static final String COMPARISON_REGEX = "\\s*(===|!==|==|!=|>=|<=|>|<|\\+|\\-|\\*|\\/).*";
     public static final String STRING_FUNCTIONS_REGEX = "\"([^\"]+)\"\\.(\\w+)\\(([^)]*)\\)";
     public static final String SINGLE_QUOTE_REGEX = "^'|'$";
 

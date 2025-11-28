@@ -49,6 +49,7 @@ public class EvaluatePredicate {
         public boolean apply(PredicateContext context) {
             Object currentNode = context.item();
             String expression = Util.replaceAdvancedFeaturesWithActualValues(traversalInstance,jsonPathExpression, currentNode);
+            System.out.println(expression);
             int startIndex, endIndex = 0;
             String reducedExpr = "";
             List<?> targetNodes = List.of();
@@ -63,7 +64,9 @@ public class EvaluatePredicate {
                 endIndex = expression.indexOf("]",startIndex);
                 reducedExpr = expression.substring(startIndex , endIndex);
             }
+            System.out.println(reducedExpr);
             reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance,reducedExpr,rootDocument);
+            System.out.println(reducedExpr);
             Object evaluatedValue = Util.evaluateExpression(reducedExpr);
             Object parent = Util.returnValuesForAdvancedFeatures(traversalInstance,currentNode, AdvancedFeatures.PARENT);
             if (!expression.contains("?"))

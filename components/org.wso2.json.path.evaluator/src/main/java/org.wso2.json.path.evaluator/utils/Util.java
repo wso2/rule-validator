@@ -363,7 +363,7 @@ public class Util {
                         Double.parseDouble(String.valueOf(finalValue));
                         replacement = String.valueOf(finalValue);
                     } catch (Exception e1) {
-                        replacement = String.valueOf(finalValue);
+                        replacement = "\"" + String.valueOf(finalValue) + "\"";
                     }
                 }
             }
