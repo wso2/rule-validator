@@ -34,6 +34,9 @@ public class JSONPathEvaluator {
         this.evaluator = new Evaluator(rootDoc);
     }
 
+    /** For the given JSONPath expression and root JSON/YAML document,
+     *   this method returns the final list of matching paths.
+     */
     public List<String> jsonPathEvaluate(String jsonPathExpression) throws JSONPathException {
         return evaluator.evaluate(jsonPathExpression , rootDoc);
     }

@@ -32,7 +32,6 @@ import org.wso2.json.path.evaluator.document.wrappers.BooleanWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.NumberWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.StringWrapper;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +43,11 @@ import java.util.regex.Pattern;
  * Util methods
  */
 public class Util {
+
+    /** This method returns actual values for JSONPath Plus features
+     * Consider this JSONPath : "$.store.book[(@.length - @.length)]"
+     * Then, this method returns the length/size of parent node.
+     */
     public static Object returnValuesForAdvancedFeatures(TraversalMapData traversalInstance,
                                                          Object currentNode, AdvancedFeatures key) {
         Object parentNode = traversalInstance.getParent(currentNode);
@@ -75,6 +79,12 @@ public class Util {
         }
     }
 
+    /**
+     * Returns the property value of the given node.
+     * For arrays, the property corresponds to the array index.
+     * For maps, the property corresponds to the map key.
+     */
+
     private static String getPropertyName(TraversalMapData traversalInstance, Object node) {
         Object parent = traversalInstance.getParent(node);
 
@@ -101,6 +111,7 @@ public class Util {
         return null;
     }
 
+    // This method return true if the expression contains any JSONPath Plus features
     public static boolean hasAdvancedFeatures(String givenPath) {
         String[] advancedFeatures = {
                 "@.",
@@ -122,6 +133,7 @@ public class Util {
         return false;
     }
 
+    // This method returns if the expression has any string methods supported by Java
     public static boolean hasStringMethods(String expression) {
         String [] stringMethods = {
                 "charAt()",
@@ -143,6 +155,10 @@ public class Util {
         return false;
 
     }
+
+    /** Replaces advanced features in the JSONPath expression with their actual values.
+     * (e.g.) "[?(@property!==0)]" , then this method returns "[?(0!==0)]"
+     */
 
     public static String replaceAdvancedFeaturesWithActualValues(TraversalMapData traversalInstance,
                                                                  String jsonPathExpression, Object currentNode) {
@@ -292,13 +308,15 @@ public class Util {
     }
 
 
+    /** If json path is in the expression, then this method handles and returns the modified expression
+     * (e.g). $.store[?(@path !== "$['store']['book']")]
+     */
     public static String comparisonOfPathsAndReplacingPathsWithActualValues(TraversalMapData traversalInstance,
                                                                             String expression, Object root) {
         // Example scenario : $.store.book[2] === @root..['book'][2]
         String pathsOnBothSides = String.valueOf(Constants.JSONPATH_COMPARISON_REGEX);
 
         if (expression.matches(pathsOnBothSides)) {
-            //Pattern pattern = Pattern.compile(Constants.JSONPATH_MATCHER_REGEX);
             Matcher matcher = Constants.JSONPATH_MATCHER_REGEX.matcher(expression);
 
             if (matcher.find()) {
@@ -319,6 +337,7 @@ public class Util {
             return expression;
         }
 
+        // JSONPath Expression : "$.store.book[?(@.price > 19)]"
         Pattern pattern = Pattern.compile(Constants.NODE_VALUE_JSONPATH_REGEX);
         Matcher matcher = pattern.matcher(expression);
 
@@ -349,10 +368,10 @@ public class Util {
             int endIdx = matcher.end();
             String afterPath = expression.substring(endIdx);
 
-            boolean hasComparisonAfter = afterPath.matches(Constants.COMPARISON_REGEX);
+            boolean hasOperatorAfter = afterPath.matches(Constants.COMPARISON_REGEX);
             String replacement;
             // Example testcase : $.store.book[?(@parent.bicycle)]
-            if (!hasComparisonAfter) {
+            if (!hasOperatorAfter) {
                 replacement = String.valueOf(isTruthy(finalValue));
             } else {
                 try {
@@ -376,6 +395,8 @@ public class Util {
         }
         return expression;
     }
+
+    // This method handles if the expression contains string methods supported by Java
     public static String handleStringFunctions(String expression) {
         Pattern functionPattern = Pattern.compile(Constants.STRING_FUNCTIONS_REGEX);
         String previousExpression;

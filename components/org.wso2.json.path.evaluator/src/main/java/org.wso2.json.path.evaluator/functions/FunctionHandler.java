@@ -41,6 +41,7 @@ public class FunctionHandler {
             "@scalar()"
     );
 
+    // This method returns boolean value if the expression contains any functions
     public static boolean hasFunction(String expr) {
         for (String function : ADVANCED_FUNCTIONS) {
             if (expr.contains(function)) {
@@ -50,6 +51,7 @@ public class FunctionHandler {
         return false;
     }
 
+    // Returns true if the node matches the specified JSONPath Plus function
     private static boolean matchesFunction(Object node, String function) {
         if (function.equals("@number()")) {
             return node instanceof NumberWrapper;
@@ -82,6 +84,7 @@ public class FunctionHandler {
         return false;
     }
 
+    // This method return paths when the expression includes any JSONPath functions
     public static List<String> processFunctions(String jsonPathExpression , Object node) {
         List<String> finalResults = new ArrayList<>();
         String advancedFunction = null;

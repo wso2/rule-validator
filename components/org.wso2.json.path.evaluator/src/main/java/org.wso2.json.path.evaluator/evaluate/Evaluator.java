@@ -17,10 +17,7 @@
  */
 package org.wso2.json.path.evaluator.evaluate;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.*;
 
 
 import org.wso2.json.path.evaluator.Constants;
@@ -59,6 +56,7 @@ public class Evaluator {
         this.traversalInstance = root.getTraversalInstanceDetails();
     }
 
+    // Returns a final list of paths for the given JSONPath Expression
     public List<String> evaluate(String jsonPathExpression, Document doc) throws JSONPathException {
         List<String> filteredResults = new ArrayList<>();
         List<String> finalPathResults = new ArrayList<>();
@@ -73,11 +71,16 @@ public class Evaluator {
             String result = jsonPathExpression;
 
 
+            /** It checks whether the given json expression contains any JSONPath Plus features
+             *  Functions like (@number() , @string() , @boolean(), and others) are also JSONPath Plus features
+             *  If it contains plus features, then we use Jayways Predicate and then evaluate using Jayways Path engine
+             */
+
             if (Util.hasAdvancedFeatures(jsonPathExpression) || FunctionHandler.hasFunction(jsonPathExpression)) {
                 advancedFeatures = extractAdvancedFeatures(jsonPathExpression);
                 Queue<String> pathQueue = new LinkedList<>();
                 for (int i = 0; i < advancedFeatures.size(); i++) {
-                    String subStrBeforeFirstAdvFeature = result.substring(0, advancedFeatures.get(i).start);
+                    String subStrBeforeFirstAdvFeature = result.substring(0, advancedFeatures.get(i).startIndex);
                     List<String> pathsBeforeFirstAdvFeature;
                     if (i == 0) {
                         pathsBeforeFirstAdvFeature = getPathsBeforeFiltering(subStrBeforeFirstAdvFeature, root);
@@ -90,9 +93,14 @@ public class Evaluator {
                         List<String> parentResults = new ArrayList<>(List.of());
                         if (i < advancedFeatures.size() - 1) {
                             remainingString = result.substring
-                                    (advancedFeatures.get(i).end, advancedFeatures.get(i + 1).start);
+                                    (advancedFeatures.get(i).endIndex, advancedFeatures.get(i + 1).startIndex);
                         } else {
-                            remainingString = result.substring(advancedFeatures.get(i).end);
+                            remainingString = result.substring(advancedFeatures.get(i).endIndex);
+                        }
+                        int indexOfCaret = jsonPathExpression.indexOf("^");
+                        String subStringBeforeCaret = jsonPathExpression.substring(0,indexOfCaret);
+                        if(subStringBeforeCaret.endsWith("..")) {
+                            filteredResults = resolvingEndingDots(subStringBeforeCaret,root);
                         }
                         for (String path : filteredResults) {
                             Object parentNode = traversalInstance.getParent
@@ -111,9 +119,17 @@ public class Evaluator {
                         List<String> propertyResults = new ArrayList<>();
                         if (i + 1 < advancedFeatures.size()) {
                             remainingString = result.substring
-                                    (advancedFeatures.get(i).end, advancedFeatures.get(i + 1).start);
+                                    (advancedFeatures.get(i).endIndex, advancedFeatures.get(i + 1).startIndex);
                         } else {
-                            remainingString = result.substring(advancedFeatures.get(i).end);
+                            remainingString = result.substring(advancedFeatures.get(i).endIndex);
+                        }
+                        int indexOfTilde = jsonPathExpression.indexOf("~");
+                        String subStringBeforeTilde = jsonPathExpression.substring(0,indexOfTilde);
+                        if(subStringBeforeTilde.endsWith("..")) {
+                            filteredResults = resolvingEndingDots(subStringBeforeTilde,root);
+                        } else if(subStringBeforeTilde.endsWith(".") && !subStringBeforeTilde.endsWith("..")) {
+                            subStringBeforeTilde = subStringBeforeTilde.replace(".","..");
+                            filteredResults = resolvingEndingDots(subStringBeforeTilde,root);
                         }
                         for (String path : filteredResults) {
                             Object currentNode = JsonPath.parse(root).read(path);
@@ -122,7 +138,7 @@ public class Evaluator {
                         filteredResults = new ArrayList<>();
                         updatePathsForRemainingString(root, propertyResults, remainingString, filteredResults);
                     } else {
-                        // This is the advanced features with the square braces.
+                        // This else part handles, advanced features with the square braces.
                         filteredResults = new ArrayList<>(List.of());
 
                         List<String> finalPaths = expandPaths
@@ -138,7 +154,7 @@ public class Evaluator {
                                 int nextPredicateIndex = jsonPathExpression.indexOf(
                                         advancedFeatures.get(i + 1).expression);
                                 remainingString = result.substring(
-                                        advancedFeatures.get(i).end + 1, advancedFeatures.get(i + 1).start).trim();
+                                        advancedFeatures.get(i).endIndex + 1, advancedFeatures.get(i + 1).startIndex).trim();
                                 if (FunctionHandler.hasFunction(advancedFeatures.get(i + 1).expression) ||
                                         advancedFeatures.get(i + 1).expression.equals("^") ||
                                         advancedFeatures.get(i + 1).expression.equals("~")) {
@@ -157,7 +173,7 @@ public class Evaluator {
                                     }
                                 }
                             } else {
-                                remainingString = result.substring(advancedFeatures.get(i).end + 1).trim();
+                                remainingString = result.substring(advancedFeatures.get(i).endIndex + 1).trim();
 
                                 int remainingStringIndex = jsonPathExpression.indexOf(remainingString);
                                 if (!remainingString.isEmpty()) {
@@ -198,20 +214,26 @@ public class Evaluator {
                                             replaceExpression, predicate);
                                     updatePathsForRemainingString(root, predicateResults, remainingString, filteredResults);
                                 }
-                            } catch (Exception e) {
-                                //throw new JSONPathException("Invalid expression at path: " + currentPath + " -> " + e.getMessage());
-
+                            } catch (PathNotFoundException e) {
+                                /**
+                                 * Consider this (e.g.,
+                                 * $.store.book[?(@property==0)]..[?(@parentProperty!==0)]).
+                                 * A failure in one path should not stop the entire evaluation.
+                                 * If a path fails, simply skip it and continue,
+                                 * since other paths may still produce valid results.
+                                 */
+                                continue;
                             }
                         }
                     }
                 }
                 finalPathResults.addAll(filteredResults);
             } else {
+                // If the JSONPath expression does not contain any plus features, simply evaluate using Jayways
                 if(jsonPathExpression.endsWith("..") || jsonPathExpression.endsWith(".")) {
                     finalPathResults.addAll(resolvingEndingDots(jsonPathExpression,root));
                 }
                  else {
-                    // No advanced features or functions passed directly to Jayways
                     filteredResults.addAll(JsonPath.using(CONFIG).parse(root).read(jsonPathExpression));
                     finalPathResults.addAll(filteredResults);
                     filteredResults = new ArrayList<>();
@@ -223,7 +245,14 @@ public class Evaluator {
         return finalPathResults;
     }
 
-    // To keep track of the indices of the advanced features in the given JSONPath expression
+    /** This extracts the advanced part in the given JSONPath Expression.
+     * Get the index of the starting point and the ending point and the content inside
+     * Example : [?(@property ==0)] then,
+     * startIndex = indexOf('['),
+     * endIndex = indexOf(']'),
+     * expression = "?(@property!==0)"
+     */
+
     private  List<AdvancedFeatureBlock> extractAdvancedFeatures(String expr) throws InvalidJSONPathException {
         Stack<Integer> stack = new Stack<>();
 
@@ -272,14 +301,17 @@ public class Evaluator {
         return advancedFeatures;
     }
 
-    // To get all the paths before the first advanced square brace containing the advanced features
+    /** To get all the paths before the first advanced square brace containing the advanced features
+     * If the given JSONPath Expression : "$.store.book[?(@property!==0)]"
+     * The advanced part : [?(@property!==0)],
+     * Then this method returns the path before the advanced part , (i.e). "$.store.book"
+     */
     private static List<String> getPathsBeforeFiltering(String jsonPathExpression, Object root) {
         List<String> paths;
         List<String> filteredPaths = new ArrayList<>(List.of());
         if (jsonPathExpression.endsWith("..")) {
             jsonPathExpression = jsonPathExpression.replaceAll(Constants.REPLACE_ENDING_DOT_REGEX, "..*");
-        }
-        else if(jsonPathExpression.endsWith(".") && !jsonPathExpression.endsWith("..")) {
+        } else if(jsonPathExpression.endsWith(".") && !jsonPathExpression.endsWith("..")) {
             jsonPathExpression = jsonPathExpression.substring(0,jsonPathExpression.length() - 1);
         }
         paths = JsonPath.using(CONFIG).parse(root).read(jsonPathExpression);
@@ -306,7 +338,6 @@ public class Evaluator {
                     Map<Object , Object> mapNode = (Map<Object , Object>) node;
                     for (Map.Entry<Object, Object> entry : mapNode.entrySet()) {
                         Object key = entry.getKey();
-                        //Object value = entry.getValue();
                         String childPath = path + "['" + key + "']";
                         if (!removeDuplicatesInArray.contains(childPath)) {
                             expanded.add(childPath);
@@ -331,7 +362,6 @@ public class Evaluator {
                     Map<Object , Object> mapNode = (Map<Object , Object>) node;
                     for (Map.Entry<Object , Object> entry : mapNode.entrySet()) {
                         Object key = entry.getKey();
-                        //Object value = entry.getValue();
                         String childPath = path + "['" + key + "']";
                         if (!removeDuplicatesInArray.contains(childPath)) {
                             expanded.add(childPath);
@@ -342,6 +372,7 @@ public class Evaluator {
                     }
                 } else {
                     if (!removeDuplicatesInArray.contains(path)) {
+                        // These are leaf nodes, so no further expansion is needed
                         if (node instanceof StringWrapper || node instanceof NumberWrapper ||
                                 node instanceof BooleanWrapper) {
                             continue;
@@ -357,8 +388,11 @@ public class Evaluator {
         return expanded;
     }
 
-    // Filter operations cannot be applied to primitives in Jayways.
-    // Manually handling when the current node is an array expanded from an object (Special case)
+    /** Handling manually without passing to Jayways Predicate for the primitives since
+     * filter operations cannot be applied to primitives in Jayways.
+     * Manually handling when the current node is an array expanded from an object (Special case)
+     */
+
     private List<String> handlePrimitivesAndArrays(Object node, String subStringPath , Object root) {
         List<String> primitiveResults = new ArrayList<>();
 
@@ -389,9 +423,17 @@ public class Evaluator {
         return primitiveResults;
     }
 
+    /** Updates the intermediate paths by appending the remaining part of the JSONPath expression.
+     * Consider the given JSONPath Expression : $.store.book[?(@parent.bicycle)].category[?(@parentProperty!==0)]
+     * First it take the paths up to "$.store.book[?(@parent.bicycle)]"
+     * remaining string is the subString in between two advanced predicates. Here, remainingString is ".category"
+     * Then, we add "$" at the front. So, now it becomes "$.category".
+     * If the intermediate path is $.store.book[0], then this method returns $.store.book[0].category
+     * This path will be used by the next predicate
+     */
     private static List<String> updatePathsForRemainingString(Object root, List<String> intermediateResults,
                                                               String remainingString, List<String> filteredResults)
-            throws InvalidJSONPathException {
+            throws JSONPathException {
         if (!remainingString.isEmpty()) {
             try {
                 String normalizedPath = remainingString.startsWith("$") ? remainingString : "$" + remainingString;
@@ -411,7 +453,7 @@ public class Evaluator {
                     }
                 }
             } catch (Exception e) {
-                throw new InvalidJSONPathException("Invalid expression at path: "  + e.getMessage());
+                throw new JSONPathException("Invalid expression at path: "  + e.getMessage());
             }
         } else {
             filteredResults.addAll(intermediateResults);
@@ -419,6 +461,12 @@ public class Evaluator {
         return filteredResults;
     }
 
+    /** Consider the given JSONPath : "$.store.book[?(@parent.bicycle)].category[?(@parentProperty!==0)]"
+     *  Here base : paths obtained after the predicate, (i.e.) paths obtained from "$.store.book[?(@parent.bicycle)]"
+     *  relative : Here, it is going to be "$.category" (subString between two predicates after normalizing)
+     *  This method return paths by replacing "$." with intermediate paths.
+     *  Example : It returns "$.store.book[0].category"
+     */
     private static String setPathsForRemainingString(String base, String relative) {
         String replaceDollar = relative.replaceFirst(Constants.LEADING_DOLLAR_REGEX , "");
         if (base.endsWith("]")) {
@@ -428,6 +476,7 @@ public class Evaluator {
         }
     }
 
+    // To handle match() function (e.g.) "$.store.book[?(@property.match(/'bn$'/i))]"
     private void handleMatchFunction(String expr, Object currentNode, List<String> filteredResults) {
         Pattern pattern = Pattern.compile(Constants.MATCH_FUNCTION_REGEX);
         Matcher matcher = pattern.matcher(expr);
@@ -463,6 +512,8 @@ public class Evaluator {
             }
         }
     }
+
+    // To handle multiple key fields inside a square brace. (e.g.) "$.store.book['category','author']"
     private List<String> expandMultiFields(String jsonPathExpression) {
         List<String> results = new ArrayList<>();
         results.add(jsonPathExpression);
@@ -497,6 +548,7 @@ public class Evaluator {
         return  results;
     }
 
+    // In Jayways, expression should not end with ".", so handling expressions ending with dots
     private List<String> resolvingEndingDots(String jsonPathExpression, Object root) {
         List<String> result = new ArrayList<>();
 

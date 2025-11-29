@@ -21,13 +21,19 @@ package org.wso2.json.path.evaluator.evaluate;
  * Handles advanced JSONPath feature blocks
  */
 public class AdvancedFeatureBlock {
-    int start;
-    int end;
+    int startIndex;
+    int endIndex;
     String expression;
 
-    public AdvancedFeatureBlock(int start, int end, String expression) {
-        this.start = start;
-        this.end = end;
+    /** Keeping track of the index of the starting point and the ending point and the content inside
+     * Example : [?(@property ==0)] then,
+     * startIndex = indexOf('['),
+     * endIndex = indexOf(']'),
+     * expression = "?(@property!==0)"
+     */
+    public AdvancedFeatureBlock(int startIndex, int endIndex, String expression) {
+        this.startIndex = startIndex;
+        this.endIndex = endIndex;
         this.expression = expression;
     }
 }

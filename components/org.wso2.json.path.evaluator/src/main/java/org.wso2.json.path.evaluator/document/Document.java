@@ -38,6 +38,7 @@ public class Document {
     private TraversalMapData traversalInstance;
 
     public Document(String documentString) {
+        // Load the input string as YAML
         Object yamlData = new Load(LoadSettings.builder().build()).loadFromString(documentString);
         if (yamlData == null) {
             this.document = null;
@@ -46,20 +47,27 @@ public class Document {
         Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
         documentString = gson.toJson(yamlData);
 
+        // Convert into JSON Object using JSONPath
         Object parsedDocument = JsonPath.parse(documentString).json();
 
+        // Convert the primitives (Integer, String, Boolean) into Objects
         this.document = wrapPrimitives(parsedDocument);
+
+        // Creating an instance of TraversalMapData to generate parent-child and the path map.
         this.traversalInstance = new TraversalMapData(this.document);
     }
 
+    // Return the JSON document with all primitives wrapped
     public Object getRootDocument() {
         return this.document;
     }
 
+    // Return the generated parent-child map and the path map
     public TraversalMapData getTraversalInstanceDetails() {
         return this.traversalInstance;
     }
 
+    // Return the given JSON document by wrapping up the primitives
     private static Object wrapPrimitives(Object node) {
         if (node instanceof String) {
             return new StringWrapper((String) node);

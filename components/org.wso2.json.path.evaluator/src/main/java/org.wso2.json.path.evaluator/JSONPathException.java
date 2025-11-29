@@ -22,6 +22,6 @@ package org.wso2.json.path.evaluator;
  */
 public class JSONPathException extends Exception {
     public JSONPathException(String message) {
-        super("Error in the given Expression" + message);
+        super("Error in the given JSON Path" + message);
     }
 }

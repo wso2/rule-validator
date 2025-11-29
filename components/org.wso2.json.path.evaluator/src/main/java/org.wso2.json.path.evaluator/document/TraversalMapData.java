@@ -33,7 +33,7 @@ public class TraversalMapData {
         generatePathMap(rootDocument, "$");
     }
 
-
+    // Stores the current node and its parent as key-value pair in the IdentityHashMap
     private void generateParentChildMap(Object current, Object parent) {
         if (parent != null) {
             parentChildMap.put(current, parent);
@@ -52,7 +52,7 @@ public class TraversalMapData {
         }
     }
 
-    // To make paths look in the same format
+    // Stores the current node and its path as key-value pair in the IdentityHashMap
     private void generatePathMap(Object node , String path) {
         if (node != null) {
             pathMap.put(node, path);
@@ -70,6 +70,7 @@ public class TraversalMapData {
         }
     }
 
+    // Returns the path of a given node
     public String getPath(Object currentNode) {
         if (currentNode == null) {
             return null;
@@ -77,6 +78,7 @@ public class TraversalMapData {
         return pathMap.get(currentNode);
     }
 
+    // Returns the parent of the given node
     public Object getParent(Object currentNode) {
         if (currentNode == null) {
             return null;
