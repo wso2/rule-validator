@@ -48,8 +48,8 @@ public class EvaluatePredicate {
         @Override
         public boolean apply(PredicateContext context) {
             Object currentNode = context.item();
-            String expression = Util.replaceAdvancedFeaturesWithActualValues(traversalInstance,jsonPathExpression, currentNode);
-            System.out.println(expression);
+            String expression = Util.replaceAdvancedFeaturesWithActualValues(traversalInstance,
+                    jsonPathExpression, currentNode);
             int startIndex, endIndex = 0;
             String reducedExpr = "";
             List<?> targetNodes = List.of();
@@ -61,16 +61,16 @@ public class EvaluatePredicate {
                 reducedExpr = expression.substring(startIndex + 1, endIndex);
             } else {
                 startIndex = expression.indexOf("(");
-                endIndex = expression.indexOf("]",startIndex);
+                endIndex = expression.indexOf("]" , startIndex);
                 reducedExpr = expression.substring(startIndex , endIndex);
             }
-            System.out.println(reducedExpr);
-            reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance,reducedExpr,rootDocument);
-            System.out.println(reducedExpr);
+            reducedExpr = Util.comparisonOfPaths(traversalInstance ,
+                    reducedExpr , rootDocument);
+
             Object evaluatedValue = Util.evaluateExpression(reducedExpr);
-            Object parent = Util.returnValuesForAdvancedFeatures(traversalInstance,currentNode, AdvancedFeatures.PARENT);
-            if (!expression.contains("?"))
-            {
+            Object parent = Util.returnValuesForAdvancedFeatures(traversalInstance , currentNode ,
+                    AdvancedFeatures.PARENT);
+            if (!expression.contains("?")) {
                 if (parent instanceof List) {
                     targetNodes = new ArrayList<>((List<?>) parent);
                 }

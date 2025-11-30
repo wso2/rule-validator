@@ -85,7 +85,7 @@ public class FunctionHandler {
     }
 
     // This method return paths when the expression includes any JSONPath functions
-    public static List<String> processFunctions(String jsonPathExpression , Object node) {
+    public static List<String> handleFunctions(String jsonPathExpression , Object node) {
         List<String> finalResults = new ArrayList<>();
         String advancedFunction = null;
         int functionStart = -1;

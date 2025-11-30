@@ -102,7 +102,7 @@ public class Util {
             List<Object> list = (List<Object>) parent;
             int index = 0;
             for (Object item : list) {
-                if(item == node) {
+                if (item == node) {
                     return String.valueOf(index);
                 }
                 index++;
@@ -260,8 +260,8 @@ public class Util {
 
     private static String replaceAt(TraversalMapData traversalInstance, String jsonPathExpression, Object currentNode) {
         String result = jsonPathExpression;
-        result = result.replace(Constants.ADVANCED_FEATURE_AT , String.valueOf(returnValuesForAdvancedFeatures(traversalInstance,
-                currentNode, AdvancedFeatures.PATH)));
+        result = result.replace(Constants.ADVANCED_FEATURE_AT , String.valueOf(returnValuesForAdvancedFeatures(
+                traversalInstance, currentNode, AdvancedFeatures.PATH)));
         return result;
     }
 
@@ -311,8 +311,8 @@ public class Util {
     /** If json path is in the expression, then this method handles and returns the modified expression
      * (e.g). $.store[?(@path !== "$['store']['book']")]
      */
-    public static String comparisonOfPathsAndReplacingPathsWithActualValues(TraversalMapData traversalInstance,
-                                                                            String expression, Object root) {
+    public static String comparisonOfPaths(TraversalMapData traversalInstance,
+                                           String expression, Object root) {
         // Example scenario : $.store.book[2] === @root..['book'][2]
         String pathsOnBothSides = String.valueOf(Constants.JSONPATH_COMPARISON_REGEX);
 

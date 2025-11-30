@@ -17,9 +17,16 @@
  */
 package org.wso2.json.path.evaluator.evaluate;
 
-import com.jayway.jsonpath.*;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.Predicate;
 
 
+import org.apache.commons.jexl3.JexlException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.json.path.evaluator.Constants;
 import org.wso2.json.path.evaluator.InvalidJSONPathException;
 import org.wso2.json.path.evaluator.JSONPathException;
@@ -33,14 +40,15 @@ import org.wso2.json.path.evaluator.predicate.EvaluatePredicate;
 import org.wso2.json.path.evaluator.utils.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 /**
  * Evaluation
@@ -49,7 +57,9 @@ public class Evaluator {
     private final TraversalMapData traversalInstance;
     private List<String> expandedArray;
     private List<AdvancedFeatureBlock> advancedFeatures;
+    private final Map<String, String> matchPlaceholders = new HashMap<>();
     public static final Configuration CONFIG = Configuration.builder().options(Option.AS_PATH_LIST).build();
+    private static final Log log = LogFactory.getLog(Evaluator.class);
 
 
     public Evaluator(Document root) {
@@ -58,6 +68,7 @@ public class Evaluator {
 
     // Returns a final list of paths for the given JSONPath Expression
     public List<String> evaluate(String jsonPathExpression, Document doc) throws JSONPathException {
+        jsonPathExpression = replaceMatchFunctionsWithPlaceholders(jsonPathExpression);
         List<String> filteredResults = new ArrayList<>();
         List<String> finalPathResults = new ArrayList<>();
         List<String> multiFieldsList = expandMultiFields(jsonPathExpression);
@@ -97,10 +108,12 @@ public class Evaluator {
                         } else {
                             remainingString = result.substring(advancedFeatures.get(i).endIndex);
                         }
-                        int indexOfCaret = jsonPathExpression.indexOf("^");
-                        String subStringBeforeCaret = jsonPathExpression.substring(0,indexOfCaret);
-                        if(subStringBeforeCaret.endsWith("..")) {
-                            filteredResults = resolvingEndingDots(subStringBeforeCaret,root);
+                        if (i == 0) {
+                            int indexOfCaret = jsonPathExpression.indexOf("^");
+                            String subStringBeforeCaret = jsonPathExpression.substring(0, indexOfCaret);
+                            if (subStringBeforeCaret.endsWith("..")) {
+                                filteredResults = resolvingEndingDots(subStringBeforeCaret, root);
+                            }
                         }
                         for (String path : filteredResults) {
                             Object parentNode = traversalInstance.getParent
@@ -123,13 +136,15 @@ public class Evaluator {
                         } else {
                             remainingString = result.substring(advancedFeatures.get(i).endIndex);
                         }
-                        int indexOfTilde = jsonPathExpression.indexOf("~");
-                        String subStringBeforeTilde = jsonPathExpression.substring(0,indexOfTilde);
-                        if(subStringBeforeTilde.endsWith("..")) {
-                            filteredResults = resolvingEndingDots(subStringBeforeTilde,root);
-                        } else if(subStringBeforeTilde.endsWith(".") && !subStringBeforeTilde.endsWith("..")) {
-                            subStringBeforeTilde = subStringBeforeTilde.replace(".","..");
-                            filteredResults = resolvingEndingDots(subStringBeforeTilde,root);
+                        if (i == 0) {
+                            int indexOfTilde = jsonPathExpression.indexOf("~");
+                            String subStringBeforeTilde = jsonPathExpression.substring(0, indexOfTilde);
+                            if (subStringBeforeTilde.endsWith("..")) {
+                                filteredResults = resolvingEndingDots(subStringBeforeTilde, root);
+                            } else if (subStringBeforeTilde.endsWith(".") && !subStringBeforeTilde.endsWith("..")) {
+                                subStringBeforeTilde = subStringBeforeTilde.replace(".", "..");
+                                filteredResults = resolvingEndingDots(subStringBeforeTilde, root);
+                            }
                         }
                         for (String path : filteredResults) {
                             Object currentNode = JsonPath.parse(root).read(path);
@@ -154,7 +169,8 @@ public class Evaluator {
                                 int nextPredicateIndex = jsonPathExpression.indexOf(
                                         advancedFeatures.get(i + 1).expression);
                                 remainingString = result.substring(
-                                        advancedFeatures.get(i).endIndex + 1, advancedFeatures.get(i + 1).startIndex).trim();
+                                        advancedFeatures.get(i).endIndex + 1,
+                                        advancedFeatures.get(i + 1).startIndex).trim();
                                 if (FunctionHandler.hasFunction(advancedFeatures.get(i + 1).expression) ||
                                         advancedFeatures.get(i + 1).expression.equals("^") ||
                                         advancedFeatures.get(i + 1).expression.equals("~")) {
@@ -184,13 +200,13 @@ public class Evaluator {
                             }
                             try {
                                 if (FunctionHandler.hasFunction(replaceExpression)) {
-                                    List<String> functionResults = FunctionHandler.processFunctions(
+                                    List<String> functionResults = FunctionHandler.handleFunctions(
                                             replaceExpression, node);
                                     updatePathsForRemainingString(root, functionResults, remainingString,
                                             filteredResults);
-
                                 } else if (replaceExpression.contains(".match")) {
-                                    handleMatchFunction(replaceExpression, node, filteredResults);
+                                    List<String> matchResults = handleMatchFunction(replaceExpression , node);
+                                    updatePathsForRemainingString(root, matchResults, remainingString, filteredResults);
 
                                 } else if (node instanceof StringWrapper ||
                                         node instanceof NumberWrapper || node instanceof BooleanWrapper) {
@@ -206,13 +222,16 @@ public class Evaluator {
                                     updatePathsForRemainingString(root, arrayResults, remainingString,
                                             filteredResults);
                                 } else {
-                                    Predicate predicate = new EvaluatePredicate.PredicateFeatures(replaceExpression, doc);
-                                    replaceExpression = replaceExpression.replace(advancedFeatures.get(i).expression, "?");
+                                    Predicate predicate = new EvaluatePredicate.PredicateFeatures(replaceExpression,
+                                            doc);
+                                    replaceExpression = replaceExpression.replace(advancedFeatures.get(i).expression,
+                                            "?");
                                     int predicateIndex = replaceExpression.indexOf("?");
                                     replaceExpression = replaceExpression.substring(0, predicateIndex + 2);
                                     List<String> predicateResults = JsonPath.using(CONFIG).parse(root).read(
                                             replaceExpression, predicate);
-                                    updatePathsForRemainingString(root, predicateResults, remainingString, filteredResults);
+                                    updatePathsForRemainingString(root, predicateResults, remainingString,
+                                            filteredResults);
                                 }
                             } catch (PathNotFoundException e) {
                                 /**
@@ -222,6 +241,10 @@ public class Evaluator {
                                  * If a path fails, simply skip it and continue,
                                  * since other paths may still produce valid results.
                                  */
+                                log.warn("Path Not Found");
+                                continue;
+                            } catch (JexlException e) {
+                                log.warn("JEXL failed to evaluate");
                                 continue;
                             }
                         }
@@ -230,10 +253,9 @@ public class Evaluator {
                 finalPathResults.addAll(filteredResults);
             } else {
                 // If the JSONPath expression does not contain any plus features, simply evaluate using Jayways
-                if(jsonPathExpression.endsWith("..") || jsonPathExpression.endsWith(".")) {
-                    finalPathResults.addAll(resolvingEndingDots(jsonPathExpression,root));
-                }
-                 else {
+                if (jsonPathExpression.endsWith("..") || jsonPathExpression.endsWith(".")) {
+                    finalPathResults.addAll(resolvingEndingDots(jsonPathExpression , root));
+                } else {
                     filteredResults.addAll(JsonPath.using(CONFIG).parse(root).read(jsonPathExpression));
                     finalPathResults.addAll(filteredResults);
                     filteredResults = new ArrayList<>();
@@ -241,7 +263,6 @@ public class Evaluator {
             }
 
         }
-        //return filteredResults;
         return finalPathResults;
     }
 
@@ -311,8 +332,8 @@ public class Evaluator {
         List<String> filteredPaths = new ArrayList<>(List.of());
         if (jsonPathExpression.endsWith("..")) {
             jsonPathExpression = jsonPathExpression.replaceAll(Constants.REPLACE_ENDING_DOT_REGEX, "..*");
-        } else if(jsonPathExpression.endsWith(".") && !jsonPathExpression.endsWith("..")) {
-            jsonPathExpression = jsonPathExpression.substring(0,jsonPathExpression.length() - 1);
+        } else if (jsonPathExpression.endsWith(".") && !jsonPathExpression.endsWith("..")) {
+            jsonPathExpression = jsonPathExpression.substring(0 , jsonPathExpression.length() - 1);
         }
         paths = JsonPath.using(CONFIG).parse(root).read(jsonPathExpression);
         filteredPaths.addAll(paths);
@@ -410,7 +431,7 @@ public class Evaluator {
             endIndex = expression.lastIndexOf(")");
             reducedExpr = expression.substring(index + 1, endIndex);
         }
-        reducedExpr = Util.comparisonOfPathsAndReplacingPathsWithActualValues(traversalInstance , reducedExpr , root);
+        reducedExpr = Util.comparisonOfPaths(traversalInstance , reducedExpr , root);
 
         Object evaluatedResult = Util.evaluateExpression(reducedExpr);
         evaluatedResult = Util.isTruthy(evaluatedResult);
@@ -437,11 +458,11 @@ public class Evaluator {
         if (!remainingString.isEmpty()) {
             try {
                 String normalizedPath = remainingString.startsWith("$") ? remainingString : "$" + remainingString;
-                if(normalizedPath.endsWith("..")) {
+                if (normalizedPath.endsWith("..")) {
                     normalizedPath = normalizedPath.substring(0 , normalizedPath.length() - 2) + "..*";
                 }
-                if(normalizedPath.endsWith(".") && !normalizedPath.endsWith("..")) {
-                    normalizedPath = normalizedPath.substring(0,normalizedPath.length()-1);
+                if (normalizedPath.endsWith(".") && !normalizedPath.endsWith("..")) {
+                    normalizedPath = normalizedPath.substring(0 , normalizedPath.length() - 1);
                 }
                 for (String path : intermediateResults) {
                     Object midNode = JsonPath.parse(root).read(path);
@@ -452,8 +473,9 @@ public class Evaluator {
                         filteredResults.add(combined);
                     }
                 }
-            } catch (Exception e) {
-                throw new JSONPathException("Invalid expression at path: "  + e.getMessage());
+            } catch (PathNotFoundException e) {
+                log.warn("Path not found while processing: " + remainingString +
+                        ", intermediate: " + intermediateResults, e);
             }
         } else {
             filteredResults.addAll(intermediateResults);
@@ -476,51 +498,59 @@ public class Evaluator {
         }
     }
 
-    // To handle match() function (e.g.) "$.store.book[?(@property.match(/'bn$'/i))]"
-    private void handleMatchFunction(String expr, Object currentNode, List<String> filteredResults) {
-        Pattern pattern = Pattern.compile(Constants.MATCH_FUNCTION_REGEX);
-        Matcher matcher = pattern.matcher(expr);
-
-        if (matcher.find()) {
+    // To handle match() function (e.g.) "$.store.book[?(@property.match(/bn$/i))]"
+    private List<String> handleMatchFunction(String expr, Object currentNode) {
+        List<String> handleMatchResults = new ArrayList<>();
+        Matcher matcher = Pattern.compile(Constants.MATCH_FUNCTION_PLACEHOLDER_REGEX).matcher(expr);
+        boolean matches = false;
+        while (matcher.find()) {
             String valueExpr = matcher.group(1);
-            String regex = matcher.group(2);
-            String flags = matcher.group(3);
-
-            Object evaluatedValue = Util.replaceAdvancedFeaturesWithActualValues
-                    (traversalInstance , valueExpr , currentNode);
+            String inside = matcher.group(2).trim();
+            String regex;
+            String flags = "";
+            if (inside.startsWith("PLACEHOLDER_")) {
+                String stored = matchPlaceholders.get(inside);  // "/^bn$/i"
+                Matcher m2 = Pattern.compile(Constants.REGEX_BODY).matcher(stored);
+                if (m2.find()) {
+                    regex = m2.group(1);
+                    flags = m2.group(2);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+            Object evaluatedValue = Util.replaceAdvancedFeaturesWithActualValues(
+                    traversalInstance, valueExpr, currentNode);
             if (evaluatedValue.toString().startsWith("$")) {
                 evaluatedValue = currentNode;
             }
             String strValue = evaluatedValue != null ? evaluatedValue.toString() : "";
-
-            if (strValue.startsWith("\"") && strValue.endsWith("\"") && strValue.length() >= 2) {
+            if (strValue.startsWith("\"") && strValue.endsWith("\"")) {
                 strValue = strValue.substring(1, strValue.length() - 1);
             }
 
             int flagBits = 0;
-            if (flags != null) {
-                if (flags.contains("i")) {
-                    flagBits |= Pattern.CASE_INSENSITIVE;
-                }
+            if (flags.contains("i")) {
+                flagBits |= Pattern.CASE_INSENSITIVE;
             }
-            boolean matches = false;
-            if (!strValue.isEmpty()) {
-                matches = Pattern.compile(regex, flagBits).matcher(strValue).find();
-            }
-            if (matches) {
-                filteredResults.add(traversalInstance.getPath(currentNode));
-            }
+            matches = Pattern.compile(regex, flagBits)
+                    .matcher(strValue).find();
         }
+        if (matches) {
+            handleMatchResults.add(traversalInstance.getPath(currentNode));
+        }
+        return handleMatchResults;
     }
 
     // To handle multiple key fields inside a square brace. (e.g.) "$.store.book['category','author']"
     private List<String> expandMultiFields(String jsonPathExpression) {
         List<String> results = new ArrayList<>();
         results.add(jsonPathExpression);
-        Pattern pattern = Pattern.compile("\\[\\s*'([^']+)'\\s*(?:,\\s*'([^']+)')+\\s*\\]");
+        Pattern pattern = Pattern.compile(Constants.MULTI_KEY_FIELDS_REGEX);
         //$.store.book['name','price']['category','price']
         boolean hasMoreMultiFields = true;
-        while(hasMoreMultiFields) {
+        while (hasMoreMultiFields) {
             List<String> collectionOfMultiFields = new ArrayList<>();
             hasMoreMultiFields = false;
             for (String expression : results) {
@@ -534,11 +564,12 @@ public class Evaluator {
                 String multiFieldsGroup = match.group(0);
                 int startIndexOfMultiFields = match.start();
                 int endIndexOfMultipleFields = match.end();
-                String multiFields = multiFieldsGroup.substring(1, multiFieldsGroup.length() - 1); // 'category','author'
+                String multiFields = multiFieldsGroup.substring(1 , multiFieldsGroup.length() - 1);
                 String[] fields = multiFields.split(",");
                 for (String fieldName : fields) {
                     String cleaned = fieldName.trim().replace("'", "");
-                    String replaced = jsonPathExpression.substring(0, startIndexOfMultiFields) + "['" + cleaned + "']" + jsonPathExpression.substring(endIndexOfMultipleFields);
+                    String replaced = jsonPathExpression.substring(0, startIndexOfMultiFields) + "['" + cleaned + "']"
+                            + jsonPathExpression.substring(endIndexOfMultipleFields);
                     collectionOfMultiFields.add(replaced);
                 }
             }
@@ -552,24 +583,40 @@ public class Evaluator {
     private List<String> resolvingEndingDots(String jsonPathExpression, Object root) {
         List<String> result = new ArrayList<>();
 
-        if(jsonPathExpression.endsWith("..")) {
+        if (jsonPathExpression.endsWith("..")) {
             String pathBeforeDoubleDot = jsonPathExpression.substring(0 , jsonPathExpression.length() - 2);
             result.addAll(JsonPath.using(CONFIG).parse(root).read(pathBeforeDoubleDot));
             jsonPathExpression = pathBeforeDoubleDot + "..*";
-            List<String> pathsEndingWithDoubleDot = new ArrayList<>(JsonPath.using(CONFIG).parse(root).read(jsonPathExpression));
-            for(String path : pathsEndingWithDoubleDot) {
+            List<String> pathsEndingWithDoubleDot = new ArrayList<>(JsonPath.using(CONFIG).parse(root).
+                    read(jsonPathExpression));
+            for (String path : pathsEndingWithDoubleDot) {
                 Object node = JsonPath.using(Configuration.builder().options().build()).parse(root).read(path);
-                if(node instanceof NumberWrapper || node instanceof StringWrapper || node instanceof BooleanWrapper) {
+                if (node instanceof NumberWrapper || node instanceof StringWrapper || node instanceof BooleanWrapper) {
+                    // If the expression is "$..", then it takes only the parent components
                     continue;
                 } else {
                     result.add(path);
                 }
             }
-        } else if(jsonPathExpression.endsWith(".") && !jsonPathExpression.endsWith("..")) {
+        } else if (jsonPathExpression.endsWith(".") && !jsonPathExpression.endsWith("..")) {
             String pathBeforeSingleDot = jsonPathExpression.substring(0 , jsonPathExpression.length() - 1);
             result.addAll(JsonPath.using(CONFIG).parse(root).read(pathBeforeSingleDot));
         }
         return  result;
+    }
 
+    private String replaceMatchFunctionsWithPlaceholders(String jsonPathExpression) {
+        Pattern pattern = Pattern.compile(Constants.MATCH_FUNCTION_REGEX);
+        Matcher matcher = pattern.matcher(jsonPathExpression);
+        int counter = 1;
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String regEx = matcher.group(1);
+            String placeholder = "PLACEHOLDER_" + counter++;
+            matchPlaceholders.put(placeholder , regEx);
+            matcher.appendReplacement(sb , Matcher.quoteReplacement(".match(" + placeholder + ")"));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 }
