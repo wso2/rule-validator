@@ -22,9 +22,11 @@
         <groupId>org.wso2.carbon</groupId>
         <artifactId>rule-validator-parent</artifactId>
         <version>1.0.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>org.wso2.rule.validator</artifactId>
+    <name>WSO2 - Rule Validator POM</name>
 
     <build>
         <plugins>

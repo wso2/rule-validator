@@ -23,7 +23,26 @@
     <version>1.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>WSO2 - Rule Validator POM</name>
+    <name>WSO2 - Rule Validator Parent POM</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.snakeyaml</groupId>
+            <artifactId>snakeyaml-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl3</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+    </dependencies>
 
     <parent>
         <groupId>org.wso2</groupId>
@@ -32,7 +51,8 @@
     </parent>
 
     <modules>
-        <module>component</module>
+        <module>components/org.wso2.rule.validator</module>
+        <module>components/org.wso2.json.path.evaluator</module>
     </modules>
 
     <dependencyManagement>
@@ -122,6 +142,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
