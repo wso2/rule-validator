@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -18,10 +18,16 @@
 package org.wso2.json.path.evaluator;
 
 /**
- * Exception to handle if brackets are not balanced
+ * Exception raised for invalid JSONPath syntax.
  */
 public class InvalidJSONPathException extends JSONPathException {
+
+    /**
+     * Creates an exception for bracket-related JSONPath syntax errors.
+     *
+     * @param message syntax error details
+     */
     public InvalidJSONPathException(String message) {
-        super("Brackets are not balanced in the given Expression" + message);
+        super(Constants.ERROR_MESSAGE_PREFIX_UNBALANCED_BRACKETS + message);
     }
 }

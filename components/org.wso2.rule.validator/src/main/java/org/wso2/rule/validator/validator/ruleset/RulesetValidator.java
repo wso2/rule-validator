@@ -18,8 +18,6 @@
 
 package org.wso2.rule.validator.validator.ruleset;
 
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.functions.FunctionFactory;
@@ -27,7 +25,6 @@ import org.wso2.rule.validator.functions.InvalidCoreFunctionException;
 import org.wso2.rule.validator.functions.LintFunction;
 import org.wso2.rule.validator.ruleset.Format;
 import org.wso2.rule.validator.ruleset.RulesetAliasDefinition;
-import org.wso2.rule.validator.ruleset.RulesetAliasTarget;
 import org.wso2.rule.validator.validator.RulesetValidationError;
 
 import java.util.ArrayList;
@@ -127,23 +124,6 @@ public abstract class RulesetValidator {
         if (!RulesetAliasDefinition.allAliasesResolved(aliases)) {
             errors.add(new RulesetValidationError("", "Circular alias dependency detected."));
             return errors;
-        }
-
-        // Check all resolved given for unsupported json paths
-        for (Map.Entry<String, RulesetAliasDefinition> entry : aliases.entrySet()) {
-            for (RulesetAliasTarget target : entry.getValue().targets) {
-                for (String given : target.given) {
-                    if (!validateJsonPath(given)) {
-                        errors.add(new RulesetValidationError(entry.getKey(), "Invalid json path in resolved alias"));
-                    }
-                }
-            }
-
-            for (String given : entry.getValue().getGiven()) {
-                if (!validateJsonPath(given)) {
-                    errors.add(new RulesetValidationError(entry.getKey(), "Invalid json path in resolved alias"));
-                }
-            }
         }
 
         return errors;
@@ -371,23 +351,8 @@ public abstract class RulesetValidator {
                     }
                 }
             }
-        } else if (!validateJsonPath(given)) {
-            errors.add(new RulesetValidationError(ruleName, "Invalid JSON path: " + given));
         }
 
         return errors;
-    }
-
-    private static boolean validateJsonPath(String jsonPath) {
-        try {
-            if (!jsonPath.startsWith(Constants.JSON_PATH_ROOT)) {
-                return false;
-            }
-
-            JsonPath.compile(jsonPath);
-            return true;
-        } catch (InvalidPathException e) {
-            return false;
-        }
     }
 }

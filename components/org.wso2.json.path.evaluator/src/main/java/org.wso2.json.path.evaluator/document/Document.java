@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -31,43 +31,52 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Process the document
+ * Represents the parsed root document and its traversal metadata.
  */
 public class Document {
     private final Object document;
     private TraversalMapData traversalInstance;
 
+    /**
+     * Parses input JSON or YAML content and prepares traversal metadata.
+     *
+     * @param documentString input JSON or YAML document
+     */
     public Document(String documentString) {
-        // Load the input string as YAML
         Object yamlData = new Load(LoadSettings.builder().build()).loadFromString(documentString);
         if (yamlData == null) {
             this.document = null;
+            this.traversalInstance = null;
             return;
         }
         Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
         documentString = gson.toJson(yamlData);
 
-        // Convert into JSON Object using JSONPath
         Object parsedDocument = JsonPath.parse(documentString).json();
 
-        // Convert the primitives (Integer, String, Boolean) into Objects
         this.document = wrapPrimitives(parsedDocument);
 
-        // Creating an instance of TraversalMapData to generate parent-child and the path map.
         this.traversalInstance = new TraversalMapData(this.document);
     }
 
-    // Return the JSON document with all primitives wrapped
+    /**
+     * Returns the root document with wrapped primitive values.
+     *
+     * @return root document object
+     */
     public Object getRootDocument() {
         return this.document;
     }
 
-    // Return the generated parent-child map and the path map
+    /**
+     * Returns traversal metadata generated for this document.
+     *
+     * @return traversal metadata instance
+     */
     public TraversalMapData getTraversalInstanceDetails() {
         return this.traversalInstance;
     }
 
-    // Return the given JSON document by wrapping up the primitives
     private static Object wrapPrimitives(Object node) {
         if (node instanceof String) {
             return new StringWrapper((String) node);

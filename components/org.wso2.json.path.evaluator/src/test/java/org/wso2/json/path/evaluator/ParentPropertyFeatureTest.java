@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -24,11 +24,16 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test cases for ParentPropertyFeatureTest.
+ */
 public class ParentPropertyFeatureTest {
 
+    /**
+     * Validates the comparingParentPropertyFeature scenario.
+     */
     @Test
     public void comparingParentPropertyFeature() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");
@@ -54,6 +59,9 @@ public class ParentPropertyFeatureTest {
         }
     }
 
+    /**
+     * Validates the comparingParentPropertyFeatureInMultipleBraces scenario.
+     */
     @Test
     public void comparingParentPropertyFeatureInMultipleBraces() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");

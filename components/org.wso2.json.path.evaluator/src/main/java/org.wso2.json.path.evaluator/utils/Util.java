@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -32,7 +32,6 @@ import org.wso2.json.path.evaluator.document.wrappers.BooleanWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.NumberWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.StringWrapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,13 +39,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Util methods
+ * Utility methods used during JSONPath Plus evaluation.
  */
 public class Util {
 
-    /** This method returns actual values for JSONPath Plus features
-     * Consider this JSONPath : "$.store.book[(@.length - @.length)]"
-     * Then, this method returns the length/size of parent node.
+    /**
+     * Resolves the runtime value for a JSONPath Plus feature for the current node.
+     *
+     * @param traversalInstance traversal metadata
+     * @param currentNode current node
+     * @param key advanced feature to resolve
+     * @return resolved feature value
      */
     public static Object returnValuesForAdvancedFeatures(TraversalMapData traversalInstance,
                                                          Object currentNode, AdvancedFeatures key) {
@@ -98,7 +101,7 @@ public class Util {
                     return entry.getKey().toString();
                 }
             }
-        } else if (parent instanceof ArrayList) {
+        } else if (parent instanceof List) {
             List<Object> list = (List<Object>) parent;
             int index = 0;
             for (Object item : list) {
@@ -111,19 +114,25 @@ public class Util {
         return null;
     }
 
-    // This method return true if the expression contains any JSONPath Plus features
+    /**
+     * Checks whether an expression contains any supported JSONPath Plus feature.
+     *
+     * @param givenPath expression to inspect
+     * @return {@code true} when at least one advanced feature is present
+     */
     public static boolean hasAdvancedFeatures(String givenPath) {
         String[] advancedFeatures = {
-                "@.",
-                "@.length",
-                "@property",
-                "@path",
-                "@parent",
-                "@root",
-                "@parentProperty",
-                "^",
-                "~"
+                Constants.ADVANCED_FEATURE_CURRENT,
+                Constants.ADVANCED_FEATURE_LENGTH,
+                Constants.ADVANCED_FEATURE_PROPERTY,
+                Constants.ADVANCED_FEATURE_PATH,
+                Constants.ADVANCED_FEATURE_PARENT,
+                Constants.ADVANCED_FEATURE_ROOT,
+                Constants.ADVANCED_FEATURE_PARENT_PROPERTY,
+                Constants.CARET,
+                Constants.TILDE
         };
+
 
         for (String pattern : advancedFeatures) {
             if (givenPath.contains(pattern)) {
@@ -133,19 +142,24 @@ public class Util {
         return false;
     }
 
-    // This method returns if the expression has any string methods supported by Java
+    /**
+     * Checks whether an expression contains supported string method calls.
+     *
+     * @param expression expression to inspect
+     * @return {@code true} when a supported string method is present
+     */
     public static boolean hasStringMethods(String expression) {
         String [] stringMethods = {
-                "charAt()",
-                "codePointAt()",
-                "concat()",
-                "endsWith()",
-                "includes()",
-                "indexOf()",
-                "lastIndexOf()",
-                "startsWith()",
-                "toLowerCase()",
-                "toUpperCase()"
+                Constants.STRING_METHOD_CHAR_AT,
+                Constants.STRING_METHOD_CODE_POINT_AT,
+                Constants.STRING_METHOD_CONCAT,
+                Constants.STRING_METHOD_ENDS_WITH,
+                Constants.STRING_METHOD_INCLUDES,
+                Constants.STRING_METHOD_INDEX_OF,
+                Constants.STRING_METHOD_LAST_INDEX_OF,
+                Constants.STRING_METHOD_STARTS_WITH,
+                Constants.STRING_METHOD_TO_LOWER_CASE,
+                Constants.STRING_METHOD_TO_UPPER_CASE
         };
         for (String strMethod : stringMethods) {
             if (expression.contains(strMethod)) {
@@ -156,8 +170,13 @@ public class Util {
 
     }
 
-    /** Replaces advanced features in the JSONPath expression with their actual values.
-     * (e.g.) "[?(@property!==0)]" , then this method returns "[?(0!==0)]"
+    /**
+     * Replaces JSONPath Plus feature tokens with runtime values for the current node.
+     *
+     * @param traversalInstance traversal metadata
+     * @param jsonPathExpression expression containing advanced features
+     * @param currentNode current node
+     * @return expression with advanced features resolved
      */
 
     public static String replaceAdvancedFeaturesWithActualValues(TraversalMapData traversalInstance,
@@ -187,7 +206,6 @@ public class Util {
         return result;
     }
 
-
     private static String replaceLength(TraversalMapData traversalInstance, String jsonPathExpression,
                                         Object currentNode) {
         String result = jsonPathExpression;
@@ -209,7 +227,7 @@ public class Util {
         try {
             Integer.parseInt(String.valueOf(getPropertyObject));
         } catch (Exception e) {
-            getPropertyObject = "\"" + getPropertyObject + "\"";
+            getPropertyObject = Constants.DOUBLE_QUOTE + getPropertyObject + Constants.DOUBLE_QUOTE;
         }
         result = result.replace(Constants.ADVANCED_FEATURE_PROPERTY, String.valueOf(getPropertyObject));
         return result;
@@ -223,7 +241,7 @@ public class Util {
         try {
             Integer.parseInt(String.valueOf(getParentObject));
         } catch (Exception e) {
-            getParentObject = "\"" + getParentObject + "\"";
+            getParentObject = Constants.DOUBLE_QUOTE + getParentObject + Constants.DOUBLE_QUOTE;
         }
         result = result.replace(Constants.ADVANCED_FEATURE_PARENT_PROPERTY, String.valueOf(getParentObject));
         return result;
@@ -236,9 +254,9 @@ public class Util {
         Object parentNode = returnValuesForAdvancedFeatures(traversalInstance, currentNode, AdvancedFeatures.PARENT);
         Object grandParentNode = traversalInstance.getParent(parentNode);
         if (grandParentNode != null) {
-            parentValue = result.replace(Constants.ADVANCED_FEATURE_PARENT, "$.");
+            parentValue = result.replace(Constants.ADVANCED_FEATURE_PARENT, Constants.JSON_PATH_ROOT_DOT);
         } else {
-            parentValue = result.replace(Constants.ADVANCED_FEATURE_PARENT, "$");
+            parentValue = result.replace(Constants.ADVANCED_FEATURE_PARENT, Constants.JSON_PATH_ROOT);
         }
 
         return parentValue;
@@ -248,13 +266,16 @@ public class Util {
                                       Object currentNode) {
         String result = jsonPathExpression;
         Object getPath = returnValuesForAdvancedFeatures(traversalInstance, currentNode, AdvancedFeatures.PATH);
-        result = result.replace(Constants.ADVANCED_FEATURE_PATH, "\"" + getPath + "\"");
+        result = result.replace(
+                Constants.ADVANCED_FEATURE_PATH,
+                Constants.DOUBLE_QUOTE + getPath + Constants.DOUBLE_QUOTE
+        );
         return result;
     }
 
     private static String replaceRoot(String jsonPathExpression) {
         String result = jsonPathExpression;
-        result = result.replace(Constants.ADVANCED_FEATURE_ROOT, "$");
+        result = result.replace(Constants.ADVANCED_FEATURE_ROOT, Constants.JSON_PATH_ROOT);
         return result;
     }
 
@@ -265,6 +286,12 @@ public class Util {
         return result;
     }
 
+    /**
+     * Evaluates JavaScript-like truthiness for values used in predicates.
+     *
+     * @param value value to evaluate
+     * @return {@code true} if value is truthy
+     */
     public static boolean isTruthy(Object value) {
         if (value == null) {
             return false;
@@ -307,9 +334,13 @@ public class Util {
         return true;
     }
 
-
-    /** If json path is in the expression, then this method handles and returns the modified expression
-     * (e.g). $.store[?(@path !== "$['store']['book']")]
+    /**
+     * Resolves JSONPath operands embedded in an expression before JEXL evaluation.
+     *
+     * @param traversalInstance traversal metadata
+     * @param expression expression to transform
+     * @param root root document
+     * @return transformed expression
      */
     public static String comparisonOfPaths(TraversalMapData traversalInstance,
                                            String expression, Object root) {
@@ -326,9 +357,10 @@ public class Util {
                 Object leftVal = JsonPath.parse(root).read(leftPath);
                 Object rightVal = JsonPath.parse(root).read(rightPath);
 
-                String newLeftPath = "\"" + traversalInstance.getPath(leftVal) + "\"";
-                String newRightPath = "\"" + traversalInstance.getPath(rightVal) + "\"";
-
+                String newLeftPath = Constants.DOUBLE_QUOTE + traversalInstance.getPath(leftVal) +
+                        Constants.DOUBLE_QUOTE;
+                String newRightPath = Constants.DOUBLE_QUOTE + traversalInstance.getPath(rightVal) +
+                        Constants.DOUBLE_QUOTE;
 
                 expression = expression.replace(leftPath, newLeftPath);
                 expression = expression.replace(rightPath, newRightPath);
@@ -358,8 +390,8 @@ public class Util {
                 if (list.size() == 1) {
                     Object firstElement = list.get(0);
                     if (firstElement instanceof Map && ((Map<Object, Object>) firstElement).size() == 1 &&
-                            ((Map<Object, Object>) firstElement).containsKey("value")) {
-                        finalValue = ((Map<?, ?>) firstElement).get("value");
+                            ((Map<Object, Object>) firstElement).containsKey(Constants.VALUE_KEY)) {
+                        finalValue = ((Map<?, ?>) firstElement).get(Constants.VALUE_KEY);
                     } else {
                         finalValue = firstElement;
                     }
@@ -382,7 +414,8 @@ public class Util {
                         Double.parseDouble(String.valueOf(finalValue));
                         replacement = String.valueOf(finalValue);
                     } catch (Exception e1) {
-                        replacement = "\"" + String.valueOf(finalValue) + "\"";
+                        replacement = Constants.DOUBLE_QUOTE + String.valueOf(finalValue) +
+                                Constants.DOUBLE_QUOTE;
                     }
                 }
             }
@@ -396,7 +429,12 @@ public class Util {
         return expression;
     }
 
-    // This method handles if the expression contains string methods supported by Java
+    /**
+     * Evaluates supported string function chains in an expression.
+     *
+     * @param expression expression containing string function calls
+     * @return expression with string functions evaluated
+     */
     public static String handleStringFunctions(String expression) {
         Pattern functionPattern = Pattern.compile(Constants.STRING_FUNCTIONS_REGEX);
         String previousExpression;
@@ -414,45 +452,48 @@ public class Util {
 
                 String result;
                 try {
-                    String arg = argument.replaceAll(Constants.SINGLE_QUOTE_REGEX, "");
+                    String arg = argument.replaceAll(Constants.SINGLE_QUOTE_REGEX, Constants.EMPTY_STRING);
 
                     switch (functionName) {
-                        case "charAt":
-                            result = String.valueOf(base.charAt(Integer.parseInt(arg)));
+                        case Constants.STRING_METHOD_NAME_CHAR_AT:
+                            result = Constants.DOUBLE_QUOTE + base.charAt(Integer.parseInt(arg))
+                                    + Constants.DOUBLE_QUOTE;
                             break;
-                        case "codePointAt":
+                        case Constants.STRING_METHOD_NAME_CODE_POINT_AT:
                             result = String.valueOf(base.codePointAt(Integer.parseInt(arg)));
                             break;
-                        case "concat":
-                            result = base.concat(arg);
+                        case Constants.STRING_METHOD_NAME_CONCAT:
+                            result = Constants.DOUBLE_QUOTE + base.concat(arg) + Constants.DOUBLE_QUOTE;
                             break;
-                        case "endsWith":
+                        case Constants.STRING_METHOD_NAME_ENDS_WITH:
                             result = String.valueOf(base.endsWith(arg));
                             break;
-                        case "includes":
+                        case Constants.STRING_METHOD_NAME_INCLUDES:
                             result = String.valueOf(base.contains(arg));
                             break;
-                        case "indexOf":
+                        case Constants.STRING_METHOD_NAME_INDEX_OF:
                             result = String.valueOf(base.indexOf(arg));
                             break;
-                        case "lastIndexOf":
+                        case Constants.STRING_METHOD_NAME_LAST_INDEX_OF:
                             result = String.valueOf(base.lastIndexOf(arg));
                             break;
-                        case "startsWith":
+                        case Constants.STRING_METHOD_NAME_STARTS_WITH:
                             result = String.valueOf(base.startsWith(arg));
                             break;
-                        case "toLowerCase":
-                            result = "\"" + base.toLowerCase(Locale.ENGLISH) + "\"";
+                        case Constants.STRING_METHOD_NAME_TO_LOWER_CASE:
+                            result = Constants.DOUBLE_QUOTE + base.toLowerCase(Locale.ENGLISH) +
+                                    Constants.DOUBLE_QUOTE;
                             break;
-                        case "toUpperCase":
-                            result = "\"" + base.toUpperCase(Locale.ENGLISH) + "\"";
+                        case Constants.STRING_METHOD_NAME_TO_UPPER_CASE:
+                            result = Constants.DOUBLE_QUOTE + base.toUpperCase(Locale.ENGLISH) +
+                                    Constants.DOUBLE_QUOTE;
                             break;
                         default:
-                            result = "\"" + base + "\"";
+                            result = Constants.DOUBLE_QUOTE + base + Constants.DOUBLE_QUOTE;
                             break;
                     }
                 } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                    result = "\"" + base + "\"";
+                    result = Constants.DOUBLE_QUOTE + base + Constants.DOUBLE_QUOTE;
                 }
 
                 matcher.appendReplacement(sb, result);
@@ -463,7 +504,12 @@ public class Util {
         return expression;
     }
 
-    //Using Jexl Evaluator
+    /**
+     * Evaluates an expression with JEXL.
+     *
+     * @param reducedExpression expression to evaluate
+     * @return evaluated result
+     */
     public static Object evaluateExpression(String reducedExpression) {
         JexlEngine jexl  = new JexlBuilder().create();
         JexlContext context = new MapContext();

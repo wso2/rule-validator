@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -18,10 +18,16 @@
 package org.wso2.json.path.evaluator;
 
 /**
- * Exception to handle if brackets are not balanced
+ * Base exception for JSONPath evaluation errors.
  */
 public class JSONPathException extends Exception {
+
+    /**
+     * Creates a JSONPath exception with the standard message prefix.
+     *
+     * @param message error message details
+     */
     public JSONPathException(String message) {
-        super("Error in the given JSON Path" + message);
+        super(Constants.ERROR_MESSAGE_PREFIX_JSON_PATH + message);
     }
 }

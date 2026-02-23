@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -24,11 +24,16 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test cases for JSONPathPlusFeaturesCombinationTest.
+ */
 public class JSONPathPlusFeaturesCombinationTest {
 
+    /**
+     * Validates the validatingAdvancedFeaturesCombinations scenario.
+     */
     @Test
     public void validatingAdvancedFeaturesCombinations() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");
@@ -36,7 +41,7 @@ public class JSONPathPlusFeaturesCombinationTest {
             String jsonDocStringContent = Files.readString(jsonDocPath);
             JSONPathEvaluator jsonPathEvaluatorInstance = new JSONPathEvaluator(jsonDocStringContent);
             String jsonPathExpression =
-                    "$..book[?(@property && (@parent.bicycle.price && @parent.bicycle.price + 19.95))]";
+                    "$..book[?(@property && (@parent.bicycle.price && @parent.bicycle.price == 19.95))]";
             List<String> spectralResults = List.of(
                     "$['store']['book'][1]",
                     "$['store']['book'][2]",
@@ -53,6 +58,63 @@ public class JSONPathPlusFeaturesCombinationTest {
         }
     }
 
+    /**
+     * Validates the validatingAdvancedFeaturesCombinationsWithBackslash scenario.
+     */
+    @Test
+    public void validatingAdvancedFeaturesCombinationsWithBackslash() {
+        Path jsonDocPath = Paths.get("src/test/resources/data-with-special-chars.json");
+        try {
+            String jsonDocStringContent = Files.readString(jsonDocPath);
+            JSONPathEvaluator jsonPathEvaluatorInstance = new JSONPathEvaluator(jsonDocStringContent);
+            String jsonPathExpression =
+                    "$..book[?(@property && (@parent.b\\icycle.price && @parent.b\\icycle.price == 19.95))]";
+            List<String> spectralResults = List.of(
+                    "$['store']['book'][1]",
+                    "$['store']['book'][2]",
+                    "$['store']['book'][3]"
+            );
+            List<String> validatorResults = jsonPathEvaluatorInstance.jsonPathEvaluate(jsonPathExpression);
+            assertEquals(
+                    new HashSet<>(spectralResults),
+                    new HashSet<>(validatorResults),
+                    "Rule Validator JSONPath results must match Spectral results"
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Validates the validatingAdvancedFeaturesCombinationsWithSingleQuotes scenario.
+     */
+    @Test
+    public void validatingAdvancedFeaturesCombinationsWithSingleQuotes() {
+        Path jsonDocPath = Paths.get("src/test/resources/data-with-special-chars.json");
+        try {
+            String jsonDocStringContent = Files.readString(jsonDocPath);
+            JSONPathEvaluator jsonPathEvaluatorInstance = new JSONPathEvaluator(jsonDocStringContent);
+            String jsonPathExpression =
+                    "$..book[?(@property && (@parent.b'icycle.price && @parent.b'icycle.price == 19.95))]";
+            List<String> spectralResults = List.of(
+                    "$['store']['book'][1]",
+                    "$['store']['book'][2]",
+                    "$['store']['book'][3]"
+            );
+            List<String> validatorResults = jsonPathEvaluatorInstance.jsonPathEvaluate(jsonPathExpression);
+            assertEquals(
+                    new HashSet<>(spectralResults),
+                    new HashSet<>(validatorResults),
+                    "Rule Validator JSONPath results must match Spectral results"
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Validates the validatingDifferentFeatureCombinations scenario.
+     */
     @Test
     public void validatingDifferentFeatureCombinations() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");

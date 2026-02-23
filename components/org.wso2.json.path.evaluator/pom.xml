@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+  ~ Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
   ~
   ~ WSO2 LLC. licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file except
@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wso2.carbon</groupId>
         <artifactId>rule-validator-parent</artifactId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -40,7 +40,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Private-Package>
-                            org.wso2.rule.validator.internal.*,
+                            org.wso2.json.path.evaluator.*,
                             org.snakeyaml.engine.*,
                             com.jayway.jsonpath.*,
                             org.reflections.*,
@@ -53,13 +53,12 @@
                             net.minidev.asm.*
                         </Private-Package>
                         <Import-Package>
-                            com.google.gson.*
+                            com.google.gson.*,
+                            org.apache.commons.jexl3.*
                         </Import-Package>
                         <Export-Package>
-                            !org.wso2.rule.validator.internal.*,
-                            org.wso2.rule.validator.*;version=${project.version}
+                            org.wso2.json.path.evaluator.*;version=${project.version}
                         </Export-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -126,12 +125,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-jexl3</artifactId>
-            <version>3.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.moandjiezana.toml</groupId>
-            <artifactId>toml4j</artifactId>
-            <version>0.7.2</version>
         </dependency>
 
     </dependencies>
@@ -140,7 +133,7 @@
         <repository>
             <id>Sonatype-public</id>
             <name>SnakeYAML repository</name>
-            <url>http://oss.sonatype.org/content/groups/public/</url>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
     </repositories>
 </project>

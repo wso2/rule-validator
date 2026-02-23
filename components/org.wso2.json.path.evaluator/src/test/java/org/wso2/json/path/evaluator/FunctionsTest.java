@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -24,11 +24,16 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test cases for FunctionsTest.
+ */
 public class FunctionsTest {
 
+    /**
+     * Validates the validatingNumberFunctionTest scenario.
+     */
     @Test
     public void validatingNumberFunctionTest() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");
@@ -50,11 +55,18 @@ public class FunctionsTest {
                     new HashSet<>(validatorResults),
                     "Rule Validator JSONPath results must match Spectral results"
             );
+            assertEquals(spectralResults.size(),
+                    validatorResults.size(),
+                    "Validator results contain unexpected duplicate paths"
+            );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Validates the validatingMatchFunction scenario.
+     */
     @Test
     public void validatingMatchFunction() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");

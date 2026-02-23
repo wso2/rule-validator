@@ -18,7 +18,11 @@
 
 package org.wso2.rule.validator.validator;
 
+import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
@@ -48,6 +52,31 @@ public class ValidatorTest {
         for (String content : contents) {
             Scenario scenario = new Scenario(content);
             scenario.runScenario();
+        }
+    }
+
+    @Test
+    public void testValidateDocumentWithWildcardsSpecAndWSO2Ruleset() {
+        String document;
+        String ruleset;
+
+        try {
+            document = readResource("oas-specs/spec-with-wildcards.yaml");
+            ruleset = readResource("rulesets/wso2-rest-api-design-guidelines.yaml");
+        } catch (Exception e) {
+            fail("Error occurred while reading test resources: " + e.getMessage());
+            return;
+        }
+
+        try {
+            String result = Validator.validateDocument(document, ruleset);
+            JSONArray errorResults = JsonPath.parse(result).read("$[?(@.severity == 'error')]");
+            JSONArray warningResults = JsonPath.parse(result).read("$[?(@.severity == 'warn')]");
+
+            assertEquals(1, errorResults.size(), "Expected exactly 1 error.");
+            assertEquals(20, warningResults.size(), "Expected exactly 20 warnings.");
+        } catch (Exception e) {
+            fail("Validation should not throw an exception: " + e.getMessage());
         }
     }
 
@@ -81,5 +110,16 @@ public class ValidatorTest {
         }
 
         return fileContents;
+    }
+
+    private static String readResource(String resourcePath) throws IOException, URISyntaxException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        URL resource = classLoader.getResource(resourcePath);
+
+        if (resource == null) {
+            throw new IllegalArgumentException("Resource not found: " + resourcePath);
+        }
+
+        return Files.readString(Paths.get(resource.toURI()));
     }
 }

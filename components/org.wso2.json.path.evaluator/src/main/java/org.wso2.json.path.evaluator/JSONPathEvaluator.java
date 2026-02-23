@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -23,21 +23,30 @@ import org.wso2.json.path.evaluator.evaluate.Evaluator;
 import java.util.List;
 
 /**
- * Entry point
+ * Entry point for evaluating JSONPath expressions against a document.
  */
 public class JSONPathEvaluator {
     private final Document rootDoc;
     private final Evaluator evaluator;
 
+    /**
+     * Creates an evaluator instance for the provided JSON or YAML content.
+     *
+     * @param content root document content
+     */
     public JSONPathEvaluator(String content) {
         this.rootDoc = new Document(content);
         this.evaluator = new Evaluator(rootDoc);
     }
 
-    /** For the given JSONPath expression and root JSON/YAML document,
-     *   this method returns the final list of matching paths.
+    /**
+     * Evaluates a JSONPath expression and returns matching paths.
+     *
+     * @param jsonPathExpression JSONPath expression to evaluate
+     * @return matching JSONPath results as path strings
+     * @throws JSONPathException when evaluation fails
      */
     public List<String> jsonPathEvaluate(String jsonPathExpression) throws JSONPathException {
-        return evaluator.evaluate(jsonPathExpression , rootDoc);
+        return evaluator.evaluate(jsonPathExpression, rootDoc);
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -17,23 +17,29 @@
  */
 package org.wso2.json.path.evaluator.document;
 
+import org.wso2.json.path.evaluator.Constants;
+
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Generating parentChild and the path maps
+ * Holds parent-child and node-path mappings for a document tree.
  */
 public class TraversalMapData {
     private final IdentityHashMap<Object, Object> parentChildMap = new IdentityHashMap<>();
     private final IdentityHashMap<Object, String> pathMap = new IdentityHashMap<>();
 
+    /**
+     * Builds traversal maps for the provided root document.
+     *
+     * @param rootDocument root document object
+     */
     public TraversalMapData(Object rootDocument) {
         generateParentChildMap(rootDocument, null);
-        generatePathMap(rootDocument, "$");
+        generatePathMap(rootDocument, Constants.JSON_PATH_ROOT);
     }
 
-    // Stores the current node and its parent as key-value pair in the IdentityHashMap
     private void generateParentChildMap(Object current, Object parent) {
         if (parent != null) {
             parentChildMap.put(current, parent);
@@ -52,25 +58,30 @@ public class TraversalMapData {
         }
     }
 
-    // Stores the current node and its path as key-value pair in the IdentityHashMap
-    private void generatePathMap(Object node , String path) {
+    private void generatePathMap(Object node, String path) {
         if (node != null) {
             pathMap.put(node, path);
         }
         if (node instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) node;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
-                generatePathMap(entry.getValue(), path + "['" + entry.getKey() + "']");
+                generatePathMap(entry.getValue(), path + Constants.PATH_KEY_PREFIX + entry.getKey() +
+                        Constants.PATH_KEY_SUFFIX);
             }
         } else if (node instanceof List) {
             List<?> list = (List<?>) node;
             for (int i = 0; i < list.size(); i++) {
-                generatePathMap(list.get(i), path + "[" + i + "]");
+                generatePathMap(list.get(i), path + Constants.OPEN_BRACKET + i + Constants.CLOSE_BRACKET);
             }
         }
     }
 
-    // Returns the path of a given node
+    /**
+     * Returns the stored JSONPath for a node.
+     *
+     * @param currentNode node to resolve
+     * @return JSONPath for the node or {@code null} if unavailable
+     */
     public String getPath(Object currentNode) {
         if (currentNode == null) {
             return null;
@@ -78,7 +89,12 @@ public class TraversalMapData {
         return pathMap.get(currentNode);
     }
 
-    // Returns the parent of the given node
+    /**
+     * Returns the stored parent for a node.
+     *
+     * @param currentNode node to resolve
+     * @return parent node or {@code null} if unavailable
+     */
     public Object getParent(Object currentNode) {
         if (currentNode == null) {
             return null;

@@ -24,6 +24,8 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
+import org.wso2.json.path.evaluator.JSONPathEvaluator;
+import org.wso2.json.path.evaluator.JSONPathException;
 import org.wso2.rule.validator.Constants;
 import org.wso2.rule.validator.InvalidRulesetException;
 import org.wso2.rule.validator.functions.FunctionResult;
@@ -122,16 +124,17 @@ public class Document {
             }
             for (String given : rule.given) {
                 try {
-                    Configuration config = Configuration.builder().options(Option.AS_PATH_LIST).build();
-                    List<String> paths = JsonPath.using(config).parse(this.document).read(given);
+                    JSONPathEvaluator jsonPathEvaluator = new JSONPathEvaluator(this.documentString);
+                    List<String> paths = jsonPathEvaluator.jsonPathEvaluate(given);
                     for (String path : paths) {
                         results.addAll(lintNode(path, rule));
                     }
-                    // log("Json Path resolved: " + given);
                 } catch (PathNotFoundException e) {
-                    // log("Json Path not found: " + given);
+
                 } catch (InvalidPathException e) {
-                    // log("Unsupported Json Path: " + given);
+
+                } catch (JSONPathException e) {
+
                 }
             }
         }

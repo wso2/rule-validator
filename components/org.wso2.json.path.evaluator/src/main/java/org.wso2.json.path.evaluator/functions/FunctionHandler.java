@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -17,7 +17,7 @@
  */
 package org.wso2.json.path.evaluator.functions;
 
-
+import org.wso2.json.path.evaluator.Constants;
 import org.wso2.json.path.evaluator.document.wrappers.BooleanWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.NumberWrapper;
 import org.wso2.json.path.evaluator.document.wrappers.StringWrapper;
@@ -27,21 +27,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Handling functions
+ * Handles JSONPath Plus type functions.
  */
 public class FunctionHandler {
-    public static  final List<String> ADVANCED_FUNCTIONS = List.of(
-            "@number()",
-            "@string()",
-            "@integer()",
-            "@boolean()",
-            "@array()",
-            "@object()",
-            "@null()",
-            "@scalar()"
-    );
+    public static final List<String> ADVANCED_FUNCTIONS = Constants.ADVANCED_FUNCTIONS;
 
-    // This method returns boolean value if the expression contains any functions
+    /**
+     * Checks whether an expression contains any supported function.
+     *
+     * @param expr expression to inspect
+     * @return {@code true} if at least one supported function is present
+     */
     public static boolean hasFunction(String expr) {
         for (String function : ADVANCED_FUNCTIONS) {
             if (expr.contains(function)) {
@@ -51,41 +47,46 @@ public class FunctionHandler {
         return false;
     }
 
-    // Returns true if the node matches the specified JSONPath Plus function
     private static boolean matchesFunction(Object node, String function) {
-        if (function.equals("@number()")) {
+        if (function.equals(Constants.ADVANCED_FUNCTION_NUMBER)) {
             return node instanceof NumberWrapper;
         }
-        if (function.equals("@string()")) {
+        if (function.equals(Constants.ADVANCED_FUNCTION_STRING)) {
             return node instanceof StringWrapper;
         }
-        if (function.equals("@boolean()")) {
+        if (function.equals(Constants.ADVANCED_FUNCTION_BOOLEAN)) {
             return node instanceof BooleanWrapper;
         }
-        if (function.equals("@integer()")) {
+        if (function.equals(Constants.ADVANCED_FUNCTION_INTEGER)) {
             if (node instanceof NumberWrapper) {
                 Number num = ((NumberWrapper) node).value;
                 return num.doubleValue() == num.longValue();
             }
         }
-        if (function.equals("@array()")) {
+        if (function.equals(Constants.ADVANCED_FUNCTION_ARRAY)) {
             return node instanceof List;
         }
-        if (function.equals("@object()")) {
+        if (function.equals(Constants.ADVANCED_FUNCTION_OBJECT)) {
             return (node instanceof Map);
         }
-        if (function.equals("@null()")) {
+        if (function.equals(Constants.ADVANCED_FUNCTION_NULL)) {
             return (node == null);
         }
-        if (function.equals("@scalar()")) {
+        if (function.equals(Constants.ADVANCED_FUNCTION_SCALAR)) {
             return (node instanceof  NumberWrapper) || (node instanceof StringWrapper) ||
                     (node instanceof BooleanWrapper) || (node == null);
         }
         return false;
     }
 
-    // This method return paths when the expression includes any JSONPath functions
-    public static List<String> handleFunctions(String jsonPathExpression , Object node) {
+    /**
+     * Evaluates function-based constraints for a node and returns matching paths.
+     *
+     * @param jsonPathExpression JSONPath expression containing a function call
+     * @param node node to evaluate
+     * @return matching path list
+     */
+    public static List<String> handleFunctions(String jsonPathExpression, Object node) {
         List<String> finalResults = new ArrayList<>();
         String advancedFunction = null;
         int functionStart = -1;
@@ -99,8 +100,8 @@ public class FunctionHandler {
         if (advancedFunction == null) {
             return finalResults;
         }
-        String basePathSubString = jsonPathExpression.substring(0 , functionStart);
-        if (matchesFunction(node , advancedFunction)) {
+        String basePathSubString = jsonPathExpression.substring(0, functionStart);
+        if (matchesFunction(node, advancedFunction)) {
             finalResults.add(basePathSubString);
         }
         return finalResults;

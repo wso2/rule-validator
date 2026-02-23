@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -18,13 +18,26 @@
 package org.wso2.json.path.evaluator.document.wrappers;
 
 /**
- * Convert Number wrapper into Objects
+ * Wraps numeric values so they can be tracked by identity in traversal maps.
  */
 public class NumberWrapper {
+
     public Number value;
+
+    /**
+     * Creates a wrapper for a numeric value.
+     *
+     * @param value numeric value to wrap
+     */
     public NumberWrapper(Number value) {
         this.value = value;
     }
+
+    /**
+     * Returns the wrapped value as a string.
+     *
+     * @return string representation of the wrapped value
+     */
     @Override
     public String toString() {
         return String.valueOf(value);

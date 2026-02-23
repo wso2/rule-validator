@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -18,13 +18,26 @@
 package org.wso2.json.path.evaluator.document.wrappers;
 
 /**
- * Convert String wrapper into Objects
+ * Wraps string values so they can be tracked by identity in traversal maps.
  */
 public class StringWrapper {
+
     public String value;
+
+    /**
+     * Creates a wrapper for a string value.
+     *
+     * @param value string value to wrap
+     */
     public StringWrapper(String value) {
         this.value = value;
     }
+
+    /**
+     * Returns the wrapped string value.
+     *
+     * @return wrapped string value
+     */
     @Override
     public String toString() {
         return value;

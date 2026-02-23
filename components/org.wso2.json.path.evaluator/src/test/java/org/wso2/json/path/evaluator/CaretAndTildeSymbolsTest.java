@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2026, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -24,11 +24,16 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test cases for CaretAndTildeSymbolsTest.
+ */
 public class CaretAndTildeSymbolsTest {
 
+    /**
+     * Validates the validatingCaretTest scenario.
+     */
     @Test
     public void validatingCaretTest() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");
@@ -51,6 +56,9 @@ public class CaretAndTildeSymbolsTest {
         }
     }
 
+    /**
+     * Validates the validatingCaretWithOtherFeatures scenario.
+     */
     @Test
     public void validatingCaretWithOtherFeatures() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");
@@ -76,6 +84,9 @@ public class CaretAndTildeSymbolsTest {
         }
     }
 
+    /**
+     * Validates the validatingTildeWithOtherFeatures scenario.
+     */
     @Test
     public void validatingTildeWithOtherFeatures() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");
@@ -101,6 +112,9 @@ public class CaretAndTildeSymbolsTest {
         }
     }
 
+    /**
+     * Validates the validatingTildeTest scenario.
+     */
     @Test
     public void validatingTildeTest() {
         Path jsonDocPath = Paths.get("src/test/resources/data.json");
