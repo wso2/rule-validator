@@ -20,10 +20,10 @@
 
     <groupId>org.wso2.carbon</groupId>
     <artifactId>rule-validator-parent</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>WSO2 - Rule Validator POM</name>
+    <name>WSO2 - Rule Validator Parent POM</name>
 
     <parent>
         <groupId>org.wso2</groupId>
@@ -32,7 +32,8 @@
     </parent>
 
     <modules>
-        <module>component</module>
+        <module>components/org.wso2.rule.validator</module>
+        <module>components/org.wso2.json.path.evaluator</module>
     </modules>
 
     <dependencyManagement>
@@ -66,6 +67,16 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${apache.commons.lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-jexl3</artifactId>
+                <version>${commons.jexl3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.json.path.evaluator</artifactId>
+                <version>${rule.validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -130,7 +141,7 @@
         <repository>
             <id>Sonatype-public</id>
             <name>SnakeYAML repository</name>
-            <url>http://oss.sonatype.org/content/groups/public/</url>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -147,7 +158,7 @@
         <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
         <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
         <org.snakeyaml.snakeyaml.engine.version>2.9</org.snakeyaml.snakeyaml.engine.version>
-        <com.jayway.jsonpath.version>2.9.0</com.jayway.jsonpath.version>
+        <com.jayway.jsonpath.version>2.10.0</com.jayway.jsonpath.version>
         <com.google.code.gson.version>2.11.0</com.google.code.gson.version>
         <compiler.plugin.version>3.0</compiler.plugin.version>
         <com.github.erosb.everit-json-schema.version>1.14.4</com.github.erosb.everit-json-schema.version>
@@ -158,6 +169,8 @@
         <maven.spotbugsplugin.version>4.8.2.0</maven.spotbugsplugin.version>
         <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
+        <commons.jexl3.version>3.5.0</commons.jexl3.version>
+        <rule.validator.version>1.1.0-SNAPSHOT</rule.validator.version>
         <maven.spotbugsplugin.exclude.file>spotbugs-exclude.xml</maven.spotbugsplugin.exclude.file>
     </properties>
 </project>

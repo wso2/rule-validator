@@ -1,0 +1,551 @@
+aliases:
+  API_Document:
+    description: "The complete API specification document. This can be used to target\
+      \ any part of the OpenAPI document using **field**.\n\n*Use this if you don't\
+      \ find specific targets that cater to your usecase.* "
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$"
+  Operation_Object:
+    description: "The complete operation object. Use it in combo with field object."
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "#Path_Item['get']"
+          - "#Path_Item['put']"
+          - "#Path_Item['post']"
+          - "#Path_Item['delete']"
+          - "#Path_Item['options']"
+          - "#Path_Item['head']"
+          - "#Path_Item['patch']"
+          - "#Path_Item['trace']"
+  Operation_Responses:
+    description: "Responses for all operations including get, put, post, delete, options,\
+      \ head, patch, trace."
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "#Operation_Object.responses"
+  Path_Item:
+    description: ""
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$.paths[*]"
+  API_Contact:
+    description: "The top level description in an API document"
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$.info.contact"
+  API_License:
+    description: "The top level description in an API document"
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$.info.license"
+  All_Markdown:
+    description: "All markdown descriptions across the document."
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$..description"
+          - "$..title"
+  API_Tags:
+    description: "Tags on an API object"
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "#Operation_Object.tags"
+  Response_All_Object:
+    description: "All responses (object) in an API"
+    targets:
+      - formats:
+          - "oas2"
+        given:
+          - "$.responses"
+          - "#Operation_Responses"
+          - "$..responses"
+      - formats:
+          - "oas3"
+        given:
+          - "$.components.responses"
+          - "#Operation_Responses"
+          - "$..responses"
+  Request_Parameter_All:
+    description: "All request parameters"
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$..parameters[*]"
+  Path_Object:
+    description: "Path object. Usually used to target the Path key e.g. `/users/{userId}`"
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$.paths"
+  API_Document_RecursiveSearch:
+    description: "The complete API specification document. This can be used to target\
+      \ any part of the OpenAPI document using **field**.\n\n*Use this if you don't\
+      \ find specific targets that cater to your usecase.* "
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$..*"
+  All_Example:
+    description: "All examples across the API document"
+    targets:
+      - formats:
+          - "oas2"
+        given:
+          - "$..examples[*]"
+      - formats:
+          - "oas3"
+        given:
+          - "$.components.examples[*]"
+          - "$.paths[*][*]..content[*].examples[*]"
+          - "$.paths[*][*]..parameters[*].examples[*]"
+          - "$.components.parameters[*].examples[*]"
+          - "$.paths[*][*]..headers[*].examples[*]"
+          - "$.components.headers[*].examples[*]"
+  API_Tags_Item:
+    description: "Tags on an API object"
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$.tags[*]"
+  All_Array_Item:
+    description: ""
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+          - "oas3_0"
+        given:
+          - "$..[?(@ && @.type=='array')]"
+  Request_Parameter_Path:
+    description: "All request path parameters"
+    targets:
+      - formats:
+          - "oas2"
+          - "oas3"
+        given:
+          - "$..parameters[?(@ && @.in==\"path\")]"
+rules:
+  contact-url:
+    given:
+      - "#API_Contact"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "url"
+    description: "The `contact` object should have a valid organization URL.\n\n**Valid\
+      \ Example**\n\n```json\n{\n  \"contact\": {\n     ... ,\n     \"url\": \"https://acme.com\"\
+      ,\n     ...\n  },\n```"
+    message: "Contact object should have \"url\"."
+  contact-email:
+    given:
+      - "#API_Contact"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "email"
+    description: "The `contact` object should have a valid email.\n\n**Valid Example**\n\
+      \n```json\n{\n  \"contact\": {\n     ... ,\n     \"email\": \"support.contact@acme.com\"\
+      \n  },\n```"
+    message: "Contact object should have \"email\""
+  info-contact:
+    given:
+      - "#API_Document"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "info.contact"
+    description: "The `info` object should include a `contact` object.\n\n**Valid\
+      \ Example**\n\n```json\n{\n  \"info\": {\n    ... ,\n    \"contact\": {\n  \
+      \    \"name\": \"ACME Corporation\",\n      \"url\": \"https://acme.com\",\n\
+      \      \"email\": \"support.contact@acme.com\"\n    }\n  }\n}\n```"
+    message: "Info object should have \"contact\" object."
+  info-description:
+    given:
+      - "#API_Document"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "info.description"
+    description: "The `info` object should have a `description` object.\n\n**Valid\
+      \ Example**\n\n```json\n{\n  \"info\": {\n     ... ,\n     \"description\":\
+      \ \"This describes my API.\"\n  }\n}\n```"
+    message: "Info object should have \"description\" object."
+  info-license:
+    given:
+      - "#API_Document"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "info.license"
+    description: "The `info` object should have a `license` object.\n\n**Valid Example**\n\
+      \n```json\n{\n  \"info\": {\n    ... ,\n    \"license\": {\n      \"name\":\
+      \ \"Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)\",\n      \"url\"\
+      : \"https://creativecommons.org/licenses/by-sa/4.0/\"\n    }\n  }\n}\n```"
+    message: "Info object should have \"license\" object."
+  license-url:
+    given:
+      - "#API_License"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "url"
+    description: "The `license` object should include a valid url.\n\n**Valid Example**\n\
+      \n```json\n{\n  \"license\": {\n    \"name\": \"Attribution-ShareAlike 4.0 International\
+      \ (CC BY-SA 4.0)\",\n    \"url\": \"https://creativecommons.org/licenses/by-sa/4.0/\"\
+      \n  }\n}\n```"
+    message: "License object should include \"url\"."
+  no-eval-in-markdown:
+    given:
+      - "#All_Markdown"
+    severity: "warn"
+    then:
+      function: "pattern"
+      functionOptions:
+        notMatch: "eval\\("
+    description: "Markdown descriptions should not contain [`eval()` functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval),\n\
+      which pose a security risk.\n\n**Invalid Example**\n\n```json\n{\n  \"info\"\
+      : {\n    ... ,\n    \"description\": \"API for users. eval()\"\n  }\n}\n```"
+    message: "Markdown descriptions must not have \"eval(\"."
+  no-script-tags-in-markdown:
+    given:
+      - "#All_Markdown"
+    severity: "warn"
+    then:
+      function: "pattern"
+      functionOptions:
+        notMatch: "<script"
+    description: "Markdown descriptions should not contain `script` tags, which pose\
+      \ a security risk.\n\n**Invalid Example**\n\n```json\n{\n  \"info\": {\n   \
+      \ ... ,\n    \"description\": \"API for users. <script>alert(\\\"You are Hacked\\\
+      \");</script>\"\n  }\n}\n```"
+    message: "Markdown descriptions must not have \"<script>\" tags."
+  openapi-tags-alphabetical:
+    given:
+      - "#API_Document"
+    severity: "warn"
+    then:
+      function: "alphabetical"
+      functionOptions:
+        keyedBy: "name"
+      field: "tags"
+    description: "Global tags specified at the root OpenAPI Document level should\
+      \ be in alphabetical order based on the `name` property.\n\n**Invalid Example**\n\
+      \n```json\n{\n  \"tags\":[\n    {\n      \"name\":\"Z Global Tag\"\n    },\n\
+      \    {\n      \"name\":\"A Global Tag\"\n    }\n  ]\n}\n```\n\n**Valid Example**\n\
+      \n```json\n{\n  \"tags\":[\n    {\n      \"name\":\"A Global Tag\"\n    },\n\
+      \    {\n      \"name\":\"Z Global Tag\"\n    }\n  ]\n}\n```"
+    message: "OpenAPI object should have alphabetical \"tags\"."
+  openapi-tags:
+    given:
+      - "#API_Document"
+    severity: "warn"
+    then:
+      function: "schema"
+      functionOptions:
+        schema:
+          type: "array"
+          minItems: 1
+      field: "tags"
+    description: "At least one global tag should be specified at the root OpenAPI\
+      \ Document level.\n\n**Valid Example**\n\n```json\n{\n  \"tags\":[\n    {\n\
+      \      \"name\":\"Global Tag #1\"\n    },\n    {\n      \"name\":\"Global Tag\
+      \ #2\"\n    }\n  ]\n}\n```"
+    message: "OpenAPI object should have non-empty \"tags\" array."
+  operation-description:
+    given:
+      - "#Operation_Object"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "description"
+    description: "Each operation should have a description.\n\n**Valid Example**\n\
+      \n```json\n{\n  \"get\": {\n    \"description\": \"Get a list of users.\"\n\
+      \  }\n}\n```"
+    message: "Operation \"description\" should be present and non-empty string."
+  operation-operationId:
+    given:
+      - "#Operation_Object"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "operationId"
+    description: "All operations should have an `operationId`.\n\n**Valid Example**\n\
+      \n```json\n{\n  \"get\": {\n    \"summary\": \"Get users\",\n    \"operationId\"\
+      : \"get-users\"\n  }\n}\n```"
+    message: "Operation should have \"operationId\"."
+  operation-operationId-valid-in-url:
+    given:
+      - "#Operation_Object"
+    severity: "error"
+    then:
+      function: "pattern"
+      functionOptions:
+        match: "^[A-Za-z0-9-._~:/?#\\[\\]@!\\$&'()*+,;=]*$"
+      field: "operationId"
+    description: "Operation IDs must not contain characters that are invalid for URLs.\n\
+      \n**Invalid Example**\n\nThe `operationId` in this example includes a pipe and\
+      \ space, which are invalid for URLs.\n\n```json\n{\n  \"/users\": {\n    \"\
+      get\": {\n      \"operationId\": \"invalid|operationID\"\n    }\n  }\n}\n```\n\
+      \n**Valid Example**\n\nThis `operationId` is valid for URLs.\n\n```json\n{\n\
+      \  \"/users\": {\n    \"get\": {\n      \"operationId\": \"this-must-be-unique\"\
+      \n    }\n  }\n}\n```"
+    message: "OperationId should not have characters that are invalid when used in\
+      \ URL."
+  operation-tags:
+    given:
+      - "#Operation_Object"
+    severity: "warn"
+    then:
+      - function: "length"
+        functionOptions:
+          max: 999
+          min: 1
+        field: "tags"
+      - function: "truthy"
+        field: "tags"
+    description: "At least one tag should be defined for each operation.\n\n**Valid\
+      \ Example**\n\n```json\n{\n  \"get\": {\n    \"tags\": [\"Users\"]\n  }\n}\n\
+      ```"
+    message: "Operation should have non-empty \"tags\" array."
+  path-declarations-must-exist:
+    given:
+      - "#Path_Object"
+    severity: "error"
+    then:
+      function: "pattern"
+      functionOptions:
+        notMatch: "\\{\\}"
+      field: "@key"
+    description: "Path parameter declarations must not be empty.\n\n**Invalid Example**\n\
+      \n`/users/{}`\n\n**Valid Example**\n\n`/users/{userId}`"
+    message: "Path parameter declarations must not be empty, e.g., \"/given/{}\" is\
+      \ invalid."
+  paths-no-trailing-slash:
+    given:
+      - "#Path_Object"
+    severity: "error"
+    then:
+      function: "pattern"
+      functionOptions:
+        notMatch: ".+\\/$"
+      field: "@key"
+    description: "Paths must not end with a trailing slash.\n\n`/users` and `/users/`\
+      \ are separate paths. It's considered bad practice for them to differ based\
+      \ only on a trailing slash. It's usually preferred to not have a trailing slash.\n\
+      \n**Invalid Example**\n\nThe `users` path ends with a slash.\n\n```json\n{\n\
+      \  \"/users/\": {\n    \"post\": {}\n  }\n}\n```\n\n**Valid Example**\n\n```json\n\
+      {\n  \"/user\": {\n    \"post\": {}\n  }\n}\n```"
+  contact-name:
+    given:
+      - "#API_Contact"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "name"
+    description: "The `contact` object should have an organization name.\n\n**Valid\
+      \ Example**\n\n```json\n{\n  \"contact\": {\n    \"name\": \"ACME Corporation\"\
+      \n  }\n}\n```"
+    message: "Contact object should have \"name\"."
+  path-not-include-query:
+    given:
+      - "#Path_Object"
+    severity: "warn"
+    then:
+      function: "pattern"
+      functionOptions:
+        notMatch: "\\?"
+      field: "@key"
+    description: "Paths should not include `query` string items. Instead, add them\
+      \ as parameters with `in: query`.\n\n**Invalid Example**\n\n```json\n{\n  \"\
+      /users/{?id}\": {\n  }\n}\n```\n\n**Valid Example**\n\n```json\n{\n  \"parameters\"\
+      : [\n    {\n      \"schema\": {\n        \"type\": \"string\"\n      },\n  \
+      \    \"name\": \"id\",\n      \"in\": \"path\",\n      \"required\": true,\n\
+      \      \"description\": \"User's ID\"\n    }\n  ]\n}\n```"
+    message: "Path should not include query string."
+  tag-description:
+    given:
+      - "#API_Tags_Item"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "description"
+    description: "Tags defined at the global level should have a description.\n\n\
+      **Valid Example**\n\n```json\n{\n  \"tags\": [\n    {\n      \"name\": \"Users\"\
+      ,\n      \"description\": \"End-user information\"\n    }\n  ]\n}\n```"
+    message: "Tag object should have \"description\"."
+  parameter-description:
+    given:
+      - "#Request_Parameter_All"
+    severity: "warn"
+    then:
+      function: "truthy"
+      field: "description"
+    description: "All `parameter` objects should have a description.\n\n**Valid Example**\n\
+      \n```json\n{\n  \"parameters\": [\n    {\n      \"schema\": {\n        \"type\"\
+      : \"integer\"\n      },\n      ... ,\n      ... ,\n      \"description\": \"\
+      The number of days to include in the response.\"\n    }\n  ]\n}\n```\n"
+    message: "Parameter objects must have \"description\"."
+  oas3-examples-value-or-externalValue:
+    given:
+      - "#All_Example"
+    severity: "warn"
+    then:
+      function: "xor"
+      functionOptions:
+        properties:
+          - "externalValue"
+          - "value"
+    description: "The `examples` object should include a `value` or `externalValue`\
+      \ field, but cannot include both.\n\n**Invalid Example**\n\nThis example includes\
+      \ both a `value` field and an `externalValue` field.\n\n```json\n{\n  \"examples\"\
+      : {\n    \"example-1\": {\n      \"value\": {\n        \"id\": \"string\",\n\
+      \        \"name\": \"string\"\n      },\n      \"externalValue\": {\n      \
+      \  \"id\": \"string\",\n        \"name\": \"string\"\n      }\n    }\n  }\n\
+      }\n```\n\n**Valid Example**\n\nThis example includes only a `value` field.\n\
+      \n```json\n{\n  \"examples\": {\n    \"example-1\": {\n      \"value\": {\n\
+      \        \"id\": \"string\",\n        \"name\": \"string\"\n      }\n    }\n\
+      \  }\n}\n```\n"
+    message: "Examples must have either \"value\" or \"externalValue\" field."
+    formats:
+      - "oas3"
+  array-items:
+    given:
+      - "#All_Array_Item"
+    severity: "error"
+    then:
+      function: "truthy"
+      field: "items"
+    description: "Schemas with `type: array`, require a sibling `items` field.\n\n\
+      **Recommended:** Yes\n\n**Good Example**\n\n```yaml\nTheGoodModel:\n  type:\
+      \ object\n  properties:\n    favoriteColorSets:\n      type: array\n      items:\n\
+      \        type: array\n        items: {}\n```\n\n**Bad Example**\n\n```yaml\n\
+      TheBadModel:\n  type: object\n  properties:\n    favoriteColorSets:\n      type:\
+      \ array\n      items:\n        type: array\n```"
+    message: "Schemas with \"type: array\", require a sibling \"items\" field"
+  path-parameters-on-path-only:
+    given:
+      - "$.paths[*][*].parameters[?(@.in == 'path')]"
+    severity: "warn"
+    then:
+      function: "falsy"
+    description: "Path parameters should be defined on the path level instead of the\
+      \ operation level.\n\n**Invalid Example**\n\nThe `user_id` path parameter on\
+      \ line 8 should not be included with the `patch` operation.\n\n```json\n{\n\
+      \  \"patch\": {\n    \"parameters\": [\n      {\n        \"schema\": {\n   \
+      \       \"type\": \"integer\"\n        },\n        \"name\": \"user_id\",\n\
+      \        \"in\": \"path\"\n      }\n    ]\n  }\n}\n```\n\n**Valid Example**\n\
+      \nThe `user-id` path parameter is correctly located at the path level.\n\n```json\n\
+      {\n  \"paths\": {\n    \"/users/{userId}\": {\n      \"parameters\": [\n   \
+      \     {\n          \"schema\": {\n            \"type\": \"integer\"\n      \
+      \    },\n          \"name\": \"user_id\",\n          \"in\": \"path\"\n    \
+      \    }\n      ]\n    }\n  }\n}\n```"
+    message: "Path parameters should be defined on the path level."
+  paths-no-query-params:
+    given:
+      - "$.paths"
+    severity: "warn"
+    then:
+      function: "pattern"
+      functionOptions:
+        notMatch: "\\?"
+      field: "@key"
+    description: "Paths should not have query parameters in them. They should be defined\
+      \ separately in the OpenAPI.\n\n**Invalid Example**\n\n```json\n{\n  \"/users/{?id}\"\
+      : {\n```\n\n**Valid Example**\n\n```json\n{\n  \"parameters\": [\n    {\n  \
+      \    \"schema\": {\n        \"type\": \"string\"\n      },\n      \"name\":\
+      \ \"id\",\n      \"in\": \"path\",\n      \"required\": true,\n      \"description\"\
+      : \"User's ID\"\n    }\n  ]\n}\n```"
+    message: "Paths should not have query parameters in them. They should be defined\
+      \ separately in the OpenAPI."
+  path-casing:
+    given:
+      - "$.paths"
+    severity: "error"
+    then:
+      function: "pattern"
+      functionOptions:
+        match: "^\\/([a-z0-9]+(-[a-z0-9]+)*)?(\\/[a-z0-9]+(-[a-z0-9]+)*|\\/\\{.+\\\
+          })*$"
+      field: "@key"
+    description: "Paths must be `kebab-case`, with hyphens separating words.\n\n**Invalid\
+      \ Example**\n\n`userInfo` must be separated with a hyphen.\n\n```json\n{\n \
+      \   \"/userInfo\": {\n        \"post: }\n       ....\n}\n```\n\n**Valid Example**\n\
+      \n```json\n{\n    \"/user-info\": {\n       \"post: }\n       ....\n}\n```"
+    message: "Paths must be kebab-case"
+  resource-names-plural:
+    given:
+      - "$.paths"
+    severity: "warn"
+    then:
+      function: "pattern"
+      functionOptions:
+        match: "^((\\/v\\d+)*((\\/[\\w+-]*s)(\\/\\{.*\\})*)*)$"
+      field: "@key"
+    description: "Resource names should generally be plural.\n\n**Invalid Example**\n\
+      \n```json\n{\n    \"paths\": {\n      \"/user\":\n    }\n  }\n```\n\n**Valid\
+      \ Example**\n\n```json\n{\n    \"paths\": {\n      \"/users\":\n    }\n}\n```"
+    message: "Resource names should generally be plural"
+  paths-no-http-verbs:
+    given:
+      - "$.paths"
+    severity: "error"
+    then:
+      function: "pattern"
+      functionOptions:
+        notMatch: "\\b(GET|PUT|POST|DELETE|LIST|CREATE|REMOVE|get|put|post|delete|list|create|remove|Get|Put|Post|Delete|List|Create|Remove)\\\
+          b"
+      field: "@key"
+    description: "Verbs such as `get`, `delete`, and `put` must not be included in\
+      \ paths because this information is conveyed by the HTTP method.\n\n**Invalid\
+      \ Example**\n\nThe path contains the verb `get`.\n\n```json\n{\n    \"/getUsers\"\
+      : {\n       \"post: }\n       ....\n}\n```\n\n**Valid Example**\n\n```json\n\
+      {\n    \"/user\": {\n       \"post: }\n       ....\n}\n```"
+    message: "Paths must not have HTTP verbs in them"
+  paths-avoid-special-characters:
+    given:
+      - "$.paths"
+    severity: "warn"
+    then:
+      function: "pattern"
+      functionOptions:
+        notMatch: "^(.*)([\\$&+,;=?@%]+)(.*)$"
+        match: ""
+      field: "@key"
+    description: "Paths should not contain special characters, such as `$` `&` `+`\
+      \ `,` `;` `=` `?` and `@%`.\n\n**Invalid Example**\n\nThe path contains an ampersand.\n\
+      \n```json\n{\n    \"/user&info\": {\n       \"post: }\n       ....\n}\n```\n\
+      \n**Valid Example**\n\n```json\n{\n    \"/user\": {\n       \"post: }\n    \
+      \   ....\n}\n```"
+    message: "Avoid using special characters in paths"
