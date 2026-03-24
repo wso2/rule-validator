@@ -23,7 +23,7 @@ package org.wso2.rule.validator.validator;
  */
 public class ValidationOptions {
 
-    private Integer yamlCodePointLimit;
+    private Integer yamlCodePointLimit = null;
 
     public ValidationOptions() {
     }
