@@ -39,20 +39,46 @@ import java.util.List;
  * Validator class to validate documents and rulesets.
  */
 public class Validator {
+    /**
+     * Validates a document with a ruleset using default validation options.
+     *
+     * @param documentFile document content
+     * @param rulesetFile  ruleset content
+     * @return validation result as JSON string
+     * @throws InvalidRulesetException     if ruleset is invalid
+     * @throws InvalidContentTypeException if content is not valid JSON or YAML
+     * @deprecated Use {@link #validateDocument(String, String, ValidationOptions)} to pass validation options.
+     */
+    @Deprecated
     public static String validateDocument(String documentFile, String rulesetFile)
             throws InvalidRulesetException, InvalidContentTypeException {
+        return validateDocument(documentFile, rulesetFile, ValidationOptions.defaults());
+    }
 
-        List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetFile);
+    /**
+     * Validates a document with a ruleset using provided validation options.
+     *
+     * @param documentFile      document content
+     * @param rulesetFile       ruleset content
+     * @param validationOptions validation options
+     * @return validation result as JSON string
+     * @throws InvalidRulesetException     if ruleset is invalid
+     * @throws InvalidContentTypeException if content is not valid JSON or YAML
+     */
+    public static String validateDocument(String documentFile, String rulesetFile, ValidationOptions validationOptions)
+            throws InvalidRulesetException, InvalidContentTypeException {
+
+        List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetFile, validationOptions);
         if (!errors.isEmpty()) {
             Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
             throw new InvalidRulesetException(gson.toJson(errors));
         }
 
-        RulesetType type = findRulesetType(rulesetFile);
+        RulesetType type = findRulesetType(rulesetFile, validationOptions);
         Ruleset ruleset;
 
         if (type == RulesetType.YAML) {
-            ruleset = new YamlRuleset(rulesetFile);
+            ruleset = new YamlRuleset(rulesetFile, validationOptions);
         } else {
             ruleset = new JsonRuleset(rulesetFile);
         }
@@ -61,7 +87,7 @@ public class Validator {
             throw new InvalidRulesetException(ruleset.getInitializationErrorMessage());
         }
 
-        Document document = new Document(documentFile);
+        Document document = new Document(documentFile, validationOptions);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         List<DocumentValidationResult> results = new ArrayList<>();
         if (!document.isNull()) {
@@ -79,20 +105,42 @@ public class Validator {
         return gson.toJson(results);
     }
 
-    private static List<RulesetValidationError> getRulesetValidationErrors(String rulesetString)
-            throws InvalidContentTypeException {
-        RulesetType type = findRulesetType(rulesetString);
+    private static List<RulesetValidationError> getRulesetValidationErrors(String rulesetString,
+            ValidationOptions validationOptions) throws InvalidContentTypeException {
+        RulesetType type = findRulesetType(rulesetString, validationOptions);
         List<RulesetValidationError> errors;
         if (type == RulesetType.YAML) {
-            errors = YamlRulesetValidator.validateRuleset(rulesetString);
+            errors = YamlRulesetValidator.validateRuleset(rulesetString, validationOptions);
         } else {
             errors = JsonRulesetValidator.validateRuleset(rulesetString);
         }
         return errors;
     }
 
+    /**
+     * Validates a ruleset using default validation options.
+     *
+     * @param rulesetString ruleset content
+     * @return validation result as JSON string
+     * @throws InvalidContentTypeException if content is not valid JSON or YAML
+     * @deprecated Use {@link #validateRuleset(String, ValidationOptions)} to pass validation options.
+     */
+    @Deprecated
     public static String validateRuleset(String rulesetString) throws InvalidContentTypeException {
-        List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetString);
+        return validateRuleset(rulesetString, ValidationOptions.defaults());
+    }
+
+    /**
+     * Validates a ruleset using provided validation options.
+     *
+     * @param rulesetString     ruleset content
+     * @param validationOptions validation options
+     * @return validation result as JSON string
+     * @throws InvalidContentTypeException if content is not valid JSON or YAML
+     */
+    public static String validateRuleset(String rulesetString, ValidationOptions validationOptions)
+            throws InvalidContentTypeException {
+        List<RulesetValidationError> errors = getRulesetValidationErrors(rulesetString, validationOptions);
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         // Create a string with all the error strings
         StringBuilder errorString = new StringBuilder();
@@ -103,14 +151,15 @@ public class Validator {
         return gson.toJson(result);
     }
 
-    private static RulesetType findRulesetType(String ruleset) throws InvalidContentTypeException {
+    private static RulesetType findRulesetType(String ruleset, ValidationOptions validationOptions)
+            throws InvalidContentTypeException {
         try {
             String trimmedRuleset = ruleset.trim();
             if (trimmedRuleset.startsWith("{") || trimmedRuleset.startsWith("[")) {
                 JsonPath.parse(ruleset);
                 return RulesetType.JSON;
             } else {
-                Util.loadYaml(ruleset);
+                Util.loadYaml(ruleset, validationOptions);
                 return RulesetType.YAML;
             }
         } catch (Exception e) {

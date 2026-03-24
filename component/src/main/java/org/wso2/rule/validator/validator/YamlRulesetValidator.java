@@ -29,9 +29,31 @@ import java.util.Map;
  * Ruleset validation for YAML files
  */
 public class YamlRulesetValidator extends RulesetValidator {
+    /**
+     * Validates YAML ruleset content using default validation options.
+     *
+     * @param rulesetString ruleset content
+     * @return list of validation errors
+     * @throws InvalidContentTypeException if ruleset content is invalid YAML
+     * @deprecated Use {@link #validateRuleset(String, ValidationOptions)} to pass validation options.
+     */
+    @Deprecated
     public static List<RulesetValidationError> validateRuleset(String rulesetString)
             throws InvalidContentTypeException {
-        Object yamlContent = Util.loadYaml(rulesetString);
+        return validateRuleset(rulesetString, ValidationOptions.defaults());
+    }
+
+    /**
+     * Validates YAML ruleset content using provided validation options.
+     *
+     * @param rulesetString     ruleset content
+     * @param validationOptions validation options
+     * @return list of validation errors
+     * @throws InvalidContentTypeException if ruleset content is invalid YAML
+     */
+    public static List<RulesetValidationError> validateRuleset(String rulesetString,
+            ValidationOptions validationOptions) throws InvalidContentTypeException {
+        Object yamlContent = Util.loadYaml(rulesetString, validationOptions);
         if (!(yamlContent instanceof Map)) {
             throw new InvalidContentTypeException("Invalid YAML ruleset content.");
         }

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.wso2.rule.validator.InvalidContentTypeException;
+import org.wso2.rule.validator.validator.ValidationOptions;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,7 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.wso2.rule.validator.validator.Validator.validateRuleset;
 
@@ -174,9 +177,10 @@ public class RulesetTest {
         try {
             String jsonRulesetContent = Files.readString(jsonRulesetPath);
             String yamlRulesetContent = Files.readString(yamlRulesetPath);
+            ValidationOptions validationOptions = ValidationOptions.defaults();
 
-            String validationResultJson = validateRuleset(jsonRulesetContent);
-            String validationResultYaml = validateRuleset(yamlRulesetContent);
+            String validationResultJson = validateRuleset(jsonRulesetContent, validationOptions);
+            String validationResultYaml = validateRuleset(yamlRulesetContent, validationOptions);
 
             assertTrue(validationResultJson.contains("Circular alias dependency detected."));
             assertTrue(validationResultYaml.contains("Circular alias dependency detected."));
@@ -195,13 +199,49 @@ public class RulesetTest {
         try {
             String jsonRulesetContent = Files.readString(jsonRulesetPath);
             String yamlRulesetContent = Files.readString(yamlRulesetPath);
+            ValidationOptions validationOptions = ValidationOptions.defaults();
 
-            String validationResultJson = validateRuleset(jsonRulesetContent);
-            String validationResultYaml = validateRuleset(yamlRulesetContent);
+            String validationResultJson = validateRuleset(jsonRulesetContent, validationOptions);
+            String validationResultYaml = validateRuleset(yamlRulesetContent, validationOptions);
 
             assertTrue(validationResultJson.contains("Alias #Name not found"));
             assertTrue(validationResultYaml.contains("Alias #Name not found"));
         } catch (IOException | InvalidContentTypeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Tests that null yaml code point limit follows default parsing behavior.
+     */
+    @Test
+    public void validateRulesetWithNullCodePointLimit() {
+        Path yamlRulesetPath = Paths.get("src/test/resources/rulesets/valid-yaml.ruleset");
+        try {
+            String yamlRulesetContent = Files.readString(yamlRulesetPath);
+            ValidationOptions validationOptions = new ValidationOptions();
+            validationOptions.setYamlCodePointLimit(null);
+
+            assertDoesNotThrow(() -> validateRuleset(yamlRulesetContent, validationOptions));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Tests that yaml code point limit is enforced when a positive value is configured.
+     */
+    @Test
+    public void validateRulesetWithConfiguredCodePointLimit() {
+        Path yamlRulesetPath = Paths.get("src/test/resources/rulesets/valid-yaml.ruleset");
+        try {
+            String yamlRulesetContent = Files.readString(yamlRulesetPath);
+            ValidationOptions validationOptions = new ValidationOptions();
+            validationOptions.setYamlCodePointLimit(10);
+
+            assertThrows(InvalidContentTypeException.class,
+                    () -> validateRuleset(yamlRulesetContent, validationOptions));
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

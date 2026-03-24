@@ -19,6 +19,7 @@ package org.wso2.rule.validator.ruleset.file.type;
 
 import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.utils.Util;
+import org.wso2.rule.validator.validator.ValidationOptions;
 
 import java.util.Map;
 
@@ -26,7 +27,24 @@ import java.util.Map;
  * This class is used to load a yaml ruleset file
  */
 public class YamlRuleset extends Ruleset {
+    /**
+     * Creates a YAML ruleset using default validation options.
+     *
+     * @param rulesetString ruleset content
+     * @deprecated Use {@link #YamlRuleset(String, ValidationOptions)} to pass validation options.
+     */
+    @Deprecated
     public YamlRuleset(String rulesetString) {
-        super((Map<String, Object>) Util.loadYaml(rulesetString));
+        this(rulesetString, ValidationOptions.defaults());
+    }
+
+    /**
+     * Creates a YAML ruleset using provided validation options.
+     *
+     * @param rulesetString     ruleset content
+     * @param validationOptions validation options
+     */
+    public YamlRuleset(String rulesetString, ValidationOptions validationOptions) {
+        super((Map<String, Object>) Util.loadYaml(rulesetString, validationOptions));
     }
 }
