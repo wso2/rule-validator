@@ -19,7 +19,9 @@ package org.wso2.rule.validator.utils;
 
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.api.LoadSettingsBuilder;
 import org.wso2.rule.validator.Constants;
+import org.wso2.rule.validator.validator.ValidationOptions;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +59,31 @@ public class Util {
         return sb.toString();
     }
 
+    /**
+     * Loads YAML content using default validation options.
+     *
+     * @param yamlString YAML content as string
+     * @return parsed YAML object
+     * @deprecated Use {@link #loadYaml(String, ValidationOptions)} to pass parser options explicitly.
+     */
+    @Deprecated
     public static Object loadYaml(String yamlString) {
-        return (new Load(LoadSettings.builder().build())).loadFromString(yamlString);
+        return loadYaml(yamlString, ValidationOptions.defaults());
+    }
+
+    /**
+     * Loads YAML content with configurable validation options.
+     *
+     * @param yamlString        YAML content as string
+     * @param validationOptions parser/validation options
+     * @return parsed YAML object
+     */
+    public static Object loadYaml(String yamlString, ValidationOptions validationOptions) {
+        LoadSettingsBuilder loadSettingsBuilder = LoadSettings.builder();
+        Integer yamlCodePointLimit = validationOptions != null ? validationOptions.getYamlCodePointLimit() : null;
+        if (yamlCodePointLimit != null && yamlCodePointLimit > 0) {
+            loadSettingsBuilder.setCodePointLimit(yamlCodePointLimit);
+        }
+        return (new Load(loadSettingsBuilder.build())).loadFromString(yamlString);
     }
 }

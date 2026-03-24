@@ -35,6 +35,7 @@ import org.wso2.rule.validator.ruleset.Ruleset;
 import org.wso2.rule.validator.ruleset.RulesetAliasDefinition;
 import org.wso2.rule.validator.utils.Util;
 import org.wso2.rule.validator.validator.MessagePlaceholder;
+import org.wso2.rule.validator.validator.ValidationOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,8 +53,25 @@ public class Document {
     private Object document = null;
     List<Format> formats;
 
+    /**
+     * Creates a document using default validation options.
+     *
+     * @param documentString document content
+     * @deprecated Use {@link #Document(String, ValidationOptions)} to pass validation options.
+     */
+    @Deprecated
     public Document(String documentString) {
-        Object yamlData = Util.loadYaml(documentString);
+        this(documentString, ValidationOptions.defaults());
+    }
+
+    /**
+     * Creates a document using provided validation options.
+     *
+     * @param documentString    document content
+     * @param validationOptions validation options
+     */
+    public Document(String documentString, ValidationOptions validationOptions) {
+        Object yamlData = Util.loadYaml(documentString, validationOptions);
 
         if (yamlData == null) {
             return;

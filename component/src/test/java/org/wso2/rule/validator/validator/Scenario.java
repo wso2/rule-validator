@@ -69,7 +69,8 @@ public class Scenario {
         String ruleset = processRuleset(rulesetKey);
 
         try {
-            String result = Validator.validateDocument(document, ruleset);
+            ValidationOptions validationOptions = ValidationOptions.defaults();
+            String result = Validator.validateDocument(document, ruleset, validationOptions);
             return matchResults(result);
         } catch (InvalidRulesetException e) {
             throw new RuntimeException(e);
